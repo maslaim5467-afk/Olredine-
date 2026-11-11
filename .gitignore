@@ -1,0 +1,18 @@
+# Private signing keys
+*.jks
+*.keystore
+
+# Build outputs
+*.apk
+*.aab
+*.idsig
+*.dex
+*.class
+*.so
+obj/
+build/
+out/
+
+# Local Android tools
+android.jar
+r8.jar
