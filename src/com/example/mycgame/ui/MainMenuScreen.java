@@ -83,14 +83,14 @@ public class MainMenuScreen {
         lp.setMargins(dp(18), dp(2), dp(18), dp(7));
         panel.addView(line, lp);
 
-        addButton(panel, "▶", "بدء حياة جديدة", true, onNewGame);
-        addButton(panel, "↻", "متابعة اللعبة", false,
-            () -> toast("لا توجد لعبة محفوظة حتى الآن"));
-        addButton(panel, "▰", "تحميل لعبة", false,
-            () -> toast("تحميل الألعاب المحفوظة سيضاف لاحقاً"));
-        addButton(panel, "⚙", "الإعدادات", false,
-            () -> toast("الإعدادات ستضاف لاحقاً"));
-        addButton(panel, "ⓘ", "حول اللعبة", false,
+        addButton(panel, "▶", "شروع بازی جدید", true, onNewGame);
+        addButton(panel, "↻", "ادامه بازی", false,
+            () -> toast("هنوز بازی ذخیره‌شده‌ای وجود ندارد"));
+        addButton(panel, "▰", "بارگذاری بازی", false,
+            () -> toast("بارگذاری بازی‌های ذخیره‌شده بعداً اضافه می‌شود"));
+        addButton(panel, "⚙", "تنظیمات", false,
+            () -> toast("تنظیمات بعداً اضافه می‌شود"));
+        addButton(panel, "ⓘ", "درباره بازی", false,
             () -> toast("OLREDINE — Life Simulation • Business • Economy"));
         addButton(panel, "⇥", "خروج", false, activity::finish);
 
