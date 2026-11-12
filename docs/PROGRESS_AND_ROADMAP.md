@@ -44,7 +44,7 @@ The new-game screen contains seven sections:
 6. Family
 7. Skills
 
-The first two sections have initial working inputs. Sections 3–7 are still placeholders.
+The first three sections now have initial working inputs. Sections 4–7 are still placeholders.
 
 #### Character section
 
@@ -74,7 +74,7 @@ An innate trait is an initial tendency, not a permanent limit or a complete pers
 
 Implemented in the current UI:
 
-- A searchable list of 195 country entries.
+- A searchable list of 195 country entries, loaded from `res/xml/world_data.xml`.
 - Country names are displayed in Persian.
 - The list is sorted by Persian country name.
 - Search accepts the displayed country name or its two-letter country code.
@@ -87,6 +87,22 @@ The country code is stored separately from the displayed Persian name. This is i
 
 **Important scope note:** the current list is a practical initial country list (193 UN member states plus the Holy See and Palestine). It is not yet a complete citizenship, territory, or international-recognition model. Special territories, disputed cases, multiple citizenships, and legal nationality rules are outside the current Alpha scope.
 
+#### Residence section
+
+Initial implementation added to the current UI:
+
+- Residence country is independent of nationality.
+- Residence country and location data are read from the static XML resource `res/xml/world_data.xml`.
+- The residence-country picker currently exposes only countries that have at least one defined playable location.
+- The initial location dataset contains 56 entries across 20 countries.
+- Locations are searchable by their Persian display name.
+- Each location has a stable ID, country code, Persian display name, and a settlement type: `METROPOLIS`, `CITY`, or `VILLAGE`.
+- The displayed settlement type is derived from the selected location; it is not a separate player choice.
+- Changing the residence country clears the previously selected location.
+- The player cannot move forward from this section until both country and location are selected.
+
+The initial location list is deliberately curated and limited. It is not a complete global city database. New countries and locations can be added to the XML without changing the screen's selection logic.
+
 ### Current limitations
 
 - Character and nationality values are held in the screen object only.
@@ -94,7 +110,7 @@ The country code is stored separately from the displayed Persian name. This is i
 - There is no complete character data model shared across screens yet.
 - There is no playable world/gameplay screen after character creation.
 - No event-and-consequence gameplay loop exists yet.
-- Sections 3–7 do not yet collect real data.
+- Sections 4–7 do not yet collect real data.
 - The final action in character creation is still a placeholder.
 - No claim of successful build or device testing should be made solely from a successful GitHub commit.
 
@@ -181,7 +197,7 @@ Keep these concerns separate as the project grows:
 4. Game rules and event resolution.
 5. Localization and translated display strings.
 
-XML is an accepted option for structured static data and language resources. The format should be selected based on the data's real needs; do not create a complex data framework prematurely.
+XML is used for structured static world reference data (currently countries and starter locations) and is an accepted option for language resources. The format should be selected based on the data's real needs; do not create a complex data framework prematurely.
 
 ### World simulation direction
 
@@ -194,9 +210,9 @@ In later versions, country and location data may influence legal conditions, emp
 
 ## 6. Immediate next tasks
 
-1. Design the residence section, including the distinction between country of residence and city/location.
+1. Review and device-test the residence section and its XML-backed country/location selection.
 2. Define a shared character data model before adding many more independent form fields.
-3. Connect the existing character and nationality UI to that model.
+3. Connect the existing character, nationality, and residence UI to that model.
 4. Decide and document the fields for education, economic status, family, and skills.
 5. Implement local save/restore once the first character schema is stable.
 6. Design the smallest playable opening scenario and its event consequences.
@@ -224,3 +240,13 @@ In later versions, country and location data may influence legal conditions, emp
 ---
 
 This document is a living development record. Update the implementation status only after inspecting the repository and distinguishing committed code from features actually built and tested.
+
+### 2026-11-12 — Initial residence section
+
+- Moved the 195-country reference list out of Java and into `res/xml/world_data.xml`.
+- Added an initial curated location dataset: 56 locations across 20 countries.
+- Added searchable residence-country and location pickers.
+- Kept residence country independent from nationality.
+- Derived the settlement type (metropolis, medium city, or rural area) from the selected location's XML record.
+- Added forward-navigation validation for residence country and location.
+- This code has been committed, but the new residence flow has not yet been confirmed by a device test.
