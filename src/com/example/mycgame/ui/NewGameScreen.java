@@ -308,7 +308,7 @@ public class NewGameScreen {
             itemParams.setMargins(dp(2), dp(3), dp(2), dp(3));
             sidebar.addView(item, itemParams);
             item.setOnClickListener(v -> {
-                if (!validateCurrentFields()) return;
+                if (index > selectedSection && !validateCurrentFields()) return;
                 saveCurrentFields();
                 selectedSection = index;
                 refreshSidebar(sidebar);
@@ -352,7 +352,7 @@ public class NewGameScreen {
         footer.addView(next, nextParams);
 
         previous.setOnClickListener(v -> {
-            if (!validateCurrentFields()) return;
+            if (selectedSection == 0 && !validateCurrentFields()) return;
             saveCurrentFields();
             if (selectedSection == 0) onBack.run();
             else selectSection(selectedSection - 1, sidebar, next);
