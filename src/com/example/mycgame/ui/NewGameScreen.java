@@ -30,6 +30,7 @@ public class NewGameScreen {
     private String playerName = "";
     private String playerAge = "18";
     private String gender = "مرد";
+    private String innateTrait = "";
 
     public NewGameScreen(Activity activity, Runnable onBack) {
         this.activity = activity;
@@ -214,10 +215,53 @@ public class NewGameScreen {
 
             addLabel("سن");
             ageInput = addInput(playerAge, "18", true);
-            addLabel("ویژگی‌های شخصیتی");
-            addOption("آرام • جاه‌طلب • اجتماعی • تحلیل‌گر");
-            addLabel("توضیح");
-            addOption("جزئیات دیگر شخصیت در مراحل بعدی قابل تنظیم هستند.");
+            addLabel("ویژگی ذاتی");
+            TextView traitHint = new TextView(activity);
+            traitHint.setText("یک ویژگی را انتخاب کنید. این ویژگی از آغاز همراه شخصیت شماست؛ ویژگی‌های دیگر در طول زندگی و بر اساس رفتارها و تجربه‌ها کسب می‌شوند.");
+            traitHint.setTextColor(Color.rgb(190, 202, 216));
+            traitHint.setTextSize(12);
+            traitHint.setPadding(0, 0, 0, dp(8));
+            content.addView(traitHint, new LinearLayout.LayoutParams(-1, -2));
+
+            String[][] traits = {
+                {"منضبط", "تمایل به نظم و برنامه‌ریزی"},
+                {"جاه‌طلب", "میل به پیشرفت و دستیابی به اهداف"},
+                {"تحلیل‌گر", "گرایش به بررسی و تحلیل مسائل"},
+                {"اجتماعی", "تمایل به ارتباط و تعامل"},
+                {"ریسک‌پذیر", "آمادگی برای پذیرش ریسک"},
+                {"صبور", "توانایی انتظار برای نتیجه بلندمدت"},
+                {"خلاق", "گرایش به ایده‌ها و راه‌حل‌های تازه"},
+                {"محتاط", "توجه به خطرات پیش از اقدام"}
+            };
+
+            for (int i = 0; i < traits.length; i += 2) {
+                LinearLayout row = new LinearLayout(activity);
+                row.setOrientation(LinearLayout.HORIZONTAL);
+                LinearLayout.LayoutParams rowParams = new LinearLayout.LayoutParams(-1, -2);
+                rowParams.bottomMargin = dp(8);
+                content.addView(row, rowParams);
+
+                for (int j = i; j < i + 2; j++) {
+                    final String traitName = traits[j][0];
+                    LinearLayout trait = traitChoiceButton(traitName, traits[j][1], innateTrait.equals(traitName));
+                    LinearLayout.LayoutParams traitParams = new LinearLayout.LayoutParams(0, dp(76), 1f);
+                    if (j == i + 1) traitParams.setMargins(dp(8), 0, 0, 0);
+                    row.addView(trait, traitParams);
+                    trait.setOnClickListener(v -> {
+                        innateTrait = traitName;
+                        renderSection();
+                    });
+                }
+            }
+
+            TextView selectedTrait = new TextView(activity);
+            selectedTrait.setText(innateTrait.isEmpty()
+                ? "هنوز ویژگی ذاتی انتخاب نشده است."
+                : "ویژگی ذاتی انتخاب‌شده: " + innateTrait);
+            selectedTrait.setTextColor(gold);
+            selectedTrait.setTextSize(13);
+            selectedTrait.setPadding(dp(4), dp(8), dp(4), dp(8));
+            content.addView(selectedTrait);
         } else {
             TextView placeholder = new TextView(activity);
             placeholder.setText("ساختار این بخش آماده است؛ گزینه‌ها و اطلاعات آن در مراحل بعدی توسعه اضافه می‌شوند.");
@@ -296,6 +340,32 @@ public class NewGameScreen {
         button.setTextColor(selected ? Color.rgb(25, 25, 25) : text);
         button.setBackground(background(selected ? gold : Color.rgb(34, 54, 77), 10, Color.rgb(160, 126, 67)));
         return button;
+    }
+
+    private LinearLayout traitChoiceButton(String name, String description, boolean selected) {
+        LinearLayout card = new LinearLayout(activity);
+        card.setOrientation(LinearLayout.VERTICAL);
+        card.setGravity(Gravity.CENTER_VERTICAL);
+        card.setPadding(dp(10), dp(6), dp(10), dp(6));
+        card.setBackground(background(
+            selected ? Color.rgb(91, 71, 39) : Color.rgb(34, 54, 77),
+            10,
+            selected ? gold : Color.rgb(86, 103, 121)
+        ));
+
+        TextView title = new TextView(activity);
+        title.setText(name);
+        title.setTextColor(selected ? gold : text);
+        title.setTextSize(14);
+        title.setTypeface(Typeface.DEFAULT_BOLD);
+        card.addView(title);
+
+        TextView detail = new TextView(activity);
+        detail.setText(description);
+        detail.setTextColor(Color.rgb(190, 202, 216));
+        detail.setTextSize(10);
+        card.addView(detail);
+        return card;
     }
 
     private void addOption(String value) {
