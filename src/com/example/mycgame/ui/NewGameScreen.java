@@ -19,7 +19,10 @@ import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Locale;
 
 public class NewGameScreen {
     private static final String[][] COUNTRIES = {
@@ -647,6 +650,8 @@ public class NewGameScreen {
         for (String[] country : COUNTRIES) {
             countryLabels.add(country[1] + " (" + country[0] + ")");
         }
+
+        Collections.sort(countryLabels, Collator.getInstance(new Locale("fa")));
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(activity, 0, countryLabels) {
             @Override
