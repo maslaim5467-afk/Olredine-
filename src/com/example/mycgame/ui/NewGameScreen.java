@@ -23,6 +23,7 @@ import android.widget.Toast;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Locale;
 
 public class NewGameScreen {
@@ -523,6 +524,27 @@ public class NewGameScreen {
         return result;
     }
 
+    private HashSet<String> loadAvailableResidenceCountryCodes() {
+        HashSet<String> result = new HashSet<>();
+        int resourceId = worldDataResourceId();
+        if (resourceId == 0) return result;
+        XmlResourceParser parser = activity.getResources().getXml(resourceId);
+        try {
+            int event;
+            while ((event = parser.next()) != XmlResourceParser.END_DOCUMENT) {
+                if (event == XmlResourceParser.START_TAG && "location".equals(parser.getName())) {
+                    String country = parser.getAttributeValue(null, "country");
+                    if (country != null) result.add(country);
+                }
+            }
+        } catch (Exception e) {
+            Toast.makeText(activity, "خواندن فهرست مکان‌های قابل انتخاب ناموفق بود.", Toast.LENGTH_SHORT).show();
+        } finally {
+            parser.close();
+        }
+        return result;
+    }
+
     private ArrayList<LocationEntry> loadLocations(String countryCodeFilter) {
         ArrayList<LocationEntry> result = new ArrayList<>();
         int resourceId = worldDataResourceId();
@@ -581,8 +603,10 @@ public class NewGameScreen {
         panel.addView(search, searchParams);
 
         ArrayList<String> countryLabels = new ArrayList<>();
+        HashSet<String> availableResidenceCountries = forResidence
+            ? loadAvailableResidenceCountryCodes() : new HashSet<String>();
         for (String[] country : loadCountries()) {
-            if (forResidence && loadLocations(country[0]).isEmpty()) continue;
+            if (forResidence && !availableResidenceCountries.contains(country[0])) continue;
             countryLabels.add(country[1] + " (" + country[0] + ")");
         }
 
