@@ -1,4 +1,4 @@
-package com.example.mycgame;
+package com.example.mycgame.ui;
 
 import android.app.Activity;
 import android.graphics.Color;
