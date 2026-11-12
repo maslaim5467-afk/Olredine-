@@ -21,7 +21,7 @@ public class NewGameScreen {
     private final int navy = Color.rgb(12, 27, 46);
     private final int text = Color.rgb(244, 239, 226);
     private final String[] sections = {
-        "الشخصية", "الجنسية", "مكان الإقامة", "التعليم", "الوضع الاقتصادي", "العائلة", "المهارات"
+        "شخصیت", "ملیت", "محل زندگی", "تحصیلات", "وضعیت اقتصادی", "خانواده", "مهارت‌ها"
     };
     private int selectedSection = 0;
     private LinearLayout content;
@@ -29,7 +29,7 @@ public class NewGameScreen {
     private EditText ageInput;
     private String playerName = "";
     private String playerAge = "18";
-    private String gender = "ذكر";
+    private String gender = "مرد";
 
     public NewGameScreen(Activity activity, Runnable onBack) {
         this.activity = activity;
@@ -72,7 +72,7 @@ public class NewGameScreen {
         sidebar.addView(brand, new LinearLayout.LayoutParams(-1, dp(48)));
 
         TextView menuTitle = new TextView(activity);
-        menuTitle.setText("إنشاء حياة جديدة");
+        menuTitle.setText("ساخت زندگی جدید");
         menuTitle.setTextColor(text);
         menuTitle.setTextSize(13);
         menuTitle.setGravity(Gravity.CENTER);
@@ -106,7 +106,7 @@ public class NewGameScreen {
         }
 
         TextView back = new TextView(activity);
-        back.setText("←  العودة للقائمة الرئيسية");
+        back.setText("←  بازگشت به منوی اصلی");
         back.setTextColor(gold);
         back.setTextSize(12);
         back.setGravity(Gravity.CENTER);
@@ -133,8 +133,8 @@ public class NewGameScreen {
         footer.setOrientation(LinearLayout.HORIZONTAL);
         right.addView(footer, new LinearLayout.LayoutParams(-1, dp(52)));
 
-        TextView previous = footerButton("السابق");
-        TextView next = footerButton("التالي");
+        TextView previous = footerButton("قبلی");
+        TextView next = footerButton("بعدی");
         footer.addView(previous, new LinearLayout.LayoutParams(0, -1, 1f));
         LinearLayout.LayoutParams nextParams = new LinearLayout.LayoutParams(0, -1, 1f);
         nextParams.setMargins(dp(8), 0, 0, 0);
@@ -150,8 +150,8 @@ public class NewGameScreen {
             if (selectedSection < sections.length - 1) {
                 selectSection(selectedSection + 1, sidebar, next);
             } else {
-                next.setText("إنهاء");
-                Toast.makeText(activity, "سيتم تفعيل إنشاء الحفظ بعد اكتمال بيانات العالم.", Toast.LENGTH_SHORT).show();
+                next.setText("پایان");
+                Toast.makeText(activity, "ساخت ذخیره بازی پس از تکمیل اطلاعات جهان فعال می‌شود.", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -162,7 +162,7 @@ public class NewGameScreen {
     private void selectSection(int index, LinearLayout sidebar, TextView next) {
         selectedSection = index;
         refreshSidebar(sidebar);
-        next.setText(selectedSection == sections.length - 1 ? "إنهاء" : "التالي");
+        next.setText(selectedSection == sections.length - 1 ? "پایان" : "بعدی");
         renderSection();
     }
 
@@ -188,36 +188,36 @@ public class NewGameScreen {
         content.addView(heading, new LinearLayout.LayoutParams(-1, dp(48)));
 
         TextView description = new TextView(activity);
-        description.setText("حدد البيانات التالية لتكوين بداية عالمك في OLREDINE.");
+        description.setText("اطلاعات زیر را برای ساخت زندگی جدید در OLREDINE مشخص کنید.");
         description.setTextColor(Color.rgb(190, 202, 216));
         description.setTextSize(13);
         content.addView(description, new LinearLayout.LayoutParams(-1, dp(34)));
 
         if (selectedSection == 0) {
-            addLabel("اسم الشخصية");
-            nameInput = addInput(playerName, "أدخل اسم الشخصية", false);
-            addLabel("الجنس");
+            addLabel("نام شخصیت");
+            nameInput = addInput(playerName, "نام شخصیت را وارد کنید", false);
+            addLabel("جنسیت");
             LinearLayout genders = new LinearLayout(activity);
             genders.setOrientation(LinearLayout.HORIZONTAL);
-            TextView male = choiceButton("ذكر", gender.equals("ذكر"));
-            TextView female = choiceButton("أنثى", gender.equals("أنثى"));
+            TextView male = choiceButton("مرد", gender.equals("مرد"));
+            TextView female = choiceButton("زن", gender.equals("زن"));
             genders.addView(male, new LinearLayout.LayoutParams(0, dp(48), 1f));
             LinearLayout.LayoutParams femaleParams = new LinearLayout.LayoutParams(0, dp(48), 1f);
             femaleParams.setMargins(dp(8), 0, 0, 0);
             genders.addView(female, femaleParams);
             content.addView(genders);
-            male.setOnClickListener(v -> { saveCurrentFields(); gender = "ذكر"; renderSection(); });
-            female.setOnClickListener(v -> { saveCurrentFields(); gender = "أنثى"; renderSection(); });
+            male.setOnClickListener(v -> { saveCurrentFields(); gender = "مرد"; renderSection(); });
+            female.setOnClickListener(v -> { saveCurrentFields(); gender = "زن"; renderSection(); });
 
-            addLabel("العمر");
+            addLabel("سن");
             ageInput = addInput(playerAge, "18", true);
-            addLabel("السمات الشخصية");
-            addOption("هادئ • طموح • اجتماعي • تحليلي");
-            addLabel("ملاحظة");
-            addOption("يمكن تعديل بقية تفاصيل الشخصية لاحقاً.");
+            addLabel("ویژگی‌های شخصیتی");
+            addOption("آرام • جاه‌طلب • اجتماعی • تحلیل‌گر");
+            addLabel("توضیح");
+            addOption("جزئیات دیگر شخصیت در مراحل بعدی قابل تنظیم هستند.");
         } else {
             TextView placeholder = new TextView(activity);
-            placeholder.setText("هذا القسم جاهز ضمن هيكل الصفحة، وسيتم بناء خياراته وربطها ببيانات العالم في مرحلة التطوير التالية.");
+            placeholder.setText("ساختار این بخش آماده است؛ گزینه‌ها و اطلاعات آن در مراحل بعدی توسعه اضافه می‌شوند.");
             placeholder.setTextColor(text);
             placeholder.setTextSize(16);
             placeholder.setGravity(Gravity.CENTER);
