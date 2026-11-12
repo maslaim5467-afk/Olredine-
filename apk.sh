@@ -92,8 +92,8 @@ rm -rf obj/*
 rm -f "lib/$ABI/lib$LIB_NAME.so"
 rm -f classes.dex
 rm -f app.unsigned.apk
-rm -f OLREDINE.apk
-rm -f OLREDINE.apk.idsig
+rm -f MyCGame.apk
+rm -f MyCGame.apk.idsig
 
 # ==========================================
 # Step 1: Compile C
@@ -209,7 +209,7 @@ apksigner sign \
     --ks-key-alias "$KEY_ALIAS" \
     --ks-pass env:APK_KEYSTORE_PASS \
     --key-pass env:APK_KEYSTORE_PASS \
-    --out OLREDINE.apk \
+    --out MyCGame.apk \
     app.unsigned.apk
 
 unset APK_KEYSTORE_PASS KEYSTORE_PASS
@@ -220,30 +220,14 @@ unset APK_KEYSTORE_PASS KEYSTORE_PASS
 
 echo "Verifying APK signature..."
 
-apksigner verify --verbose OLREDINE.apk
+apksigner verify --verbose MyCGame.apk
 
 echo
 echo "=========================================="
 echo "SUCCESS!"
-echo "APK: $PROJECT_DIR/OLREDINE.apk"
+echo "APK: $PROJECT_DIR/MyCGame.apk"
 echo "=========================================="
 
-# ==========================================
-# Copy APK to the phone's Downloads folder
-# ==========================================
+cp -v "$PWD/MyCGame.apk" "$HOME/storage/downloads/MyCGame.apk"
 
-DOWNLOAD_DIR="$HOME/storage/downloads"
-
-if [ ! -d "$DOWNLOAD_DIR" ]; then
-    echo "خطأ: مجلد التنزيلات غير متاح."
-    echo "نفّذ الأمر التالي مرة واحدة ثم أعد تشغيل السكربت:"
-    echo "termux-setup-storage"
-    exit 1
-fi
-
-cp -f "$PROJECT_DIR/OLREDINE.apk" "$DOWNLOAD_DIR/OLREDINE.apk"
-
-echo
-echo "تم نقل اللعبة بنجاح إلى:"
-echo "$DOWNLOAD_DIR/OLREDINE.apk"
-echo "=========================================="
+echo "تم نقل الملف إلى مجلد التنزيلات بنجاح!"
