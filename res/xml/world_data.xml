@@ -229,7 +229,7 @@
         <location country="JP" id="shirakawago" name="شیراکاواگو" type="VILLAGE" />
         <location country="CA" id="toronto" name="تورنتو" type="METROPOLIS" />
         <location country="CA" id="vancouver" name="ونکوور" type="CITY" />
-        <location country="CA" id="banff" name="بن프" type="VILLAGE" />
+        <location country="CA" id="banff" name="بنف" type="VILLAGE" />
         <location country="AU" id="sydney" name="سیدنی" type="METROPOLIS" />
         <location country="AU" id="melbourne" name="ملبورن" type="CITY" />
         <location country="AU" id="halls_gap" name="هالز گپ" type="VILLAGE" />
