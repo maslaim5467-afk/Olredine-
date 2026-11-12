@@ -1,20 +1,224 @@
 package com.example.mycgame.ui;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.util.ArrayList;
 
 public class NewGameScreen {
+    private static final String[][] COUNTRIES = {
+        {"AD", "آندورا"},
+        {"AE", "امارات متحدهٔ عربی"},
+        {"AF", "افغانستان"},
+        {"AG", "آنتیگوا و باربودا"},
+        {"AL", "آلبانی"},
+        {"AM", "ارمنستان"},
+        {"AO", "آنگولا"},
+        {"AR", "آرژانتین"},
+        {"AT", "اتریش"},
+        {"AU", "استرالیا"},
+        {"AZ", "جمهوری آذربایجان"},
+        {"BA", "بوسنی و هرزگوین"},
+        {"BB", "باربادوس"},
+        {"BD", "بنگلادش"},
+        {"BE", "بلژیک"},
+        {"BF", "بورکینافاسو"},
+        {"BG", "بلغارستان"},
+        {"BH", "بحرین"},
+        {"BI", "بوروندی"},
+        {"BJ", "بنین"},
+        {"BN", "برونئی"},
+        {"BO", "بولیوی"},
+        {"BR", "برزیل"},
+        {"BS", "باهاما"},
+        {"BT", "بوتان"},
+        {"BW", "بوتسوانا"},
+        {"BY", "بلاروس"},
+        {"BZ", "بلیز"},
+        {"CA", "کانادا"},
+        {"CD", "جمهوری دموکراتیک کنگو"},
+        {"CF", "جمهوری افریقای مرکزی"},
+        {"CG", "جمهوری کنگو"},
+        {"CH", "سوئیس"},
+        {"CI", "ساحل عاج"},
+        {"CL", "شیلی"},
+        {"CM", "کامرون"},
+        {"CN", "چین"},
+        {"CO", "کلمبیا"},
+        {"CR", "کاستاریکا"},
+        {"CU", "کوبا"},
+        {"CV", "کیپ‌ورد"},
+        {"CY", "قبرس"},
+        {"CZ", "جمهوری چک"},
+        {"DE", "آلمان"},
+        {"DJ", "جیبوتی"},
+        {"DK", "دانمارک"},
+        {"DM", "دومینیکا"},
+        {"DO", "جمهوری دومینیکن"},
+        {"DZ", "الجزایر"},
+        {"EC", "اکوادور"},
+        {"EE", "استونی"},
+        {"EG", "مصر"},
+        {"ER", "اریتره"},
+        {"ES", "اسپانیا"},
+        {"ET", "اتیوپی"},
+        {"FI", "فنلاند"},
+        {"FJ", "فیجی"},
+        {"FM", "میکرونزی"},
+        {"FR", "فرانسه"},
+        {"GA", "گابن"},
+        {"GB", "بریتانیا"},
+        {"GD", "گرنادا"},
+        {"GE", "گرجستان"},
+        {"GH", "غنا"},
+        {"GM", "گامبیا"},
+        {"GN", "گینه"},
+        {"GQ", "گینهٔ استوایی"},
+        {"GR", "یونان"},
+        {"GT", "گواتمالا"},
+        {"GW", "گینهٔ بیسائو"},
+        {"GY", "گویان"},
+        {"HN", "هندوراس"},
+        {"HR", "کرواسی"},
+        {"HT", "هائیتی"},
+        {"HU", "مجارستان"},
+        {"ID", "اندونزی"},
+        {"IE", "ایرلند"},
+        {"IL", "اسرائیل"},
+        {"IN", "هند"},
+        {"IQ", "عراق"},
+        {"IR", "ایران"},
+        {"IS", "ایسلند"},
+        {"IT", "ایتالیا"},
+        {"JM", "جامائیکا"},
+        {"JO", "اردن"},
+        {"JP", "ژاپن"},
+        {"KE", "کنیا"},
+        {"KG", "قرقیزستان"},
+        {"KH", "کامبوج"},
+        {"KI", "کیریباتی"},
+        {"KM", "کومور"},
+        {"KN", "سنت کیتس و نویس"},
+        {"KP", "کرهٔ شمالی"},
+        {"KR", "کرهٔ جنوبی"},
+        {"KW", "کویت"},
+        {"KZ", "قزاقستان"},
+        {"LA", "لائوس"},
+        {"LB", "لبنان"},
+        {"LC", "سنت لوسیا"},
+        {"LI", "لیختن‌اشتاین"},
+        {"LK", "سری‌لانکا"},
+        {"LR", "لیبریا"},
+        {"LS", "لسوتو"},
+        {"LT", "لیتوانی"},
+        {"LU", "لوکزامبورگ"},
+        {"LV", "لتونی"},
+        {"LY", "لیبی"},
+        {"MA", "مراکش"},
+        {"MC", "موناکو"},
+        {"MD", "مولداوی"},
+        {"ME", "مونته‌نگرو"},
+        {"MG", "ماداگاسکار"},
+        {"MH", "جزایر مارشال"},
+        {"MK", "مقدونیهٔ شمالی"},
+        {"ML", "مالی"},
+        {"MM", "میانمار (برمه)"},
+        {"MN", "مغولستان"},
+        {"MR", "موریتانی"},
+        {"MT", "مالت"},
+        {"MU", "موریس"},
+        {"MV", "مالدیو"},
+        {"MW", "مالاوی"},
+        {"MX", "مکزیک"},
+        {"MY", "مالزی"},
+        {"MZ", "موزامبیک"},
+        {"NA", "نامیبیا"},
+        {"NE", "نیجر"},
+        {"NG", "نیجریه"},
+        {"NI", "نیکاراگوئه"},
+        {"NL", "هلند"},
+        {"NO", "نروژ"},
+        {"NP", "نپال"},
+        {"NR", "نائورو"},
+        {"NZ", "نیوزیلند"},
+        {"OM", "عمان"},
+        {"PA", "پاناما"},
+        {"PE", "پرو"},
+        {"PG", "پاپوا گینهٔ نو"},
+        {"PH", "فیلیپین"},
+        {"PK", "پاکستان"},
+        {"PL", "لهستان"},
+        {"PS", "فلسطین"},
+        {"PT", "پرتغال"},
+        {"PW", "پالائو"},
+        {"PY", "پاراگوئه"},
+        {"QA", "قطر"},
+        {"RO", "رومانی"},
+        {"RS", "صربستان"},
+        {"RU", "روسیه"},
+        {"RW", "رواندا"},
+        {"SA", "عربستان سعودی"},
+        {"SB", "جزایر سلیمان"},
+        {"SC", "سیشل"},
+        {"SD", "سودان"},
+        {"SE", "سوئد"},
+        {"SG", "سنگاپور"},
+        {"SI", "اسلوونی"},
+        {"SK", "اسلواکی"},
+        {"SL", "سیرالئون"},
+        {"SM", "سان‌مارینو"},
+        {"SN", "سنگال"},
+        {"SO", "سومالی"},
+        {"SR", "سورینام"},
+        {"SS", "سودان جنوبی"},
+        {"ST", "سائوتومه و پرینسیپ"},
+        {"SV", "السالوادور"},
+        {"SY", "سوریه"},
+        {"SZ", "اسواتینی"},
+        {"TD", "چاد"},
+        {"TG", "توگو"},
+        {"TH", "تایلند"},
+        {"TJ", "تاجیکستان"},
+        {"TL", "تیمور شرقی"},
+        {"TM", "ترکمنستان"},
+        {"TN", "تونس"},
+        {"TO", "تونگا"},
+        {"TR", "ترکیه"},
+        {"TT", "ترینیداد و توباگو"},
+        {"TV", "تووالو"},
+        {"TZ", "تانزانیا"},
+        {"UA", "اوکراین"},
+        {"UG", "اوگاندا"},
+        {"US", "ایالات متحده"},
+        {"UY", "اروگوئه"},
+        {"UZ", "ازبکستان"},
+        {"VA", "واتیکان"},
+        {"VC", "سنت وینسنت و گرنادین"},
+        {"VE", "ونزوئلا"},
+        {"VN", "ویتنام"},
+        {"VU", "وانواتو"},
+        {"WS", "ساموآ"},
+        {"YE", "یمن"},
+        {"ZA", "افریقای جنوبی"},
+        {"ZM", "زامبیا"},
+        {"ZW", "زیمبابوه"}
+    };
     private final Activity activity;
     private final Runnable onBack;
     private final int gold = Color.rgb(225, 180, 91);
@@ -31,6 +235,8 @@ public class NewGameScreen {
     private String playerAge = "18";
     private String gender = "مرد";
     private String innateTrait = "";
+    private String countryCode = "";
+    private String countryName = "";
 
     public NewGameScreen(Activity activity, Runnable onBack) {
         this.activity = activity;
@@ -262,6 +468,28 @@ public class NewGameScreen {
             selectedTrait.setTextSize(13);
             selectedTrait.setPadding(dp(4), dp(8), dp(4), dp(8));
             content.addView(selectedTrait);
+        } else if (selectedSection == 1) {
+            addLabel("ملیت اصلی");
+            TextView countryButton = choiceButton(
+                countryName.isEmpty() ? "انتخاب کشور" : countryName + "  (" + countryCode + ")",
+                !countryCode.isEmpty()
+            );
+            content.addView(countryButton, new LinearLayout.LayoutParams(-1, dp(52)));
+            countryButton.setOnClickListener(v -> showCountryPicker());
+
+            TextView countryHint = new TextView(activity);
+            countryHint.setText("یک کشور را به‌عنوان ملیت اصلی انتخاب کنید. برای پیدا کردن کشور می‌توانید نام فارسی یا کد دوحرفی آن را جست‌وجو کنید.");
+            countryHint.setTextColor(Color.rgb(190, 202, 216));
+            countryHint.setTextSize(12);
+            countryHint.setPadding(dp(4), dp(12), dp(4), 0);
+            content.addView(countryHint, new LinearLayout.LayoutParams(-1, -2));
+
+            TextView count = new TextView(activity);
+            count.setText("فهرست شامل ۱۹۵ کشور است.");
+            count.setTextColor(gold);
+            count.setTextSize(13);
+            count.setPadding(dp(4), dp(16), dp(4), 0);
+            content.addView(count);
         } else {
             TextView placeholder = new TextView(activity);
             placeholder.setText("ساختار این بخش آماده است؛ گزینه‌ها و اطلاعات آن در مراحل بعدی توسعه اضافه می‌شوند.");
@@ -275,30 +503,35 @@ public class NewGameScreen {
     }
 
     private boolean validateCurrentFields() {
-        if (selectedSection != 0 || ageInput == null) return true;
-
-        String value = ageInput.getText().toString().trim();
-        if (value.isEmpty()) {
-            ageInput.setError("سن را وارد کنید");
-            ageInput.requestFocus();
-            return false;
-        }
-
-        try {
-            int age = Integer.parseInt(value);
-            if (age < 12 || age > 30) {
-                ageInput.setError("سن باید بین ۱۲ تا ۳۰ سال باشد");
+        if (selectedSection == 0 && ageInput != null) {
+            String value = ageInput.getText().toString().trim();
+            if (value.isEmpty()) {
+                ageInput.setError("سن را وارد کنید");
                 ageInput.requestFocus();
                 return false;
             }
-        } catch (NumberFormatException e) {
-            ageInput.setError("سن واردشده معتبر نیست");
-            ageInput.requestFocus();
-            return false;
+
+            try {
+                int age = Integer.parseInt(value);
+                if (age < 12 || age > 30) {
+                    ageInput.setError("سن باید بین ۱۲ تا ۳۰ سال باشد");
+                    ageInput.requestFocus();
+                    return false;
+                }
+            } catch (NumberFormatException e) {
+                ageInput.setError("سن واردشده معتبر نیست");
+                ageInput.requestFocus();
+                return false;
+            }
+
+            if (innateTrait.isEmpty()) {
+                Toast.makeText(activity, "یک ویژگی ذاتی انتخاب کنید.", Toast.LENGTH_SHORT).show();
+                return false;
+            }
         }
 
-        if (innateTrait.isEmpty()) {
-            Toast.makeText(activity, "یک ویژگی ذاتی انتخاب کنید.", Toast.LENGTH_SHORT).show();
+        if (selectedSection == 1 && countryCode.isEmpty()) {
+            Toast.makeText(activity, "ملیت اصلی را انتخاب کنید.", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
@@ -381,6 +614,96 @@ public class NewGameScreen {
         option.setPadding(dp(12), dp(12), dp(12), dp(12));
         option.setBackground(background(Color.rgb(34, 54, 77), 10, Color.rgb(86, 103, 121)));
         content.addView(option, new LinearLayout.LayoutParams(-1, dp(44)));
+    }
+
+    private void showCountryPicker() {
+        LinearLayout panel = new LinearLayout(activity);
+        panel.setOrientation(LinearLayout.VERTICAL);
+        panel.setPadding(dp(16), dp(12), dp(16), dp(12));
+        panel.setBackground(background(Color.rgb(18, 34, 54), 14, gold));
+
+        TextView title = new TextView(activity);
+        title.setText("انتخاب ملیت");
+        title.setTextColor(gold);
+        title.setTextSize(19);
+        title.setTypeface(Typeface.DEFAULT_BOLD);
+        title.setGravity(Gravity.CENTER);
+        panel.addView(title, new LinearLayout.LayoutParams(-1, dp(40)));
+
+        EditText search = new EditText(activity);
+        search.setSingleLine(true);
+        search.setHint("جست‌وجوی کشور یا کد کشور");
+        search.setTextColor(Color.WHITE);
+        search.setHintTextColor(Color.rgb(155, 169, 185));
+        search.setTextSize(14);
+        search.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
+        search.setPadding(dp(12), 0, dp(12), 0);
+        search.setBackground(background(Color.rgb(34, 54, 77), 9, Color.rgb(111, 94, 67)));
+        LinearLayout.LayoutParams searchParams = new LinearLayout.LayoutParams(-1, dp(46));
+        searchParams.setMargins(0, dp(6), 0, dp(8));
+        panel.addView(search, searchParams);
+
+        ArrayList<String> countryLabels = new ArrayList<>();
+        for (String[] country : COUNTRIES) {
+            countryLabels.add(country[1] + " (" + country[0] + ")");
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(activity, 0, countryLabels) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                TextView row = convertView instanceof TextView
+                    ? (TextView) convertView
+                    : new TextView(activity);
+                row.setText(getItem(position));
+                row.setTextColor(text);
+                row.setTextSize(14);
+                row.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
+                row.setPadding(dp(12), dp(8), dp(12), dp(8));
+                row.setMinHeight(dp(44));
+                row.setBackground(background(Color.rgb(34, 54, 77), 8, Color.rgb(70, 88, 108)));
+                return row;
+            }
+        };
+
+        ListView list = new ListView(activity);
+        list.setAdapter(adapter);
+        list.setFastScrollEnabled(true);
+        list.setBackgroundColor(Color.rgb(18, 34, 54));
+        panel.addView(list, new LinearLayout.LayoutParams(-1, dp(320)));
+
+        AlertDialog dialog = new AlertDialog.Builder(activity)
+            .setView(panel)
+            .setNegativeButton("بستن", null)
+            .create();
+
+        search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                adapter.getFilter().filter(s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) { }
+        });
+
+        list.setOnItemClickListener((parent, view, position, id) -> {
+            String selected = adapter.getItem(position);
+            if (selected == null) return;
+
+            int codeStart = selected.lastIndexOf('(');
+            int codeEnd = selected.lastIndexOf(')');
+            if (codeStart < 0 || codeEnd <= codeStart) return;
+
+            countryName = selected.substring(0, codeStart).trim();
+            countryCode = selected.substring(codeStart + 1, codeEnd);
+            dialog.dismiss();
+            renderSection();
+        });
+
+        dialog.show();
     }
 
     private TextView footerButton(String label) {
