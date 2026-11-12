@@ -1,6 +1,7 @@
 package com.example.mycgame.ui;
 
 import android.app.Activity;
+import android.content.res.XmlResourceParser;
 import android.app.AlertDialog;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -25,203 +26,21 @@ import java.util.Collections;
 import java.util.Locale;
 
 public class NewGameScreen {
-    private static final String[][] COUNTRIES = {
-        {"AD", "آندورا"},
-        {"AE", "امارات متحدهٔ عربی"},
-        {"AF", "افغانستان"},
-        {"AG", "آنتیگوا و باربودا"},
-        {"AL", "آلبانی"},
-        {"AM", "ارمنستان"},
-        {"AO", "آنگولا"},
-        {"AR", "آرژانتین"},
-        {"AT", "اتریش"},
-        {"AU", "استرالیا"},
-        {"AZ", "جمهوری آذربایجان"},
-        {"BA", "بوسنی و هرزگوین"},
-        {"BB", "باربادوس"},
-        {"BD", "بنگلادش"},
-        {"BE", "بلژیک"},
-        {"BF", "بورکینافاسو"},
-        {"BG", "بلغارستان"},
-        {"BH", "بحرین"},
-        {"BI", "بوروندی"},
-        {"BJ", "بنین"},
-        {"BN", "برونئی"},
-        {"BO", "بولیوی"},
-        {"BR", "برزیل"},
-        {"BS", "باهاما"},
-        {"BT", "بوتان"},
-        {"BW", "بوتسوانا"},
-        {"BY", "بلاروس"},
-        {"BZ", "بلیز"},
-        {"CA", "کانادا"},
-        {"CD", "جمهوری دموکراتیک کنگو"},
-        {"CF", "جمهوری افریقای مرکزی"},
-        {"CG", "جمهوری کنگو"},
-        {"CH", "سوئیس"},
-        {"CI", "ساحل عاج"},
-        {"CL", "شیلی"},
-        {"CM", "کامرون"},
-        {"CN", "چین"},
-        {"CO", "کلمبیا"},
-        {"CR", "کاستاریکا"},
-        {"CU", "کوبا"},
-        {"CV", "کیپ‌ورد"},
-        {"CY", "قبرس"},
-        {"CZ", "جمهوری چک"},
-        {"DE", "آلمان"},
-        {"DJ", "جیبوتی"},
-        {"DK", "دانمارک"},
-        {"DM", "دومینیکا"},
-        {"DO", "جمهوری دومینیکن"},
-        {"DZ", "الجزایر"},
-        {"EC", "اکوادور"},
-        {"EE", "استونی"},
-        {"EG", "مصر"},
-        {"ER", "اریتره"},
-        {"ES", "اسپانیا"},
-        {"ET", "اتیوپی"},
-        {"FI", "فنلاند"},
-        {"FJ", "فیجی"},
-        {"FM", "میکرونزی"},
-        {"FR", "فرانسه"},
-        {"GA", "گابن"},
-        {"GB", "بریتانیا"},
-        {"GD", "گرنادا"},
-        {"GE", "گرجستان"},
-        {"GH", "غنا"},
-        {"GM", "گامبیا"},
-        {"GN", "گینه"},
-        {"GQ", "گینهٔ استوایی"},
-        {"GR", "یونان"},
-        {"GT", "گواتمالا"},
-        {"GW", "گینهٔ بیسائو"},
-        {"GY", "گویان"},
-        {"HN", "هندوراس"},
-        {"HR", "کرواسی"},
-        {"HT", "هائیتی"},
-        {"HU", "مجارستان"},
-        {"ID", "اندونزی"},
-        {"IE", "ایرلند"},
-        {"IL", "اسرائیل"},
-        {"IN", "هند"},
-        {"IQ", "عراق"},
-        {"IR", "ایران"},
-        {"IS", "ایسلند"},
-        {"IT", "ایتالیا"},
-        {"JM", "جامائیکا"},
-        {"JO", "اردن"},
-        {"JP", "ژاپن"},
-        {"KE", "کنیا"},
-        {"KG", "قرقیزستان"},
-        {"KH", "کامبوج"},
-        {"KI", "کیریباتی"},
-        {"KM", "کومور"},
-        {"KN", "سنت کیتس و نویس"},
-        {"KP", "کرهٔ شمالی"},
-        {"KR", "کرهٔ جنوبی"},
-        {"KW", "کویت"},
-        {"KZ", "قزاقستان"},
-        {"LA", "لائوس"},
-        {"LB", "لبنان"},
-        {"LC", "سنت لوسیا"},
-        {"LI", "لیختن‌اشتاین"},
-        {"LK", "سری‌لانکا"},
-        {"LR", "لیبریا"},
-        {"LS", "لسوتو"},
-        {"LT", "لیتوانی"},
-        {"LU", "لوکزامبورگ"},
-        {"LV", "لتونی"},
-        {"LY", "لیبی"},
-        {"MA", "مراکش"},
-        {"MC", "موناکو"},
-        {"MD", "مولداوی"},
-        {"ME", "مونته‌نگرو"},
-        {"MG", "ماداگاسکار"},
-        {"MH", "جزایر مارشال"},
-        {"MK", "مقدونیهٔ شمالی"},
-        {"ML", "مالی"},
-        {"MM", "میانمار (برمه)"},
-        {"MN", "مغولستان"},
-        {"MR", "موریتانی"},
-        {"MT", "مالت"},
-        {"MU", "موریس"},
-        {"MV", "مالدیو"},
-        {"MW", "مالاوی"},
-        {"MX", "مکزیک"},
-        {"MY", "مالزی"},
-        {"MZ", "موزامبیک"},
-        {"NA", "نامیبیا"},
-        {"NE", "نیجر"},
-        {"NG", "نیجریه"},
-        {"NI", "نیکاراگوئه"},
-        {"NL", "هلند"},
-        {"NO", "نروژ"},
-        {"NP", "نپال"},
-        {"NR", "نائورو"},
-        {"NZ", "نیوزیلند"},
-        {"OM", "عمان"},
-        {"PA", "پاناما"},
-        {"PE", "پرو"},
-        {"PG", "پاپوا گینهٔ نو"},
-        {"PH", "فیلیپین"},
-        {"PK", "پاکستان"},
-        {"PL", "لهستان"},
-        {"PS", "فلسطین"},
-        {"PT", "پرتغال"},
-        {"PW", "پالائو"},
-        {"PY", "پاراگوئه"},
-        {"QA", "قطر"},
-        {"RO", "رومانی"},
-        {"RS", "صربستان"},
-        {"RU", "روسیه"},
-        {"RW", "رواندا"},
-        {"SA", "عربستان سعودی"},
-        {"SB", "جزایر سلیمان"},
-        {"SC", "سیشل"},
-        {"SD", "سودان"},
-        {"SE", "سوئد"},
-        {"SG", "سنگاپور"},
-        {"SI", "اسلوونی"},
-        {"SK", "اسلواکی"},
-        {"SL", "سیرالئون"},
-        {"SM", "سان‌مارینو"},
-        {"SN", "سنگال"},
-        {"SO", "سومالی"},
-        {"SR", "سورینام"},
-        {"SS", "سودان جنوبی"},
-        {"ST", "سائوتومه و پرینسیپ"},
-        {"SV", "السالوادور"},
-        {"SY", "سوریه"},
-        {"SZ", "اسواتینی"},
-        {"TD", "چاد"},
-        {"TG", "توگو"},
-        {"TH", "تایلند"},
-        {"TJ", "تاجیکستان"},
-        {"TL", "تیمور شرقی"},
-        {"TM", "ترکمنستان"},
-        {"TN", "تونس"},
-        {"TO", "تونگا"},
-        {"TR", "ترکیه"},
-        {"TT", "ترینیداد و توباگو"},
-        {"TV", "تووالو"},
-        {"TZ", "تانزانیا"},
-        {"UA", "اوکراین"},
-        {"UG", "اوگاندا"},
-        {"US", "ایالات متحده"},
-        {"UY", "اروگوئه"},
-        {"UZ", "ازبکستان"},
-        {"VA", "واتیکان"},
-        {"VC", "سنت وینسنت و گرنادین"},
-        {"VE", "ونزوئلا"},
-        {"VN", "ویتنام"},
-        {"VU", "وانواتو"},
-        {"WS", "ساموآ"},
-        {"YE", "یمن"},
-        {"ZA", "افریقای جنوبی"},
-        {"ZM", "زامبیا"},
-        {"ZW", "زیمبابوه"}
-    };
+    private static class LocationEntry {
+        final String id;
+        final String name;
+        final String type;
+        LocationEntry(String id, String name, String type) {
+            this.id = id; this.name = name; this.type = type;
+        }
+        String typeLabel() {
+            if ("METROPOLIS".equals(type)) return "کلان‌شهر";
+            if ("VILLAGE".equals(type)) return "منطقه روستایی";
+            return "شهر متوسط";
+        }
+        @Override public String toString() { return name + " — " + typeLabel(); }
+    }
+
     private final Activity activity;
     private final Runnable onBack;
     private final int gold = Color.rgb(225, 180, 91);
@@ -240,6 +59,11 @@ public class NewGameScreen {
     private String innateTrait = "";
     private String countryCode = "";
     private String countryName = "";
+    private String residenceCountryCode = "";
+    private String residenceCountryName = "";
+    private String residenceLocationId = "";
+    private String residenceLocationName = "";
+    private String residenceType = "";
 
     public NewGameScreen(Activity activity, Runnable onBack) {
         this.activity = activity;
@@ -478,7 +302,7 @@ public class NewGameScreen {
                 !countryCode.isEmpty()
             );
             content.addView(countryButton, new LinearLayout.LayoutParams(-1, dp(52)));
-            countryButton.setOnClickListener(v -> showCountryPicker());
+            countryButton.setOnClickListener(v -> showCountryPicker(false));
 
             TextView countryHint = new TextView(activity);
             countryHint.setText("یک کشور را به‌عنوان ملیت اصلی انتخاب کنید. برای پیدا کردن کشور می‌توانید نام فارسی یا کد دوحرفی آن را جست‌وجو کنید.");
@@ -493,6 +317,48 @@ public class NewGameScreen {
             count.setTextSize(13);
             count.setPadding(dp(4), dp(16), dp(4), 0);
             content.addView(count);
+        } else if (selectedSection == 2) {
+            addLabel("کشور محل زندگی");
+            TextView residenceCountryButton = choiceButton(
+                residenceCountryName.isEmpty() ? "انتخاب کشور محل زندگی" : residenceCountryName + "  (" + residenceCountryCode + ")",
+                !residenceCountryCode.isEmpty()
+            );
+            content.addView(residenceCountryButton, new LinearLayout.LayoutParams(-1, dp(50)));
+            residenceCountryButton.setOnClickListener(v -> showCountryPicker(true));
+
+            TextView countryHint = new TextView(activity);
+            countryHint.setText("کشور محل زندگی مستقل از ملیت شخصیت است. فهرست کشورها بر اساس مکان‌های قابل انتخاب در نسخه فعلی بازی محدود شده است.");
+            countryHint.setTextColor(Color.rgb(190, 202, 216));
+            countryHint.setTextSize(12);
+            countryHint.setPadding(dp(4), dp(8), dp(4), dp(8));
+            content.addView(countryHint, new LinearLayout.LayoutParams(-1, -2));
+
+            addLabel("شهر / منطقه محل زندگی");
+            TextView locationButton = choiceButton(
+                residenceLocationName.isEmpty() ? "ابتدا کشور را انتخاب کنید" : residenceLocationName,
+                !residenceLocationId.isEmpty()
+            );
+            content.addView(locationButton, new LinearLayout.LayoutParams(-1, dp(50)));
+            locationButton.setEnabled(!residenceCountryCode.isEmpty());
+            locationButton.setOnClickListener(v -> showLocationPicker());
+
+            if (!residenceType.isEmpty()) {
+                TextView typeValue = new TextView(activity);
+                String typeLabel = "METROPOLIS".equals(residenceType) ? "کلان‌شهر"
+                    : ("VILLAGE".equals(residenceType) ? "منطقه روستایی" : "شهر متوسط");
+                typeValue.setText("نوع منطقه: " + typeLabel);
+                typeValue.setTextColor(gold);
+                typeValue.setTextSize(14);
+                typeValue.setPadding(dp(4), dp(12), dp(4), dp(8));
+                content.addView(typeValue, new LinearLayout.LayoutParams(-1, -2));
+            }
+
+            TextView residenceHint = new TextView(activity);
+            residenceHint.setText("نوع منطقه از داده‌های ثابت همان مکان تعیین می‌شود و بازیکن آن را جداگانه انتخاب نمی‌کند.");
+            residenceHint.setTextColor(Color.rgb(190, 202, 216));
+            residenceHint.setTextSize(12);
+            residenceHint.setPadding(dp(4), dp(4), dp(4), dp(8));
+            content.addView(residenceHint, new LinearLayout.LayoutParams(-1, -2));
         } else {
             TextView placeholder = new TextView(activity);
             placeholder.setText("ساختار این بخش آماده است؛ گزینه‌ها و اطلاعات آن در مراحل بعدی توسعه اضافه می‌شوند.");
@@ -536,6 +402,16 @@ public class NewGameScreen {
         if (selectedSection == 1 && countryCode.isEmpty()) {
             Toast.makeText(activity, "ملیت اصلی را انتخاب کنید.", Toast.LENGTH_SHORT).show();
             return false;
+        }
+        if (selectedSection == 2) {
+            if (residenceCountryCode.isEmpty()) {
+                Toast.makeText(activity, "کشور محل زندگی را انتخاب کنید.", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+            if (residenceLocationId.isEmpty()) {
+                Toast.makeText(activity, "شهر یا منطقه محل زندگی را انتخاب کنید.", Toast.LENGTH_SHORT).show();
+                return false;
+            }
         }
         return true;
     }
