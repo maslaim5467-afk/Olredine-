@@ -19,7 +19,6 @@ public class NewGameScreen {
     private final Runnable onBack;
     private final int gold = Color.rgb(225, 180, 91);
     private final int navy = Color.rgb(12, 27, 46);
-    private final int panel = Color.rgb(20, 39, 62);
     private final int text = Color.rgb(244, 239, 226);
     private final String[] sections = {
         "الشخصية", "الملكية", "مكان الإقامة", "التعليم", "الوضع الاقتصادي", "العائلة", "المهارات"
@@ -56,9 +55,7 @@ public class NewGameScreen {
         LinearLayout layout = new LinearLayout(activity);
         layout.setOrientation(LinearLayout.HORIZONTAL);
         layout.setPadding(dp(12), dp(10), dp(12), dp(10));
-
-        LinearLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(-1, -1);
-        root.addView(layout, layoutParams);
+        root.addView(layout, new FrameLayout.LayoutParams(-1, -1));
 
         LinearLayout sidebar = new LinearLayout(activity);
         sidebar.setOrientation(LinearLayout.VERTICAL);
@@ -95,9 +92,7 @@ public class NewGameScreen {
             item.setTextSize(14);
             item.setGravity(Gravity.CENTER_VERTICAL);
             item.setPadding(dp(10), 0, dp(8), 0);
-            item.setBackground(background(
-                i == selectedSection ? gold : Color.TRANSPARENT,
-                10,
+            item.setBackground(background(i == selectedSection ? gold : Color.TRANSPARENT, 10,
                 i == selectedSection ? gold : Color.TRANSPARENT));
             LinearLayout.LayoutParams itemParams = new LinearLayout.LayoutParams(-1, 0, 1f);
             itemParams.setMargins(dp(2), dp(3), dp(2), dp(3));
@@ -139,7 +134,7 @@ public class NewGameScreen {
         right.addView(footer, new LinearLayout.LayoutParams(-1, dp(52)));
 
         TextView previous = footerButton("السابق");
-        TextView next = footerButton(selectedSection == sections.length - 1 ? "إنهاء" : "التالي");
+        TextView next = footerButton("التالي");
         footer.addView(previous, new LinearLayout.LayoutParams(0, -1, 1f));
         LinearLayout.LayoutParams nextParams = new LinearLayout.LayoutParams(0, -1, 1f);
         nextParams.setMargins(dp(8), 0, 0, 0);
@@ -155,6 +150,7 @@ public class NewGameScreen {
             if (selectedSection < sections.length - 1) {
                 selectSection(selectedSection + 1, sidebar, next);
             } else {
+                next.setText("إنهاء");
                 Toast.makeText(activity, "سيتم تفعيل إنشاء الحفظ بعد اكتمال بيانات العالم.", Toast.LENGTH_SHORT).show();
             }
         });
@@ -176,9 +172,7 @@ public class NewGameScreen {
             if (child instanceof TextView) {
                 TextView item = (TextView) child;
                 item.setTextColor(i == selectedSection ? Color.rgb(28, 25, 19) : text);
-                item.setBackground(background(
-                    i == selectedSection ? gold : Color.TRANSPARENT,
-                    10,
+                item.setBackground(background(i == selectedSection ? gold : Color.TRANSPARENT, 10,
                     i == selectedSection ? gold : Color.TRANSPARENT));
             }
         }
@@ -212,8 +206,8 @@ public class NewGameScreen {
             femaleParams.setMargins(dp(8), 0, 0, 0);
             genders.addView(female, femaleParams);
             content.addView(genders);
-            male.setOnClickListener(v -> { gender = "ذكر"; renderSection(); });
-            female.setOnClickListener(v -> { gender = "أنثى"; renderSection(); });
+            male.setOnClickListener(v -> { saveCurrentFields(); gender = "ذكر"; renderSection(); });
+            female.setOnClickListener(v -> { saveCurrentFields(); gender = "أنثى"; renderSection(); });
 
             addLabel("العمر");
             ageInput = addInput(playerAge, "18", true);
@@ -272,10 +266,7 @@ public class NewGameScreen {
         button.setGravity(Gravity.CENTER);
         button.setTextSize(15);
         button.setTextColor(selected ? Color.rgb(25, 25, 25) : text);
-        button.setBackground(background(
-            selected ? gold : Color.rgb(34, 54, 77),
-            10,
-            Color.rgb(160, 126, 67)));
+        button.setBackground(background(selected ? gold : Color.rgb(34, 54, 77), 10, Color.rgb(160, 126, 67)));
         return button;
     }
 
