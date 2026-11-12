@@ -21,8 +21,11 @@ The design should be data-driven and extensible. Avoid hard-coding country facts
   - Android back action from new-game screen -> main menu
 - The new-game screen uses a left navigation rail and a right content panel.
 - Current sections: character, nationality, place of residence, education, economic status, family, and skills.
-- The character section currently has basic name, gender, and age inputs.
-- The other sections are structural placeholders; they are not yet backed by real game data.
+- The character section has name, gender, age, and one innate-trait selection.
+- The nationality section is backed by the searchable 195-country XML list and was confirmed working by the user on-device.
+- The residence section now has XML-backed country and location pickers. Its initial data covers 56 locations in 20 countries. The selected location supplies its settlement type (metropolis, medium city, or rural area).
+- Education, economic status, family, and skills remain structural placeholders.
+- Residence implementation is committed but has not yet been confirmed by a device test.
 - The current screen state is held in the screen object only. It is not yet persisted to SQLite or another save system.
 - Main menu labels and new-game screen labels are Persian at present.
 
@@ -70,20 +73,33 @@ The design should be data-driven and extensible. Avoid hard-coding country facts
    - no clipping or unreadable text occurs in landscape orientation.
 5. Adjust the visual proportions only after reviewing a real device screenshot.
 6. Once navigation/layout is stable, extract reusable UI helpers if they reduce duplication; avoid premature framework-building.
-7. Implement the nationality section as the first real data-backed section, after agreeing on its data schema and the distinction between nationality and residence.
-8. Add a localization manager and XML language files before spreading hard-coded strings across more screens.
-9. Design save-game schema and SQLite integration when the first complete character/world creation flow is understood.
+7. Build and device-test the XML-backed residence section; verify country filtering, city search, type display, and required-field navigation.
+8. Define a shared character data model and connect character, nationality, and residence values to it.
+9. Decide the fields and validation rules for education, economic status, family, and skills.
+10. Design save-game schema and SQLite integration when the first complete character/world creation flow is understood.
+11. Add a localization manager before spreading more hard-coded user-facing strings across screens.
 
 ## Known caveats / things not to assume
 
 - Do not tell the user that the latest APK works until the new build and device test succeed.
 - SVG files under `assets/ui/svg/` are design assets only; the current Android screens do not load them.
-- The new-game sections other than character are placeholders.
+- Education, economic status, family, and skills are placeholders. Nationality and residence have initial data-backed implementations.
 - The final "finish" action does not create a save yet.
-- The current character fields are not durable across Activity/process recreation.
+- Character, nationality, and residence values are currently held in the screen object and are not durable across Activity/process recreation.
 - The background image's fit and the panel proportions need validation on the actual landscape device.
 - Do not expose or copy any sensitive MARG YOORNA code or credentials into project notes, examples, or public assets.
 
 ## Collaboration style
 
 Work directly in the GitHub repository when the required tool access is available. Make small, reviewable commits. Preserve the user's local work: never use destructive Git cleanup/reset commands to resolve a pull conflict without first inspecting status and protecting local changes. Give the user the exact pull/build commands and wait for actual build output before diagnosing compilation success or failure.
+
+## Residence implementation notes (2026-11-12)
+
+- Static country and starter-location records are stored in `res/xml/world_data.xml`; the country list is no longer duplicated as a Java constant.
+- Nationality uses the complete 195-entry country list.
+- Residence intentionally lists only countries with at least one location currently defined in XML. This avoids offering a country for which the current build has no selectable location.
+- The starter residence dataset contains 56 locations in 20 countries. Add more records to XML as the playable world expands; do not hard-code them in the screen.
+- Each location has a stable ID, country code, Persian display name, and a game settlement category: `METROPOLIS`, `CITY`, or `VILLAGE`.
+- The settlement category is derived from the selected location. It is not an independent user choice.
+- The residence UI validates that both a country and a location are selected before moving forward.
+- This implementation has not yet been built and device-tested. Do not describe it as verified until the user reports the test result.
