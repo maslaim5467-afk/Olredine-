@@ -619,14 +619,72 @@ public class NewGameScreen {
         content.addView(option, new LinearLayout.LayoutParams(-1, dp(44)));
     }
 
-    private void showCountryPicker() {
+    private int worldDataResourceId() {
+        return activity.getResources().getIdentifier("world_data", "xml", activity.getPackageName());
+    }
+
+    private ArrayList<String[]> loadCountries() {
+        ArrayList<String[]> result = new ArrayList<>();
+        int resourceId = worldDataResourceId();
+        if (resourceId == 0) return result;
+        XmlResourceParser parser = activity.getResources().getXml(resourceId);
+        try {
+            int event;
+            while ((event = parser.next()) != XmlResourceParser.END_DOCUMENT) {
+                if (event == XmlResourceParser.START_TAG && "country".equals(parser.getName())) {
+                    String code = parser.getAttributeValue(null, "code");
+                    String name = parser.getAttributeValue(null, "name");
+                    if (code != null && name != null) result.add(new String[]{code, name});
+                }
+            }
+        } catch (Exception e) {
+            Toast.makeText(activity, "خواندن فهرست کشورها ناموفق بود.", Toast.LENGTH_SHORT).show();
+        } finally {
+            parser.close();
+        }
+        Collator collator = Collator.getInstance(new Locale("fa"));
+        Collections.sort(result, (a, b) -> collator.compare(a[1], b[1]));
+        return result;
+    }
+
+    private ArrayList<LocationEntry> loadLocations(String countryCodeFilter) {
+        ArrayList<LocationEntry> result = new ArrayList<>();
+        int resourceId = worldDataResourceId();
+        if (resourceId == 0) return result;
+        XmlResourceParser parser = activity.getResources().getXml(resourceId);
+        try {
+            int event;
+            while ((event = parser.next()) != XmlResourceParser.END_DOCUMENT) {
+                if (event == XmlResourceParser.START_TAG && "location".equals(parser.getName())) {
+                    String country = parser.getAttributeValue(null, "country");
+                    if (countryCodeFilter.equals(country)) {
+                        String id = parser.getAttributeValue(null, "id");
+                        String name = parser.getAttributeValue(null, "name");
+                        String type = parser.getAttributeValue(null, "type");
+                        if (id != null && name != null && type != null) {
+                            result.add(new LocationEntry(id, name, type));
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Toast.makeText(activity, "خواندن فهرست شهرها ناموفق بود.", Toast.LENGTH_SHORT).show();
+        } finally {
+            parser.close();
+        }
+        Collator collator = Collator.getInstance(new Locale("fa"));
+        Collections.sort(result, (a, b) -> collator.compare(a.name, b.name));
+        return result;
+    }
+
+    private void showCountryPicker(boolean forResidence) {
         LinearLayout panel = new LinearLayout(activity);
         panel.setOrientation(LinearLayout.VERTICAL);
         panel.setPadding(dp(16), dp(12), dp(16), dp(12));
         panel.setBackground(background(Color.rgb(18, 34, 54), 14, gold));
 
         TextView title = new TextView(activity);
-        title.setText("انتخاب ملیت");
+        title.setText(forResidence ? "انتخاب کشور محل زندگی" : "انتخاب ملیت");
         title.setTextColor(gold);
         title.setTextSize(19);
         title.setTypeface(Typeface.DEFAULT_BOLD);
@@ -647,18 +705,16 @@ public class NewGameScreen {
         panel.addView(search, searchParams);
 
         ArrayList<String> countryLabels = new ArrayList<>();
-        for (String[] country : COUNTRIES) {
+        for (String[] country : loadCountries()) {
+            if (forResidence && loadLocations(country[0]).isEmpty()) continue;
             countryLabels.add(country[1] + " (" + country[0] + ")");
         }
-
-        Collections.sort(countryLabels, Collator.getInstance(new Locale("fa")));
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(activity, 0, countryLabels) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 TextView row = convertView instanceof TextView
-                    ? (TextView) convertView
-                    : new TextView(activity);
+                    ? (TextView) convertView : new TextView(activity);
                 row.setText(getItem(position));
                 row.setTextColor(text);
                 row.setTextSize(14);
@@ -677,37 +733,119 @@ public class NewGameScreen {
         panel.addView(list, new LinearLayout.LayoutParams(-1, dp(320)));
 
         AlertDialog dialog = new AlertDialog.Builder(activity)
-            .setView(panel)
-            .setNegativeButton("بستن", null)
-            .create();
+            .setView(panel).setNegativeButton("بستن", null).create();
 
         search.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
                 adapter.getFilter().filter(s);
             }
-
-            @Override
-            public void afterTextChanged(Editable s) { }
+            @Override public void afterTextChanged(Editable s) { }
         });
 
         list.setOnItemClickListener((parent, view, position, id) -> {
             String selected = adapter.getItem(position);
             if (selected == null) return;
-
             int codeStart = selected.lastIndexOf('(');
             int codeEnd = selected.lastIndexOf(')');
             if (codeStart < 0 || codeEnd <= codeStart) return;
+            String selectedCode = selected.substring(codeStart + 1, codeEnd);
+            String selectedName = selected.substring(0, codeStart).trim();
 
-            countryName = selected.substring(0, codeStart).trim();
-            countryCode = selected.substring(codeStart + 1, codeEnd);
+            if (forResidence) {
+                if (!selectedCode.equals(residenceCountryCode)) {
+                    residenceLocationId = "";
+                    residenceLocationName = "";
+                    residenceType = "";
+                }
+                residenceCountryCode = selectedCode;
+                residenceCountryName = selectedName;
+            } else {
+                countryName = selectedName;
+                countryCode = selectedCode;
+            }
             dialog.dismiss();
             renderSection();
         });
+        dialog.show();
+    }
 
+    private void showLocationPicker() {
+        ArrayList<LocationEntry> locations = loadLocations(residenceCountryCode);
+        if (locations.isEmpty()) {
+            Toast.makeText(activity, "فعلاً مکانی برای این کشور تعریف نشده است.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        LinearLayout panel = new LinearLayout(activity);
+        panel.setOrientation(LinearLayout.VERTICAL);
+        panel.setPadding(dp(16), dp(12), dp(16), dp(12));
+        panel.setBackground(background(Color.rgb(18, 34, 54), 14, gold));
+
+        TextView title = new TextView(activity);
+        title.setText("انتخاب شهر یا منطقه");
+        title.setTextColor(gold);
+        title.setTextSize(19);
+        title.setTypeface(Typeface.DEFAULT_BOLD);
+        title.setGravity(Gravity.CENTER);
+        panel.addView(title, new LinearLayout.LayoutParams(-1, dp(40)));
+
+        EditText search = new EditText(activity);
+        search.setSingleLine(true);
+        search.setHint("جست‌وجوی شهر یا منطقه");
+        search.setTextColor(Color.WHITE);
+        search.setHintTextColor(Color.rgb(155, 169, 185));
+        search.setTextSize(14);
+        search.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
+        search.setPadding(dp(12), 0, dp(12), 0);
+        search.setBackground(background(Color.rgb(34, 54, 77), 9, Color.rgb(111, 94, 67)));
+        LinearLayout.LayoutParams searchParams = new LinearLayout.LayoutParams(-1, dp(46));
+        searchParams.setMargins(0, dp(6), 0, dp(8));
+        panel.addView(search, searchParams);
+
+        ArrayAdapter<LocationEntry> adapter = new ArrayAdapter<LocationEntry>(activity, 0, locations) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                TextView row = convertView instanceof TextView
+                    ? (TextView) convertView : new TextView(activity);
+                LocationEntry item = getItem(position);
+                row.setText(item == null ? "" : item.toString());
+                row.setTextColor(text);
+                row.setTextSize(14);
+                row.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
+                row.setPadding(dp(12), dp(8), dp(12), dp(8));
+                row.setMinHeight(dp(46));
+                row.setBackground(background(Color.rgb(34, 54, 77), 8, Color.rgb(70, 88, 108)));
+                return row;
+            }
+        };
+
+        ListView list = new ListView(activity);
+        list.setAdapter(adapter);
+        list.setFastScrollEnabled(true);
+        list.setBackgroundColor(Color.rgb(18, 34, 54));
+        panel.addView(list, new LinearLayout.LayoutParams(-1, dp(320)));
+
+        AlertDialog dialog = new AlertDialog.Builder(activity)
+            .setView(panel).setNegativeButton("بستن", null).create();
+
+        search.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                adapter.getFilter().filter(s);
+            }
+            @Override public void afterTextChanged(Editable s) { }
+        });
+
+        list.setOnItemClickListener((parent, view, position, id) -> {
+            LocationEntry selected = adapter.getItem(position);
+            if (selected == null) return;
+            residenceLocationId = selected.id;
+            residenceLocationName = selected.name;
+            residenceType = selected.type;
+            dialog.dismiss();
+            renderSection();
+        });
         dialog.show();
     }
 
