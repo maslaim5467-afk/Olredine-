@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<worldData>
+    <countries>
+        <country code="AD" name="آندورا" />
+        <country code="AE" name="امارات متحدهٔ عربی" />
+        <country code="AF" name="افغانستان" />
+        <country code="AG" name="آنتیگوا و باربودا" />
+        <country code="AL" name="آلبانی" />
+        <country code="AM" name="ارمنستان" />
+        <country code="AO" name="آنگولا" />
+        <country code="AR" name="آرژانتین" />
+        <country code="AT" name="اتریش" />
+        <country code="AU" name="استرالیا" />
+        <country code="AZ" name="جمهوری آذربایجان" />
+        <country code="BA" name="بوسنی و هرزگوین" />
+        <country code="BB" name="باربادوس" />
+        <country code="BD" name="بنگلادش" />
+        <country code="BE" name="بلژیک" />
+        <country code="BF" name="بورکینافاسو" />
+        <country code="BG" name="بلغارستان" />
+        <country code="BH" name="بحرین" />
+        <country code="BI" name="بوروندی" />
+        <country code="BJ" name="بنین" />
+        <country code="BN" name="برونئی" />
+        <country code="BO" name="بولیوی" />
+        <country code="BR" name="برزیل" />
+        <country code="BS" name="باهاما" />
+        <country code="BT" name="بوتان" />
+        <country code="BW" name="بوتسوانا" />
+        <country code="BY" name="بلاروس" />
+        <country code="BZ" name="بلیز" />
+        <country code="CA" name="کانادا" />
+        <country code="CD" name="جمهوری دموکراتیک کنگو" />
+        <country code="CF" name="جمهوری افریقای مرکزی" />
+        <country code="CG" name="جمهوری کنگو" />
+        <country code="CH" name="سوئیس" />
+        <country code="CI" name="ساحل عاج" />
+        <country code="CL" name="شیلی" />
+        <country code="CM" name="کامرون" />
+        <country code="CN" name="چین" />
+        <country code="CO" name="کلمبیا" />
+        <country code="CR" name="کاستاریکا" />
+        <country code="CU" name="کوبا" />
+        <country code="CV" name="کیپ‌ورد" />
+        <country code="CY" name="قبرس" />
+        <country code="CZ" name="جمهوری چک" />
+        <country code="DE" name="آلمان" />
+        <country code="DJ" name="جیبوتی" />
+        <country code="DK" name="دانمارک" />
+        <country code="DM" name="دومینیکا" />
+        <country code="DO" name="جمهوری دومینیکن" />
+        <country code="DZ" name="الجزایر" />
+        <country code="EC" name="اکوادور" />
+        <country code="EE" name="استونی" />
+        <country code="EG" name="مصر" />
+        <country code="ER" name="اریتره" />
+        <country code="ES" name="اسپانیا" />
+        <country code="ET" name="اتیوپی" />
+        <country code="FI" name="فنلاند" />
+        <country code="FJ" name="فیجی" />
+        <country code="FM" name="میکرونزی" />
+        <country code="FR" name="فرانسه" />
+        <country code="GA" name="گابن" />
+        <country code="GB" name="بریتانیا" />
+        <country code="GD" name="گرنادا" />
+        <country code="GE" name="گرجستان" />
+        <country code="GH" name="غنا" />
+        <country code="GM" name="گامبیا" />
+        <country code="GN" name="گینه" />
+        <country code="GQ" name="گینهٔ استوایی" />
+        <country code="GR" name="یونان" />
+        <country code="GT" name="گواتمالا" />
+        <country code="GW" name="گینهٔ بیسائو" />
+        <country code="GY" name="گویان" />
+        <country code="HN" name="هندوراس" />
+        <country code="HR" name="کرواسی" />
+        <country code="HT" name="هائیتی" />
+        <country code="HU" name="مجارستان" />
+        <country code="ID" name="اندونزی" />
+        <country code="IE" name="ایرلند" />
+        <country code="IL" name="اسرائیل" />
+        <country code="IN" name="هند" />
+        <country code="IQ" name="عراق" />
+        <country code="IR" name="ایران" />
+        <country code="IS" name="ایسلند" />
+        <country code="IT" name="ایتالیا" />
+        <country code="JM" name="جامائیکا" />
+        <country code="JO" name="اردن" />
+        <country code="JP" name="ژاپن" />
+        <country code="KE" name="کنیا" />
+        <country code="KG" name="قرقیزستان" />
+        <country code="KH" name="کامبوج" />
+        <country code="KI" name="کیریباتی" />
+        <country code="KM" name="کومور" />
+        <country code="KN" name="سنت کیتس و نویس" />
+        <country code="KP" name="کرهٔ شمالی" />
+        <country code="KR" name="کرهٔ جنوبی" />
+        <country code="KW" name="کویت" />
+        <country code="KZ" name="قزاقستان" />
+        <country code="LA" name="لائوس" />
+        <country code="LB" name="لبنان" />
+        <country code="LC" name="سنت لوسیا" />
+        <country code="LI" name="لیختن‌اشتاین" />
+        <country code="LK" name="سری‌لانکا" />
+        <country code="LR" name="لیبریا" />
+        <country code="LS" name="لسوتو" />
+        <country code="LT" name="لیتوانی" />
+        <country code="LU" name="لوکزامبورگ" />
+        <country code="LV" name="لتونی" />
+        <country code="LY" name="لیبی" />
+        <country code="MA" name="مراکش" />
+        <country code="MC" name="موناکو" />
+        <country code="MD" name="مولداوی" />
+        <country code="ME" name="مونته‌نگرو" />
+        <country code="MG" name="ماداگاسکار" />
+        <country code="MH" name="جزایر مارشال" />
+        <country code="MK" name="مقدونیهٔ شمالی" />
+        <country code="ML" name="مالی" />
+        <country code="MM" name="میانمار (برمه)" />
+        <country code="MN" name="مغولستان" />
+        <country code="MR" name="موریتانی" />
+        <country code="MT" name="مالت" />
+        <country code="MU" name="موریس" />
+        <country code="MV" name="مالدیو" />
+        <country code="MW" name="مالاوی" />
+        <country code="MX" name="مکزیک" />
+        <country code="MY" name="مالزی" />
+        <country code="MZ" name="موزامبیک" />
+        <country code="NA" name="نامیبیا" />
+        <country code="NE" name="نیجر" />
+        <country code="NG" name="نیجریه" />
+        <country code="NI" name="نیکاراگوئه" />
+        <country code="NL" name="هلند" />
+        <country code="NO" name="نروژ" />
+        <country code="NP" name="نپال" />
+        <country code="NR" name="نائورو" />
+        <country code="NZ" name="نیوزیلند" />
+        <country code="OM" name="عمان" />
+        <country code="PA" name="پاناما" />
+        <country code="PE" name="پرو" />
+        <country code="PG" name="پاپوا گینهٔ نو" />
+        <country code="PH" name="فیلیپین" />
+        <country code="PK" name="پاکستان" />
+        <country code="PL" name="لهستان" />
+        <country code="PS" name="فلسطین" />
+        <country code="PT" name="پرتغال" />
+        <country code="PW" name="پالائو" />
+        <country code="PY" name="پاراگوئه" />
+        <country code="QA" name="قطر" />
+        <country code="RO" name="رومانی" />
+        <country code="RS" name="صربستان" />
+        <country code="RU" name="روسیه" />
+        <country code="RW" name="رواندا" />
+        <country code="SA" name="عربستان سعودی" />
+        <country code="SB" name="جزایر سلیمان" />
+        <country code="SC" name="سیشل" />
+        <country code="SD" name="سودان" />
+        <country code="SE" name="سوئد" />
+        <country code="SG" name="سنگاپور" />
+        <country code="SI" name="اسلوونی" />
+        <country code="SK" name="اسلواکی" />
+        <country code="SL" name="سیرالئون" />
+        <country code="SM" name="سان‌مارینو" />
+        <country code="SN" name="سنگال" />
+        <country code="SO" name="سومالی" />
+        <country code="SR" name="سورینام" />
+        <country code="SS" name="سودان جنوبی" />
+        <country code="ST" name="سائوتومه و پرینسیپ" />
+        <country code="SV" name="السالوادور" />
+        <country code="SY" name="سوریه" />
+        <country code="SZ" name="اسواتینی" />
+        <country code="TD" name="چاد" />
+        <country code="TG" name="توگو" />
+        <country code="TH" name="تایلند" />
+        <country code="TJ" name="تاجیکستان" />
+        <country code="TL" name="تیمور شرقی" />
+        <country code="TM" name="ترکمنستان" />
+        <country code="TN" name="تونس" />
+        <country code="TO" name="تونگا" />
+        <country code="TR" name="ترکیه" />
+        <country code="TT" name="ترینیداد و توباگو" />
+        <country code="TV" name="تووالو" />
+        <country code="TZ" name="تانزانیا" />
+        <country code="UA" name="اوکراین" />
+        <country code="UG" name="اوگاندا" />
+        <country code="US" name="ایالات متحده" />
+        <country code="UY" name="اروگوئه" />
+        <country code="UZ" name="ازبکستان" />
+        <country code="VA" name="واتیکان" />
+        <country code="VC" name="سنت وینسنت و گرنادین" />
+        <country code="VE" name="ونزوئلا" />
+        <country code="VN" name="ویتنام" />
+        <country code="VU" name="وانواتو" />
+        <country code="WS" name="ساموآ" />
+        <country code="YE" name="یمن" />
+        <country code="ZA" name="افریقای جنوبی" />
+        <country code="ZM" name="زامبیا" />
+        <country code="ZW" name="زیمبابوه" />
+    </countries>
+    <locations>
+        <location country="IR" id="tehran" name="تهران" type="METROPOLIS" />
+        <location country="IR" id="isfahan" name="اصفهان" type="CITY" />
+        <location country="IR" id="abyaneh" name="ابیانه" type="VILLAGE" />
+        <location country="DE" id="berlin" name="برلین" type="METROPOLIS" />
+        <location country="DE" id="munich" name="مونیخ" type="CITY" />
+        <location country="DE" id="ramsau" name="رامسائو" type="VILLAGE" />
+        <location country="SE" id="stockholm" name="استکهلم" type="METROPOLIS" />
+        <location country="SE" id="gothenburg" name="گوتنبرگ" type="CITY" />
+        <location country="SE" id="visby" name="ویسبی" type="VILLAGE" />
+        <location country="US" id="new_york" name="نیویورک" type="METROPOLIS" />
+        <location country="US" id="chicago" name="شیکاگو" type="CITY" />
+        <location country="US" id="woodstock" name="وودستاک" type="VILLAGE" />
+        <location country="GB" id="london" name="لندن" type="METROPOLIS" />
+        <location country="GB" id="manchester" name="منچستر" type="CITY" />
+        <location country="GB" id="castle_combe" name="کاسل کامب" type="VILLAGE" />
+        <location country="FR" id="paris" name="پاریس" type="METROPOLIS" />
+        <location country="FR" id="lyon" name="لیون" type="CITY" />
+        <location country="FR" id="gordes" name="گورد" type="VILLAGE" />
+        <location country="TR" id="istanbul" name="استانبول" type="METROPOLIS" />
+        <location country="TR" id="ankara" name="آنکارا" type="CITY" />
+        <location country="TR" id="sirince" name="شیرینجه" type="VILLAGE" />
+        <location country="SA" id="riyadh" name="ریاض" type="METROPOLIS" />
+        <location country="SA" id="jeddah" name="جده" type="CITY" />
+        <location country="SA" id="alula" name="العلا" type="VILLAGE" />
+        <location country="AE" id="dubai" name="دبی" type="METROPOLIS" />
+        <location country="AE" id="abudhabi" name="ابوظبی" type="CITY" />
+        <location country="JP" id="tokyo" name="توکیو" type="METROPOLIS" />
+        <location country="JP" id="osaka" name="اوساکا" type="CITY" />
+        <location country="JP" id="shirakawago" name="شیراکاواگو" type="VILLAGE" />
+        <location country="CA" id="toronto" name="تورنتو" type="METROPOLIS" />
+        <location country="CA" id="vancouver" name="ونکوور" type="CITY" />
+        <location country="CA" id="banff" name="بن프" type="VILLAGE" />
+        <location country="AU" id="sydney" name="سیدنی" type="METROPOLIS" />
+        <location country="AU" id="melbourne" name="ملبورن" type="CITY" />
+        <location country="AU" id="halls_gap" name="هالز گپ" type="VILLAGE" />
+        <location country="IN" id="mumbai" name="بمبئی" type="METROPOLIS" />
+        <location country="IN" id="jaipur" name="جیپور" type="CITY" />
+        <location country="IN" id="mawlynnong" name="ماولینونگ" type="VILLAGE" />
+        <location country="EG" id="cairo" name="قاهره" type="METROPOLIS" />
+        <location country="EG" id="alexandria" name="اسکندریه" type="CITY" />
+        <location country="EG" id="siwa" name="سیوه" type="VILLAGE" />
+        <location country="IQ" id="baghdad" name="بغداد" type="METROPOLIS" />
+        <location country="IQ" id="erbil" name="اربیل" type="CITY" />
+        <location country="IQ" id="amedy" name="عمادیه" type="VILLAGE" />
+        <location country="NL" id="amsterdam" name="آمستردام" type="METROPOLIS" />
+        <location country="NL" id="rotterdam" name="روتردام" type="CITY" />
+        <location country="IT" id="rome" name="رم" type="METROPOLIS" />
+        <location country="IT" id="florence" name="فلورانس" type="CITY" />
+        <location country="IT" id="san_gimignano" name="سن جیمینیانو" type="VILLAGE" />
+        <location country="ES" id="madrid" name="مادرید" type="METROPOLIS" />
+        <location country="ES" id="barcelona" name="بارسلونا" type="CITY" />
+        <location country="ES" id="albarracin" name="آلباراسین" type="VILLAGE" />
+        <location country="BR" id="sao_paulo" name="سائوپائولو" type="METROPOLIS" />
+        <location country="BR" id="rio" name="ریودوژانیرو" type="CITY" />
+        <location country="NO" id="oslo" name="اسلو" type="METROPOLIS" />
+        <location country="NO" id="bergen" name="برگن" type="CITY" />
+    </locations>
+</worldData>
