@@ -296,6 +296,11 @@ public class NewGameScreen {
             ageInput.requestFocus();
             return false;
         }
+
+        if (innateTrait.isEmpty()) {
+            Toast.makeText(activity, "یک ویژگی ذاتی انتخاب کنید.", Toast.LENGTH_SHORT).show();
+            return false;
+        }
         return true;
     }
 
