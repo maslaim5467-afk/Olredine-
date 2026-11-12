@@ -21,7 +21,7 @@ public class NewGameScreen {
     private final int navy = Color.rgb(12, 27, 46);
     private final int text = Color.rgb(244, 239, 226);
     private final String[] sections = {
-        "الشخصية", "الملكية", "مكان الإقامة", "التعليم", "الوضع الاقتصادي", "العائلة", "المهارات"
+        "الشخصية", "الجنسية", "مكان الإقامة", "التعليم", "الوضع الاقتصادي", "العائلة", "المهارات"
     };
     private int selectedSection = 0;
     private LinearLayout content;
