@@ -98,6 +98,7 @@ public class NewGameScreen {
             itemParams.setMargins(dp(2), dp(3), dp(2), dp(3));
             sidebar.addView(item, itemParams);
             item.setOnClickListener(v -> {
+                if (!validateCurrentFields()) return;
                 saveCurrentFields();
                 selectedSection = index;
                 refreshSidebar(sidebar);
@@ -141,11 +142,13 @@ public class NewGameScreen {
         footer.addView(next, nextParams);
 
         previous.setOnClickListener(v -> {
+            if (!validateCurrentFields()) return;
             saveCurrentFields();
             if (selectedSection == 0) onBack.run();
             else selectSection(selectedSection - 1, sidebar, next);
         });
         next.setOnClickListener(v -> {
+            if (!validateCurrentFields()) return;
             saveCurrentFields();
             if (selectedSection < sections.length - 1) {
                 selectSection(selectedSection + 1, sidebar, next);
@@ -225,6 +228,31 @@ public class NewGameScreen {
             placeholder.setBackground(background(Color.rgb(28, 48, 70), 14, Color.rgb(110, 91, 61)));
             content.addView(placeholder, new LinearLayout.LayoutParams(-1, dp(150)));
         }
+    }
+
+    private boolean validateCurrentFields() {
+        if (selectedSection != 0 || ageInput == null) return true;
+
+        String value = ageInput.getText().toString().trim();
+        if (value.isEmpty()) {
+            ageInput.setError("سن را وارد کنید");
+            ageInput.requestFocus();
+            return false;
+        }
+
+        try {
+            int age = Integer.parseInt(value);
+            if (age < 12 || age > 30) {
+                ageInput.setError("سن باید بین ۱۲ تا ۳۰ سال باشد");
+                ageInput.requestFocus();
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            ageInput.setError("سن واردشده معتبر نیست");
+            ageInput.requestFocus();
+            return false;
+        }
+        return true;
     }
 
     private void saveCurrentFields() {
