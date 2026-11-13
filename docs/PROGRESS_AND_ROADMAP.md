@@ -2,7 +2,7 @@
 
 > Living project log and forward-looking development plan. This document tracks what exists, what has been agreed, and what is planned. It is not a claim that planned or committed code has been tested on a device.
 
-Last updated: 2026-11-12
+Last updated: 2026-11-13
 
 ## 1. Product vision
 
@@ -44,7 +44,7 @@ The new-game screen contains seven sections:
 6. Family
 7. Skills
 
-The first three sections now have initial working inputs. Sections 4–7 are still placeholders.
+The first three sections have initial inputs. Education (section 4) now has initial selectable fields for highest completed level, current study status, study field/category, and academic performance. Sections 5–7 remain placeholders. The education implementation is committed but still requires APK build and device testing.
 
 #### Character section
 
@@ -110,7 +110,7 @@ The initial location list is deliberately curated and limited. It is not a compl
 - There is no complete character data model shared across screens yet.
 - There is no playable world/gameplay screen after character creation.
 - No event-and-consequence gameplay loop exists yet.
-- Sections 4–7 do not yet collect real data.
+- Sections 5–7 do not yet collect real data. Education captures initial form data but has no gameplay effects or durable save integration yet.
 - The final action in character creation is still a placeholder.
 - No claim of successful build or device testing should be made solely from a successful GitHub commit.
 
