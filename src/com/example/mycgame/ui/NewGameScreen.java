@@ -260,7 +260,7 @@ public class NewGameScreen {
             addLabel("جنسیت");
             LinearLayout genders = new LinearLayout(activity);
             genders.setOrientation(LinearLayout.HORIZONTAL);
-            String[][] genderOptions = loadOptions("character_data", "data.gender");
+            String[][] genderOptions = loadOptions("character_data", "gender");
             TextView male = choiceButton(optionLabel(genderOptions, "MALE"), data.gender.equals("MALE"));
             TextView female = choiceButton(optionLabel(genderOptions, "FEMALE"), data.gender.equals("FEMALE"));
             genders.addView(male, new LinearLayout.LayoutParams(0, dp(48), 1f));
@@ -496,7 +496,7 @@ public class NewGameScreen {
             });
 
             addFamilyOptionGroup("وضعیت اقتصادی خانواده",
-                loadOptions("family_data", "data.economicStatus"), data.familyEconomicStatus, value -> {
+                loadOptions("family_data", "economicStatus"), data.familyEconomicStatus, value -> {
                 data.familyEconomicStatus = value;
                 renderSection();
             });
