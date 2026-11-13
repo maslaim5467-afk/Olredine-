@@ -44,7 +44,7 @@ The new-game screen contains seven sections:
 6. Family
 7. Skills
 
-The first three sections have initial inputs. Education (section 4) now has initial selectable fields for highest completed level, current study status, study field/category, and academic performance. The user has confirmed that the latest education-related APK build succeeded; further on-device behavior testing and design refinement remain. Sections 5–7 remain placeholders.
+Character, nationality, and residence have initial inputs. Education (section 4) has initial selectable fields for highest completed level, current study status, study field/category, and academic performance. The user has confirmed that the latest education-related APK build succeeded; further on-device behavior testing and design refinement remain. Economic status (section 5) now has a required selection among five broad starting-condition levels, with short descriptions and no exact monetary amounts. This is an initial UI capture only; the selected level is not yet connected to an economic model or durable save. Family and skills (sections 6–7) remain placeholders.
 
 #### Character section
 
@@ -103,14 +103,27 @@ Initial implementation added to the current UI:
 
 The initial location list is deliberately curated and limited. It is not a complete global city database. New countries and locations can be added to the XML without changing the screen's selection logic.
 
+### Economic status section
+
+The initial economic-status UI offers five mutually exclusive starting-condition choices:
+
+| Internal ID | Display label | Initial meaning |
+|---|---|---|
+| `VERY_DIFFICULT` | بسیار دشوار | منابع اولیه بسیار محدود و فشار اقتصادی زیاد |
+| `DIFFICULT` | دشوار | منابع محدود و شرایط مالی سخت |
+| `ORDINARY` | معمولی | شرایط اقتصادی عادی |
+| `SUITABLE` | مناسب | برخورداری از مقداری پشتوانه مالی |
+| `FAVORABLE` | مطلوب | پشتوانه مالی نسبتاً خوب و شروع راحت‌تر |
+
+The player does not enter exact amounts or choose a job/income source during character creation. The selection is required before leaving section 5 and is currently held only in the `NewGameScreen` object. The actual starting cash, assets, liabilities, income, and economic consequences have not been defined or implemented. Family circumstances remain separate in section 6.
+
 ### Current limitations
 
-- Character and nationality values are held in the screen object only.
-- There is no durable save-game system yet.
+- Character, nationality, residence, education, and economic-status values are held in the screen object only; there is no durable save-game system yet.
 - There is no complete character data model shared across screens yet.
 - There is no playable world/gameplay screen after character creation.
 - No event-and-consequence gameplay loop exists yet.
-- Sections 5–7 do not yet collect real data. Education captures initial form data but has no gameplay effects or durable save integration yet.
+- Education captures initial form data but has no gameplay effects or durable save integration yet. Economic status captures one coarse starting category but is not connected to economic calculations or gameplay. Family and skills remain placeholders.
 - The final action in character creation is still a placeholder.
 - No claim of successful build or device testing should be made solely from a successful GitHub commit.
 
@@ -138,8 +151,8 @@ Alpha 0.1 should prioritize one complete, understandable loop over broad but sha
 
 #### A. Complete character creation
 
-- Finish the six remaining sections: nationality is now implemented, leaving residence, education, economic status, family, and skills.
-- Define the actual fields and rules for each section before adding UI controls.
+- Complete and validate all seven character-creation sections; refine education and economic-status rules, and design the family and skills sections.
+- Finalize the fields and rules for each section without collecting data that has no planned gameplay use.
 - Keep nationality separate from residence.
 - Validate required fields and avoid collecting information that has no planned use.
 - Preserve the character's data when moving between sections.
@@ -225,7 +238,7 @@ In later versions, country and location data may influence legal conditions, emp
 1. Review and device-test the residence section and its XML-backed country/location selection.
 2. Define a shared character data model before adding many more independent form fields.
 3. Connect the existing character, nationality, and residence UI to that model.
-4. Decide and document the fields for education, economic status, family, and skills.
+4. Refine education progression/validation rules and define the fields for family and skills; revisit the economic-status categories when the shared character and economy models are designed.
 5. Implement local save/restore once the first character schema is stable.
 6. Design the smallest playable opening scenario and its event consequences.
 
@@ -270,3 +283,13 @@ This document is a living development record. Update the implementation status o
 - Deferred implementation until the character model and shared validation/game-rule logic are completed.
 - Future rules must consider progression and study duration, country-specific education systems, and any deliberately supported exceptional paths.
 - The current successful APK build confirms compilation only; it does not mean this logical validation has been implemented.
+
+
+### 2026-11-13 — Initial economic status section
+
+- Replaced the section 5 placeholder with five mutually exclusive starting-condition choices: very difficult, difficult, ordinary, suitable, and favorable.
+- Added short explanations while intentionally avoiding exact money/wealth amounts.
+- Added required selection validation and stable internal IDs for the chosen category.
+- Kept job selection and income-source selection out of character creation; those are intended to emerge through gameplay.
+- Kept family economic circumstances separate in section 6.
+- This commit implements initial UI capture only. It does not establish starting cash/assets/debt, economic calculations, persistent storage, or on-device test results.
