@@ -48,39 +48,16 @@ public class NewGameScreen {
     private final Activity activity;
     private final Runnable onBack;
     private final CharacterCreationRepository repository;
+    private final CharacterCreationData data;
     private final int gold = Color.rgb(225, 180, 91);
     private final int navy = Color.rgb(12, 27, 46);
     private final int text = Color.rgb(244, 239, 226);
     private final String[] sections = {
         "شخصیت", "ملیت", "محل زندگی", "تحصیلات", "وضعیت اقتصادی", "خانواده", "مهارت‌ها"
     };
-    private int selectedSection = 0;
     private LinearLayout content;
     private EditText nameInput;
     private EditText ageInput;
-    private String playerName = "";
-    private String playerAge = "18";
-    private String gender = "MALE";
-    private String innateTrait = "";
-    private String countryCode = "";
-    private String countryName = "";
-    private String residenceCountryCode = "";
-    private String residenceCountryName = "";
-    private String residenceLocationId = "";
-    private String residenceLocationName = "";
-    private String residenceType = "";
-    private String educationLevel = "";
-    private String educationCurrentLevel = "";
-    private String educationStatus = "";
-    private String educationField = "";
-    private String educationPerformance = "";
-    private String economicStatus = "";
-    private String familyStructure = "";
-    private String familyParentStatus = "";
-    private String familySupport = "";
-
-    private String familyEconomicStatus = "";
-
     private static final int MAX_INITIAL_GENERAL_SKILLS = 3;
     private static final int SKILL_NONE = 0;
     private static final int SKILL_BEGINNER = 1;
@@ -92,16 +69,13 @@ public class NewGameScreen {
     // Static choice catalogs are loaded from XML resources.
     private String[][] skillLevelOptions;
     private final HashMap<String, String[][]> optionCache = new HashMap<>();
-
-    private final HashSet<String> selectedGeneralSkillIds = new HashSet<>();
-    private final HashSet<String> selectedSpecializedSkillIds = new HashSet<>();
-
     public NewGameScreen(Activity activity, Runnable onBack,
                          CharacterCreationRepository repository, CharacterCreationData initialData) {
         this.activity = activity;
         this.onBack = onBack;
         this.repository = repository;
-        if (initialData != null) applyData(initialData);
+        this.data = initialData == null ? new CharacterCreationData() : initialData;
+        this.data.selectedSection = Math.max(0, Math.min(sections.length - 1, this.data.selectedSection));
     }
 
     public View create() {
@@ -156,19 +130,19 @@ public class NewGameScreen {
             final int index = i;
             TextView item = new TextView(activity);
             item.setText((i + 1) + "   " + sections[i]);
-            item.setTextColor(i == selectedSection ? Color.rgb(28, 25, 19) : text);
+            item.setTextColor(i == data.selectedSection ? Color.rgb(28, 25, 19) : text);
             item.setTextSize(14);
             item.setGravity(Gravity.CENTER_VERTICAL);
             item.setPadding(dp(10), 0, dp(8), 0);
-            item.setBackground(background(i == selectedSection ? gold : Color.TRANSPARENT, 10,
-                i == selectedSection ? gold : Color.TRANSPARENT));
+            item.setBackground(background(i == data.selectedSection ? gold : Color.TRANSPARENT, 10,
+                i == data.selectedSection ? gold : Color.TRANSPARENT));
             LinearLayout.LayoutParams itemParams = new LinearLayout.LayoutParams(-1, 0, 1f);
             itemParams.setMargins(dp(2), dp(3), dp(2), dp(3));
             sidebar.addView(item, itemParams);
             item.setOnClickListener(v -> {
-                if (index > selectedSection && !validateCurrentFields()) return;
+                if (index > data.selectedSection && !validateCurrentFields()) return;
                 saveCurrentFields();
-                selectedSection = index;
+                data.selectedSection = index;
                 refreshSidebar(sidebar);
                 renderSection();
             });
@@ -210,22 +184,22 @@ public class NewGameScreen {
         footer.addView(next, nextParams);
 
         previous.setOnClickListener(v -> {
-            if (selectedSection == 0 && !validateCurrentFields()) return;
+            if (data.selectedSection == 0 && !validateCurrentFields()) return;
             saveCurrentFields();
-            if (selectedSection == 0) onBack.run();
-            else selectSection(selectedSection - 1, sidebar, next);
+            if (data.selectedSection == 0) onBack.run();
+            else selectSection(data.selectedSection - 1, sidebar, next);
         });
         next.setOnClickListener(v -> {
             if (!validateCurrentFields()) return;
             saveCurrentFields();
-            if (selectedSection < sections.length - 1) {
-                selectSection(selectedSection + 1, sidebar, next);
+            if (data.selectedSection < sections.length - 1) {
+                selectSection(data.selectedSection + 1, sidebar, next);
             } else {
                 int invalidSection = firstInvalidSection();
                 if (invalidSection >= 0) {
-                    selectedSection = invalidSection;
+                    data.selectedSection = invalidSection;
                     refreshSidebar(sidebar);
-                    next.setText(selectedSection == sections.length - 1 ? "پایان" : "بعدی");
+                    next.setText(data.selectedSection == sections.length - 1 ? "پایان" : "بعدی");
                     renderSection();
                     Toast.makeText(activity, "ابتدا اطلاعات الزامی بخش «" + sections[invalidSection] + "» را کامل کنید.", Toast.LENGTH_LONG).show();
                     return;
@@ -245,9 +219,9 @@ public class NewGameScreen {
     }
 
     private void selectSection(int index, LinearLayout sidebar, TextView next) {
-        selectedSection = index;
+        data.selectedSection = index;
         refreshSidebar(sidebar);
-        next.setText(selectedSection == sections.length - 1 ? "پایان" : "بعدی");
+        next.setText(data.selectedSection == sections.length - 1 ? "پایان" : "بعدی");
         renderSection();
     }
 
@@ -256,9 +230,9 @@ public class NewGameScreen {
             View child = sidebar.getChildAt(i + 3);
             if (child instanceof TextView) {
                 TextView item = (TextView) child;
-                item.setTextColor(i == selectedSection ? Color.rgb(28, 25, 19) : text);
-                item.setBackground(background(i == selectedSection ? gold : Color.TRANSPARENT, 10,
-                    i == selectedSection ? gold : Color.TRANSPARENT));
+                item.setTextColor(i == data.selectedSection ? Color.rgb(28, 25, 19) : text);
+                item.setBackground(background(i == data.selectedSection ? gold : Color.TRANSPARENT, 10,
+                    i == data.selectedSection ? gold : Color.TRANSPARENT));
             }
         }
     }
@@ -268,7 +242,7 @@ public class NewGameScreen {
         persistDraft();
         content.removeAllViews();
         TextView heading = new TextView(activity);
-        heading.setText(sections[selectedSection]);
+        heading.setText(sections[data.selectedSection]);
         heading.setTextColor(gold);
         heading.setTextSize(25);
         heading.setTypeface(Typeface.DEFAULT_BOLD);
@@ -280,25 +254,25 @@ public class NewGameScreen {
         description.setTextSize(13);
         content.addView(description, new LinearLayout.LayoutParams(-1, dp(34)));
 
-        if (selectedSection == 0) {
+        if (data.selectedSection == 0) {
             addLabel("نام شخصیت");
-            nameInput = addInput(playerName, "نام شخصیت را وارد کنید", false);
+            nameInput = addInput(data.playerName, "نام شخصیت را وارد کنید", false);
             addLabel("جنسیت");
             LinearLayout genders = new LinearLayout(activity);
             genders.setOrientation(LinearLayout.HORIZONTAL);
-            String[][] genderOptions = loadOptions("character_data", "gender");
-            TextView male = choiceButton(optionLabel(genderOptions, "MALE"), gender.equals("MALE"));
-            TextView female = choiceButton(optionLabel(genderOptions, "FEMALE"), gender.equals("FEMALE"));
+            String[][] genderOptions = loadOptions("character_data", "data.gender");
+            TextView male = choiceButton(optionLabel(genderOptions, "MALE"), data.gender.equals("MALE"));
+            TextView female = choiceButton(optionLabel(genderOptions, "FEMALE"), data.gender.equals("FEMALE"));
             genders.addView(male, new LinearLayout.LayoutParams(0, dp(48), 1f));
             LinearLayout.LayoutParams femaleParams = new LinearLayout.LayoutParams(0, dp(48), 1f);
             femaleParams.setMargins(dp(8), 0, 0, 0);
             genders.addView(female, femaleParams);
             content.addView(genders);
-            male.setOnClickListener(v -> { saveCurrentFields(); gender = "MALE"; renderSection(); });
-            female.setOnClickListener(v -> { saveCurrentFields(); gender = "FEMALE"; renderSection(); });
+            male.setOnClickListener(v -> { saveCurrentFields(); data.gender = "MALE"; renderSection(); });
+            female.setOnClickListener(v -> { saveCurrentFields(); data.gender = "FEMALE"; renderSection(); });
 
             addLabel("سن");
-            ageInput = addInput(playerAge, "18", true);
+            ageInput = addInput(data.playerAge, "18", true);
             addLabel("ویژگی ذاتی");
             TextView traitHint = new TextView(activity);
             traitHint.setText("یک ویژگی را انتخاب کنید. این ویژگی از آغاز همراه شخصیت شماست؛ ویژگی‌های دیگر در طول زندگی و بر اساس رفتارها و تجربه‌ها کسب می‌شوند.");
@@ -319,30 +293,30 @@ public class NewGameScreen {
                 for (int j = i; j < Math.min(i + 2, traits.length); j++) {
                     final String traitId = traits[j][0];
                     final String traitName = traits[j][1];
-                    LinearLayout trait = traitChoiceButton(traitName, traits[j][2], innateTrait.equals(traitId));
+                    LinearLayout trait = traitChoiceButton(traitName, traits[j][2], data.innateTrait.equals(traitId));
                     LinearLayout.LayoutParams traitParams = new LinearLayout.LayoutParams(0, dp(76), 1f);
                     if (j == i + 1) traitParams.setMargins(dp(8), 0, 0, 0);
                     row.addView(trait, traitParams);
                     trait.setOnClickListener(v -> {
-                        innateTrait = traitId;
+                        data.innateTrait = traitId;
                         renderSection();
                     });
                 }
             }
 
             TextView selectedTrait = new TextView(activity);
-            selectedTrait.setText(innateTrait.isEmpty()
+            selectedTrait.setText(data.innateTrait.isEmpty()
                 ? "هنوز ویژگی ذاتی انتخاب نشده است."
-                : "ویژگی ذاتی انتخاب‌شده: " + optionLabel(traits, innateTrait));
+                : "ویژگی ذاتی انتخاب‌شده: " + optionLabel(traits, data.innateTrait));
             selectedTrait.setTextColor(gold);
             selectedTrait.setTextSize(13);
             selectedTrait.setPadding(dp(4), dp(8), dp(4), dp(8));
             content.addView(selectedTrait);
-        } else if (selectedSection == 1) {
+        } else if (data.selectedSection == 1) {
             addLabel("ملیت اصلی");
             TextView countryButton = choiceButton(
-                countryName.isEmpty() ? "انتخاب کشور" : countryName + "  (" + countryCode + ")",
-                !countryCode.isEmpty()
+                data.countryName.isEmpty() ? "انتخاب کشور" : data.countryName + "  (" + data.countryCode + ")",
+                !data.countryCode.isEmpty()
             );
             content.addView(countryButton, new LinearLayout.LayoutParams(-1, dp(52)));
             countryButton.setOnClickListener(v -> showCountryPicker(false));
@@ -360,11 +334,11 @@ public class NewGameScreen {
             count.setTextSize(13);
             count.setPadding(dp(4), dp(16), dp(4), 0);
             content.addView(count);
-        } else if (selectedSection == 2) {
+        } else if (data.selectedSection == 2) {
             addLabel("کشور محل زندگی");
             TextView residenceCountryButton = choiceButton(
-                residenceCountryName.isEmpty() ? "انتخاب کشور محل زندگی" : residenceCountryName + "  (" + residenceCountryCode + ")",
-                !residenceCountryCode.isEmpty()
+                data.residenceCountryName.isEmpty() ? "انتخاب کشور محل زندگی" : data.residenceCountryName + "  (" + data.residenceCountryCode + ")",
+                !data.residenceCountryCode.isEmpty()
             );
             content.addView(residenceCountryButton, new LinearLayout.LayoutParams(-1, dp(50)));
             residenceCountryButton.setOnClickListener(v -> showCountryPicker(true));
@@ -378,17 +352,17 @@ public class NewGameScreen {
 
             addLabel("شهر / منطقه محل زندگی");
             TextView locationButton = choiceButton(
-                residenceLocationName.isEmpty() ? "ابتدا کشور را انتخاب کنید" : residenceLocationName,
-                !residenceLocationId.isEmpty()
+                data.residenceLocationName.isEmpty() ? "ابتدا کشور را انتخاب کنید" : data.residenceLocationName,
+                !data.residenceLocationId.isEmpty()
             );
             content.addView(locationButton, new LinearLayout.LayoutParams(-1, dp(50)));
-            locationButton.setEnabled(!residenceCountryCode.isEmpty());
+            locationButton.setEnabled(!data.residenceCountryCode.isEmpty());
             locationButton.setOnClickListener(v -> showLocationPicker());
 
-            if (!residenceType.isEmpty()) {
+            if (!data.residenceType.isEmpty()) {
                 TextView typeValue = new TextView(activity);
-                String typeLabel = "METROPOLIS".equals(residenceType) ? "کلان‌شهر"
-                    : ("VILLAGE".equals(residenceType) ? "منطقه روستایی" : "شهر متوسط");
+                String typeLabel = "METROPOLIS".equals(data.residenceType) ? "کلان‌شهر"
+                    : ("VILLAGE".equals(data.residenceType) ? "منطقه روستایی" : "شهر متوسط");
                 typeValue.setText("نوع منطقه: " + typeLabel);
                 typeValue.setTextColor(gold);
                 typeValue.setTextSize(14);
@@ -402,7 +376,7 @@ public class NewGameScreen {
             residenceHint.setTextSize(12);
             residenceHint.setPadding(dp(4), dp(4), dp(4), dp(8));
             content.addView(residenceHint, new LinearLayout.LayoutParams(-1, -2));
-        } else if (selectedSection == 3) {
+        } else if (data.selectedSection == 3) {
             TextView intro = new TextView(activity);
             intro.setText("سابقه آموزشی شخصیت را مشخص کنید. این اطلاعات در آینده بر فرصت‌های شغلی، مهارت‌ها و مسیر پیشرفت اثر خواهند گذاشت.");
             intro.setTextColor(Color.rgb(190, 202, 216));
@@ -411,64 +385,64 @@ public class NewGameScreen {
             content.addView(intro, new LinearLayout.LayoutParams(-1, -2));
 
             addOptionGroup("آخرین مقطع تکمیل‌شده",
-                loadOptions("education_data", "level"), educationLevel, value -> {
-                    String previousFocus = educationCurrentLevel.isEmpty()
-                        ? educationLevel : educationCurrentLevel;
-                    educationLevel = value;
+                loadOptions("education_data", "level"), data.educationLevel, value -> {
+                    String previousFocus = data.educationCurrentLevel.isEmpty()
+                        ? data.educationLevel : data.educationCurrentLevel;
+                    data.educationLevel = value;
                     if ("NO_FORMAL_EDUCATION".equals(value)) {
-                        educationCurrentLevel = "";
-                    } else if (!educationCurrentLevel.isEmpty()
-                            && educationLevelRank(educationCurrentLevel) < educationLevelRank(value)) {
-                        educationCurrentLevel = "";
+                        data.educationCurrentLevel = "";
+                    } else if (!data.educationCurrentLevel.isEmpty()
+                            && educationLevelRank(data.educationCurrentLevel) < educationLevelRank(value)) {
+                        data.educationCurrentLevel = "";
                     }
-                    String nextFocus = educationCurrentLevel.isEmpty()
-                        ? educationLevel : educationCurrentLevel;
+                    String nextFocus = data.educationCurrentLevel.isEmpty()
+                        ? data.educationLevel : data.educationCurrentLevel;
                     if (!previousFocus.equals(nextFocus)) {
-                        educationField = "";
-                        educationPerformance = "";
+                        data.educationField = "";
+                        data.educationPerformance = "";
                     }
                     renderSection();
                 });
 
             addOptionGroup("وضعیت تحصیل",
-                loadOptions("education_data", "status"), educationStatus, value -> {
-                    if (!educationStatus.equals(value)) {
-                        educationField = "";
-                        educationPerformance = "";
+                loadOptions("education_data", "status"), data.educationStatus, value -> {
+                    if (!data.educationStatus.equals(value)) {
+                        data.educationField = "";
+                        data.educationPerformance = "";
                     }
-                    educationStatus = value;
-                    if ("NOT_STUDYING".equals(value)) educationCurrentLevel = "";
+                    data.educationStatus = value;
+                    if ("NOT_STUDYING".equals(value)) data.educationCurrentLevel = "";
                     renderSection();
                 });
 
-            if (!educationStatus.isEmpty() && !"NOT_STUDYING".equals(educationStatus)) {
+            if (!data.educationStatus.isEmpty() && !"NOT_STUDYING".equals(data.educationStatus)) {
                 addOptionGroup("مقطع ناتمام فعلی",
-                    educationCurrentLevelOptions(), educationCurrentLevel, value -> {
+                    educationCurrentLevelOptions(), data.educationCurrentLevel, value -> {
                         if (!"NO_FORMAL_EDUCATION".equals(value)
-                                && educationLevelRank(value) >= educationLevelRank(educationLevel)) {
-                            if (!educationCurrentLevel.equals(value)) {
-                                educationField = "";
-                                educationPerformance = "";
+                                && educationLevelRank(value) >= educationLevelRank(data.educationLevel)) {
+                            if (!data.educationCurrentLevel.equals(value)) {
+                                data.educationField = "";
+                                data.educationPerformance = "";
                             }
-                            educationCurrentLevel = value;
+                            data.educationCurrentLevel = value;
                         }
                         renderSection();
                     });
             }
 
-            String focusLevel = educationCurrentLevel.isEmpty() ? educationLevel : educationCurrentLevel;
+            String focusLevel = data.educationCurrentLevel.isEmpty() ? data.educationLevel : data.educationCurrentLevel;
             if (!focusLevel.isEmpty() && !"NO_FORMAL_EDUCATION".equals(focusLevel)) {
-                addOptionGroup(educationCurrentLevel.isEmpty()
+                addOptionGroup(data.educationCurrentLevel.isEmpty()
                         ? "رشته آخرین مقطع تکمیل‌شده" : "رشته مقطع ناتمام",
-                    loadOptions("education_data", "field"), educationField, value -> {
-                        educationField = value;
+                    loadOptions("education_data", "field"), data.educationField, value -> {
+                        data.educationField = value;
                         renderSection();
                     });
 
-                addOptionGroup(educationCurrentLevel.isEmpty()
+                addOptionGroup(data.educationCurrentLevel.isEmpty()
                         ? "عملکرد در آخرین مقطع تکمیل‌شده" : "عملکرد در مقطع ناتمام",
-                    loadOptions("education_data", "performance"), educationPerformance, value -> {
-                        educationPerformance = value;
+                    loadOptions("education_data", "performance"), data.educationPerformance, value -> {
+                        data.educationPerformance = value;
                         renderSection();
                     });
             } else {
@@ -479,7 +453,7 @@ public class NewGameScreen {
                 noFormalEducation.setPadding(dp(4), dp(8), dp(4), dp(8));
                 content.addView(noFormalEducation);
             }
-        } else if (selectedSection == 4) {
+        } else if (data.selectedSection == 4) {
             TextView intro = new TextView(activity);
             intro.setText("وضعیت اقتصادی فقط شرایط شروع شخصیت را مشخص می‌کند. مقدار دقیق پول یا ثروت در این مرحله نمایش داده نمی‌شود.");
             intro.setTextColor(Color.rgb(190, 202, 216));
@@ -495,7 +469,7 @@ public class NewGameScreen {
             economicHint.setTextSize(12);
             economicHint.setPadding(dp(4), dp(10), dp(4), dp(8));
             content.addView(economicHint, new LinearLayout.LayoutParams(-1, -2));
-        } else if (selectedSection == 5) {
+        } else if (data.selectedSection == 5) {
             TextView intro = new TextView(activity);
             intro.setText("شرایط خانوادگی شخصیت را مشخص کنید. ساختار خانواده درباره محل و شیوه زندگی است؛ وضعیت والدین مستقل از این موضوع ثبت می‌شود.");
             intro.setTextColor(Color.rgb(190, 202, 216));
@@ -504,26 +478,26 @@ public class NewGameScreen {
             content.addView(intro, new LinearLayout.LayoutParams(-1, -2));
 
             addFamilyOptionGroup("ساختار و محل زندگی خانوادگی",
-                loadOptions("family_data", "structure"), familyStructure, value -> {
-                familyStructure = value;
+                loadOptions("family_data", "structure"), data.familyStructure, value -> {
+                data.familyStructure = value;
                 renderSection();
             });
 
             addFamilyOptionGroup("وضعیت والدین",
-                loadOptions("family_data", "parentStatus"), familyParentStatus, value -> {
-                familyParentStatus = value;
+                loadOptions("family_data", "parentStatus"), data.familyParentStatus, value -> {
+                data.familyParentStatus = value;
                 renderSection();
             });
 
             addFamilyOptionGroup("میزان حمایت خانوادگی",
-                loadOptions("family_data", "support"), familySupport, value -> {
-                familySupport = value;
+                loadOptions("family_data", "support"), data.familySupport, value -> {
+                data.familySupport = value;
                 renderSection();
             });
 
             addFamilyOptionGroup("وضعیت اقتصادی خانواده",
-                loadOptions("family_data", "economicStatus"), familyEconomicStatus, value -> {
-                familyEconomicStatus = value;
+                loadOptions("family_data", "data.economicStatus"), data.familyEconomicStatus, value -> {
+                data.familyEconomicStatus = value;
                 renderSection();
             });
 
@@ -533,7 +507,7 @@ public class NewGameScreen {
             familyHint.setTextSize(12);
             familyHint.setPadding(dp(4), dp(10), dp(4), dp(8));
             content.addView(familyHint, new LinearLayout.LayoutParams(-1, -2));
-        } else if (selectedSection == 6) {
+        } else if (data.selectedSection == 6) {
             renderSkillsSection();
         } else {
             TextView placeholder = new TextView(activity);
@@ -556,7 +530,7 @@ public class NewGameScreen {
         content.addView(intro, new LinearLayout.LayoutParams(-1, -2));
 
         TextView generalCount = new TextView(activity);
-        generalCount.setText("انتخاب مهارت‌های عمومی: " + selectedGeneralSkillIds.size()
+        generalCount.setText("انتخاب مهارت‌های عمومی: " + data.selectedGeneralSkillIds.size()
             + " از " + MAX_INITIAL_GENERAL_SKILLS);
         generalCount.setTextColor(gold);
         generalCount.setTextSize(12);
@@ -564,10 +538,10 @@ public class NewGameScreen {
         content.addView(generalCount);
 
         addSkillSelectionGrid("مهارت‌های عمومی — حداکثر سه انتخاب",
-            loadOptions("skills_data", "generalSkill"), selectedGeneralSkillIds, true);
+            loadOptions("skills_data", "generalSkill"), data.selectedGeneralSkillIds, true);
 
         addSkillSelectionGrid("مهارت‌های تخصصی — انتخاب آزاد",
-            loadOptions("skills_data", "specializedSkill"), selectedSpecializedSkillIds, false);
+            loadOptions("skills_data", "specializedSkill"), data.selectedSpecializedSkillIds, false);
 
         TextView levelHint = new TextView(activity);
         levelHint.setText("سطح تخصص‌ها به‌صورت اولیه از تطبیق رشته و سابقه تحصیلی محاسبه می‌شود. این برآورد هنوز تجربه کاری یا یادگیری مستقل را اندازه‌گیری نمی‌کند و هیچ مهارتی را قفل نمی‌کند.");
@@ -596,7 +570,7 @@ public class NewGameScreen {
                 String levelText = "سطح آغازین: " + skillLevelLabel(level);
                 LinearLayout card = skillChoiceCard(skillName, skillDescription, levelText, selected);
                 boolean limitReached = general && !selected
-                    && selectedGeneralSkillIds.size() >= MAX_INITIAL_GENERAL_SKILLS;
+                    && data.selectedGeneralSkillIds.size() >= MAX_INITIAL_GENERAL_SKILLS;
                 if (limitReached) card.setAlpha(0.48f);
 
                 LinearLayout.LayoutParams cardParams =
@@ -607,7 +581,7 @@ public class NewGameScreen {
                 card.setOnClickListener(v -> {
                     if (selectedSkills.contains(skillId)) {
                         selectedSkills.remove(skillId);
-                    } else if (general && selectedGeneralSkillIds.size() >= MAX_INITIAL_GENERAL_SKILLS) {
+                    } else if (general && data.selectedGeneralSkillIds.size() >= MAX_INITIAL_GENERAL_SKILLS) {
                         Toast.makeText(activity, "حداکثر سه مهارت عمومی می‌توانید انتخاب کنید.", Toast.LENGTH_SHORT).show();
                         return;
                     } else {
@@ -680,8 +654,8 @@ public class NewGameScreen {
     }
 
     private int initialSpecializedSkillLevel(String relatedEducationField) {
-        String focusLevel = educationCurrentLevel.isEmpty() ? educationLevel : educationCurrentLevel;
-        if (relatedEducationField == null || !relatedEducationField.equals(educationField)
+        String focusLevel = data.educationCurrentLevel.isEmpty() ? data.educationLevel : data.educationCurrentLevel;
+        if (relatedEducationField == null || !relatedEducationField.equals(data.educationField)
                 || focusLevel.isEmpty() || "NO_FORMAL_EDUCATION".equals(focusLevel)) {
             return SKILL_BEGINNER;
         }
@@ -695,16 +669,16 @@ public class NewGameScreen {
             || "VOCATIONAL_DIPLOMA".equals(focusLevel);
 
         int level = SKILL_BEGINNER;
-        if (educationCurrentLevel.isEmpty()) {
+        if (data.educationCurrentLevel.isEmpty()) {
             level = postSecondary ? SKILL_INTERMEDIATE : SKILL_BASIC;
-        } else if ("STUDYING".equals(educationStatus)
-                || "ON_BREAK".equals(educationStatus)
-                || "DROPPED_OUT".equals(educationStatus)) {
+        } else if ("STUDYING".equals(data.educationStatus)
+                || "ON_BREAK".equals(data.educationStatus)
+                || "DROPPED_OUT".equals(data.educationStatus)) {
             level = secondaryOrAbove ? SKILL_BASIC : SKILL_BEGINNER;
         }
 
         // Academic credentials alone never grant advanced or expert practical proficiency.
-        if ("POOR".equals(educationPerformance) && level > SKILL_BEGINNER) {
+        if ("POOR".equals(data.educationPerformance) && level > SKILL_BEGINNER) {
             level--;
         }
         return Math.min(level, SKILL_INTERMEDIATE);
@@ -726,7 +700,7 @@ public class NewGameScreen {
     }
 
     private boolean validateCurrentFields() {
-        if (selectedSection == 0 && ageInput != null) {
+        if (data.selectedSection == 0 && ageInput != null) {
             String value = ageInput.getText().toString().trim();
             if (value.isEmpty()) {
                 ageInput.setError("سن را وارد کنید");
@@ -747,74 +721,74 @@ public class NewGameScreen {
                 return false;
             }
 
-            if (innateTrait.isEmpty()) {
+            if (data.innateTrait.isEmpty()) {
                 Toast.makeText(activity, "یک ویژگی ذاتی انتخاب کنید.", Toast.LENGTH_SHORT).show();
                 return false;
             }
         }
 
-        if (selectedSection == 1 && countryCode.isEmpty()) {
+        if (data.selectedSection == 1 && data.countryCode.isEmpty()) {
             Toast.makeText(activity, "ملیت اصلی را انتخاب کنید.", Toast.LENGTH_SHORT).show();
             return false;
         }
-        if (selectedSection == 2) {
-            if (residenceCountryCode.isEmpty()) {
+        if (data.selectedSection == 2) {
+            if (data.residenceCountryCode.isEmpty()) {
                 Toast.makeText(activity, "کشور محل زندگی را انتخاب کنید.", Toast.LENGTH_SHORT).show();
                 return false;
             }
-            if (residenceLocationId.isEmpty()) {
+            if (data.residenceLocationId.isEmpty()) {
                 Toast.makeText(activity, "شهر یا منطقه محل زندگی را انتخاب کنید.", Toast.LENGTH_SHORT).show();
                 return false;
             }
         }
-        if (selectedSection == 3) {
-            if (educationLevel.isEmpty()) {
+        if (data.selectedSection == 3) {
+            if (data.educationLevel.isEmpty()) {
                 Toast.makeText(activity, "آخرین مقطع تکمیل‌شده را انتخاب کنید.", Toast.LENGTH_SHORT).show();
                 return false;
             }
-            if (educationStatus.isEmpty()) {
+            if (data.educationStatus.isEmpty()) {
                 Toast.makeText(activity, "وضعیت تحصیل را مشخص کنید.", Toast.LENGTH_SHORT).show();
                 return false;
             }
-            if (!"NOT_STUDYING".equals(educationStatus)) {
-                if (educationCurrentLevel.isEmpty()) {
+            if (!"NOT_STUDYING".equals(data.educationStatus)) {
+                if (data.educationCurrentLevel.isEmpty()) {
                     Toast.makeText(activity, "مقطع ناتمام فعلی را انتخاب کنید.", Toast.LENGTH_SHORT).show();
                     return false;
                 }
-                if (educationLevelRank(educationCurrentLevel) < educationLevelRank(educationLevel)) {
+                if (educationLevelRank(data.educationCurrentLevel) < educationLevelRank(data.educationLevel)) {
                     Toast.makeText(activity, "مقطع فعلی نمی‌تواند پایین‌تر از آخرین مقطع تکمیل‌شده باشد.", Toast.LENGTH_SHORT).show();
                     return false;
                 }
             }
-            String focusLevel = educationCurrentLevel.isEmpty() ? educationLevel : educationCurrentLevel;
+            String focusLevel = data.educationCurrentLevel.isEmpty() ? data.educationLevel : data.educationCurrentLevel;
             if (!focusLevel.isEmpty() && !"NO_FORMAL_EDUCATION".equals(focusLevel)
-                    && (educationField.isEmpty() || educationPerformance.isEmpty())) {
+                    && (data.educationField.isEmpty() || data.educationPerformance.isEmpty())) {
                 Toast.makeText(activity, "رشته و عملکرد تحصیلی مقطع مربوط را مشخص کنید.", Toast.LENGTH_SHORT).show();
                 return false;
             }
         }
-        if (selectedSection == 4 && economicStatus.isEmpty()) {
+        if (data.selectedSection == 4 && data.economicStatus.isEmpty()) {
             Toast.makeText(activity, "وضعیت اقتصادی اولیه را انتخاب کنید.", Toast.LENGTH_SHORT).show();
             return false;
         }
-        if (selectedSection == 6 && selectedGeneralSkillIds.isEmpty()) {
+        if (data.selectedSection == 6 && data.selectedGeneralSkillIds.isEmpty()) {
             Toast.makeText(activity, "حداقل یک مهارت عمومی انتخاب کنید.", Toast.LENGTH_SHORT).show();
             return false;
         }
-        if (selectedSection == 5) {
-            if (familyStructure.isEmpty()) {
+        if (data.selectedSection == 5) {
+            if (data.familyStructure.isEmpty()) {
                 Toast.makeText(activity, "ساختار خانواده را انتخاب کنید.", Toast.LENGTH_SHORT).show();
                 return false;
             }
-            if (familyParentStatus.isEmpty()) {
+            if (data.familyParentStatus.isEmpty()) {
                 Toast.makeText(activity, "وضعیت والدین را مشخص کنید.", Toast.LENGTH_SHORT).show();
                 return false;
             }
-            if (familySupport.isEmpty()) {
+            if (data.familySupport.isEmpty()) {
                 Toast.makeText(activity, "میزان حمایت خانوادگی را انتخاب کنید.", Toast.LENGTH_SHORT).show();
                 return false;
             }
-            if (familyEconomicStatus.isEmpty()) {
+            if (data.familyEconomicStatus.isEmpty()) {
                 Toast.makeText(activity, "وضعیت اقتصادی خانواده را انتخاب کنید.", Toast.LENGTH_SHORT).show();
                 return false;
             }
@@ -830,8 +804,8 @@ public class NewGameScreen {
     }
 
     private void captureVisibleFields() {
-        if (nameInput != null) playerName = nameInput.getText().toString();
-        if (ageInput != null) playerAge = ageInput.getText().toString();
+        if (nameInput != null) data.playerName = nameInput.getText().toString();
+        if (ageInput != null) data.playerAge = ageInput.getText().toString();
     }
 
     public void saveDraft() {
@@ -849,87 +823,33 @@ public class NewGameScreen {
     }
 
     private CharacterCreationData toData() {
-        CharacterCreationData data = new CharacterCreationData();
-        data.selectedSection = selectedSection;
-        data.playerName = playerName;
-        data.playerAge = playerAge;
-        data.gender = gender;
-        data.innateTrait = innateTrait;
-        data.countryCode = countryCode;
-        data.countryName = countryName;
-        data.residenceCountryCode = residenceCountryCode;
-        data.residenceCountryName = residenceCountryName;
-        data.residenceLocationId = residenceLocationId;
-        data.residenceLocationName = residenceLocationName;
-        data.residenceType = residenceType;
-        data.educationLevel = educationLevel;
-        data.educationCurrentLevel = educationCurrentLevel;
-        data.educationStatus = educationStatus;
-        data.educationField = educationField;
-        data.educationPerformance = educationPerformance;
-        data.economicStatus = economicStatus;
-        data.familyStructure = familyStructure;
-        data.familyParentStatus = familyParentStatus;
-        data.familySupport = familySupport;
-        data.familyEconomicStatus = familyEconomicStatus;
-        data.selectedGeneralSkillIds.addAll(selectedGeneralSkillIds);
-        data.selectedSpecializedSkillIds.addAll(selectedSpecializedSkillIds);
         return data;
     }
 
-    private void applyData(CharacterCreationData data) {
-        selectedSection = Math.max(0, Math.min(sections.length - 1, data.selectedSection));
-        playerName = data.playerName;
-        playerAge = data.playerAge;
-        gender = data.gender;
-        innateTrait = data.innateTrait;
-        countryCode = data.countryCode;
-        countryName = data.countryName;
-        residenceCountryCode = data.residenceCountryCode;
-        residenceCountryName = data.residenceCountryName;
-        residenceLocationId = data.residenceLocationId;
-        residenceLocationName = data.residenceLocationName;
-        residenceType = data.residenceType;
-        educationLevel = data.educationLevel;
-        educationCurrentLevel = data.educationCurrentLevel;
-        educationStatus = data.educationStatus;
-        educationField = data.educationField;
-        educationPerformance = data.educationPerformance;
-        economicStatus = data.economicStatus;
-        familyStructure = data.familyStructure;
-        familyParentStatus = data.familyParentStatus;
-        familySupport = data.familySupport;
-        familyEconomicStatus = data.familyEconomicStatus;
-        selectedGeneralSkillIds.clear();
-        selectedGeneralSkillIds.addAll(data.selectedGeneralSkillIds);
-        selectedSpecializedSkillIds.clear();
-        selectedSpecializedSkillIds.addAll(data.selectedSpecializedSkillIds);
-    }
-
     private int firstInvalidSection() {
-        if (playerName == null || playerName.trim().isEmpty()) return 0;
+        if (data.playerName == null || data.playerName.trim().isEmpty()) return 0;
         try {
-            int age = Integer.parseInt(playerAge.trim());
+            int age = Integer.parseInt(data.playerAge.trim());
             if (age < 12 || age > 30) return 0;
         } catch (Exception e) {
             return 0;
         }
-        if (innateTrait.isEmpty()) return 0;
-        if (countryCode.isEmpty()) return 1;
-        if (residenceCountryCode.isEmpty() || residenceLocationId.isEmpty()) return 2;
-        if (educationLevel.isEmpty() || educationStatus.isEmpty()) return 3;
-        if (!"NOT_STUDYING".equals(educationStatus)) {
-            if (educationCurrentLevel.isEmpty()
-                    || educationLevelRank(educationCurrentLevel) < educationLevelRank(educationLevel)) return 3;
+        if (data.innateTrait.isEmpty()) return 0;
+        if (data.countryCode.isEmpty()) return 1;
+        if (data.residenceCountryCode.isEmpty() || data.residenceLocationId.isEmpty()) return 2;
+        if (data.educationLevel.isEmpty() || data.educationStatus.isEmpty()) return 3;
+        if (!"NOT_STUDYING".equals(data.educationStatus)) {
+            if (data.educationCurrentLevel.isEmpty()
+                    || educationLevelRank(data.educationCurrentLevel) < educationLevelRank(data.educationLevel)) return 3;
         }
-        String focusLevel = educationCurrentLevel.isEmpty() ? educationLevel : educationCurrentLevel;
+        String focusLevel = data.educationCurrentLevel.isEmpty() ? data.educationLevel : data.educationCurrentLevel;
         if (!"NO_FORMAL_EDUCATION".equals(focusLevel)
-                && (educationField.isEmpty() || educationPerformance.isEmpty())) return 3;
-        if (economicStatus.isEmpty()) return 4;
-        if (familyStructure.isEmpty() || familyParentStatus.isEmpty()
-                || familySupport.isEmpty() || familyEconomicStatus.isEmpty()) return 5;
-        if (selectedGeneralSkillIds.isEmpty()
-                || selectedGeneralSkillIds.size() > MAX_INITIAL_GENERAL_SKILLS) return 6;
+                && (data.educationField.isEmpty() || data.educationPerformance.isEmpty())) return 3;
+        if (data.economicStatus.isEmpty()) return 4;
+        if (data.familyStructure.isEmpty() || data.familyParentStatus.isEmpty()
+                || data.familySupport.isEmpty() || data.familyEconomicStatus.isEmpty()) return 5;
+        if (data.selectedGeneralSkillIds.isEmpty()
+                || data.selectedGeneralSkillIds.size() > MAX_INITIAL_GENERAL_SKILLS) return 6;
         return -1;
     }
 
@@ -1008,7 +928,7 @@ public class NewGameScreen {
 
             for (int j = i; j < Math.min(i + 2, options.length); j++) {
                 final String statusId = options[j][0];
-                boolean selected = statusId.equals(economicStatus);
+                boolean selected = statusId.equals(data.economicStatus);
 
                 LinearLayout card = new LinearLayout(activity);
                 card.setOrientation(LinearLayout.VERTICAL);
@@ -1039,7 +959,7 @@ public class NewGameScreen {
                 row.addView(card, cardParams);
 
                 card.setOnClickListener(v -> {
-                    economicStatus = statusId;
+                    data.economicStatus = statusId;
                     renderSection();
                 });
             }
@@ -1329,16 +1249,16 @@ public class NewGameScreen {
             String selectedName = selected.substring(0, codeStart).trim();
 
             if (forResidence) {
-                if (!selectedCode.equals(residenceCountryCode)) {
-                    residenceLocationId = "";
-                    residenceLocationName = "";
-                    residenceType = "";
+                if (!selectedCode.equals(data.residenceCountryCode)) {
+                    data.residenceLocationId = "";
+                    data.residenceLocationName = "";
+                    data.residenceType = "";
                 }
-                residenceCountryCode = selectedCode;
-                residenceCountryName = selectedName;
+                data.residenceCountryCode = selectedCode;
+                data.residenceCountryName = selectedName;
             } else {
-                countryName = selectedName;
-                countryCode = selectedCode;
+                data.countryName = selectedName;
+                data.countryCode = selectedCode;
             }
             dialog.dismiss();
             renderSection();
@@ -1347,7 +1267,7 @@ public class NewGameScreen {
     }
 
     private void showLocationPicker() {
-        ArrayList<LocationEntry> locations = loadLocations(residenceCountryCode);
+        ArrayList<LocationEntry> locations = loadLocations(data.residenceCountryCode);
         if (locations.isEmpty()) {
             Toast.makeText(activity, "فعلاً مکانی برای این کشور تعریف نشده است.", Toast.LENGTH_SHORT).show();
             return;
@@ -1416,9 +1336,9 @@ public class NewGameScreen {
         list.setOnItemClickListener((parent, view, position, id) -> {
             LocationEntry selected = adapter.getItem(position);
             if (selected == null) return;
-            residenceLocationId = selected.id;
-            residenceLocationName = selected.name;
-            residenceType = selected.type;
+            data.residenceLocationId = selected.id;
+            data.residenceLocationName = selected.name;
+            data.residenceType = selected.type;
             dialog.dismiss();
             renderSection();
         });
