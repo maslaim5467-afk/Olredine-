@@ -89,6 +89,30 @@ public class CharacterCreationRepository extends SQLiteOpenHelper {
         }
     }
 
+    public synchronized long completeDraft(CharacterCreationData data) {
+        if (data == null) throw new IllegalArgumentException("Character data is required");
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+        try {
+            long now = System.currentTimeMillis();
+            String name = data.playerName == null ? "" : data.playerName.trim();
+            if (name.isEmpty()) name = "شخصیت بدون نام";
+            ContentValues values = new ContentValues();
+            values.put("name", name);
+            values.put("data_json", data.toJson().toString());
+            values.put("created_at", now);
+            values.put("updated_at", now);
+            long id = db.insertOrThrow(TABLE_SAVES, null, values);
+            db.delete(TABLE_DRAFTS, "id = 1", null);
+            db.setTransactionSuccessful();
+            return id;
+        } catch (JSONException e) {
+            throw new IllegalStateException("Unable to encode completed character", e);
+        } finally {
+            db.endTransaction();
+        }
+    }
+
     public synchronized CharacterCreationData loadCharacter(long id) {
         try (Cursor cursor = getReadableDatabase().query(
                 TABLE_SAVES, new String[]{"data_json"}, "id = ?",
