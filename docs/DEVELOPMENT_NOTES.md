@@ -140,3 +140,15 @@ Work directly in the GitHub repository when the required tool access is availabl
 - Household arrangement and parent life status are intentionally separate facts: for example, a parent may be alive without being part of the character's household. They are not forced into a simplistic one-to-one mapping.
 - Family economic circumstances remain independent from the character's own starting economic status in section 5.
 - This is initial UI data capture only. Family relationships, support events, obligations, starting resources, gameplay effects, and durable save integration are not implemented.
+
+
+## Skills section implementation notes (2026-11-13)
+
+- Replaced the section 7 placeholder with an initial skills-selection UI.
+- Added ten general skills; the player must choose at least one and may choose up to three. Selected general skills begin at the beginner level.
+- Added an open specialist-skill catalog covering technology, finance/business, medicine, science, design/content, teaching, and technical trades. Specialist choices are not locked by education and have no artificial selection cap in this initial form.
+- Every specialist skill can be selected independently. Its displayed initial level is estimated from a matching broad education field, current education status, completed education level, and academic performance.
+- The current estimator uses beginner as the baseline, basic for relevant ongoing or non-tertiary study, and intermediate for relevant completed post-secondary education. Weak academic performance reduces the estimate by one level. Formal education alone never grants advanced or expert practical proficiency.
+- Age does not prohibit choosing a skill. Experience and independent learning are not captured in this form yet, so the displayed specialist level is explicitly a preliminary education-based estimate.
+- Skill selections and initial estimates are held in the NewGameScreen object only. Character-model integration, durable save, skill growth/decay, and gameplay effects remain unimplemented.
+- No build or device-test result is claimed by this commit.
