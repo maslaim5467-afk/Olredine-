@@ -390,20 +390,30 @@ public class NewGameScreen {
 
             addOptionGroup("آخرین مقطع تکمیل‌شده",
                 loadOptions("education_data", "level"), educationLevel, value -> {
+                    String previousFocus = educationCurrentLevel.isEmpty()
+                        ? educationLevel : educationCurrentLevel;
                     educationLevel = value;
                     if ("NO_FORMAL_EDUCATION".equals(value)) {
                         educationCurrentLevel = "";
-                        educationField = "";
-                        educationPerformance = "";
                     } else if (!educationCurrentLevel.isEmpty()
                             && educationLevelRank(educationCurrentLevel) < educationLevelRank(value)) {
                         educationCurrentLevel = "";
+                    }
+                    String nextFocus = educationCurrentLevel.isEmpty()
+                        ? educationLevel : educationCurrentLevel;
+                    if (!previousFocus.equals(nextFocus)) {
+                        educationField = "";
+                        educationPerformance = "";
                     }
                     renderSection();
                 });
 
             addOptionGroup("وضعیت تحصیل",
                 loadOptions("education_data", "status"), educationStatus, value -> {
+                    if (!educationStatus.equals(value)) {
+                        educationField = "";
+                        educationPerformance = "";
+                    }
                     educationStatus = value;
                     if ("NOT_STUDYING".equals(value)) educationCurrentLevel = "";
                     renderSection();
@@ -414,6 +424,10 @@ public class NewGameScreen {
                     educationCurrentLevelOptions(), educationCurrentLevel, value -> {
                         if (!"NO_FORMAL_EDUCATION".equals(value)
                                 && educationLevelRank(value) >= educationLevelRank(educationLevel)) {
+                            if (!educationCurrentLevel.equals(value)) {
+                                educationField = "";
+                                educationPerformance = "";
+                            }
                             educationCurrentLevel = value;
                         }
                         renderSection();
