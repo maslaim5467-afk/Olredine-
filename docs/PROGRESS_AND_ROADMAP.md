@@ -265,11 +265,11 @@ In later versions, country and location data may influence legal conditions, emp
 
 ## 6. Immediate next tasks
 
-1. Review and device-test the residence section and its XML-backed country/location selection.
-2. Define a shared character data model before adding many more independent form fields.
-3. Connect the existing character, nationality, and residence UI to that model.
-4. Refine education progression/validation rules and define the fields for family and skills; revisit the economic-status categories when the shared character and economy models are designed.
-5. Implement local save/restore once the first character schema is stable.
+1. Build and device-test the new XML-backed option catalogs across all seven character-creation sections.
+2. Extract XML loading and panel validation/rules from `NewGameScreen` into a dedicated Java class, keeping rendering separate from game rules.
+3. Design the cross-section consistency rules and preserve unusual but logically valid character backgrounds.
+4. Define a shared character data model and connect all seven sections to it.
+5. Implement SQLite save/restore once the initial character schema and mutable-state boundaries are stable.
 6. Design the smallest playable opening scenario and its event consequences.
 
 ## 7. Release philosophy
