@@ -420,7 +420,7 @@ public class NewGameScreen {
                 addOptionGroup("مقطع ناتمام فعلی",
                     educationCurrentLevelOptions(), data.educationCurrentLevel, value -> {
                         if (!"NO_FORMAL_EDUCATION".equals(value)
-                                && educationLevelRank(value) >= educationLevelRank(data.educationLevel)) {
+                                && educationLevelRank(value) > educationLevelRank(data.educationLevel)) {
                             if (!data.educationCurrentLevel.equals(value)) {
                                 data.educationField = "";
                                 data.educationPerformance = "";
@@ -435,7 +435,7 @@ public class NewGameScreen {
             if (!focusLevel.isEmpty() && !"NO_FORMAL_EDUCATION".equals(focusLevel)) {
                 addOptionGroup(data.educationCurrentLevel.isEmpty()
                         ? "رشته آخرین مقطع تکمیل‌شده" : "رشته مقطع ناتمام",
-                    loadOptions("education_data", "field"), data.educationField, value -> {
+                    educationFieldOptions(focusLevel), data.educationField, value -> {
                         data.educationField = value;
                         renderSection();
                     });
@@ -636,10 +636,23 @@ public class NewGameScreen {
     private String[][] educationCurrentLevelOptions() {
         String[][] allLevels = loadOptions("education_data", "level");
         ArrayList<String[]> available = new ArrayList<>();
+        int completedRank = educationLevelRank(data.educationLevel);
         for (String[] level : allLevels) {
-            if (!"NO_FORMAL_EDUCATION".equals(level[0])) available.add(level);
+            if (!"NO_FORMAL_EDUCATION".equals(level[0])
+                    && educationLevelRank(level[0]) > completedRank) {
+                available.add(level);
+            }
         }
         return available.toArray(new String[available.size()][]);
+    }
+
+    private String[][] educationFieldOptions(String focusLevel) {
+        String[][] allFields = loadOptions("education_data", "field");
+        if ("PRIMARY".equals(focusLevel) || "LOWER_SECONDARY".equals(focusLevel)) {
+            String undeclaredLabel = optionLabel(allFields, "UNDECLARED");
+            return new String[][]{{"UNDECLARED", undeclaredLabel, "", ""}};
+        }
+        return allFields;
     }
 
     private int educationLevelRank(String level) {
@@ -701,73 +714,20 @@ public class NewGameScreen {
     }
 
     private boolean validateCurrentFields() {
-        if (data.selectedSection >= 0 && data.selectedSection <= 2) {
-            captureVisibleFields();
-            CharacterCreationValidator.ValidationError error =
-                CharacterCreationValidator.validateSection(activity, data, data.selectedSection);
-            if (error != null) {
-                if ("playerName".equals(error.field) && nameInput != null) {
-                    nameInput.setError(error.message);
-                    nameInput.requestFocus();
-                } else if ("playerAge".equals(error.field) && ageInput != null) {
-                    ageInput.setError(error.message);
-                    ageInput.requestFocus();
-                }
-                Toast.makeText(activity, error.message, Toast.LENGTH_SHORT).show();
-                return false;
+        if (data.selectedSection == 0) captureVisibleFields();
+
+        CharacterCreationValidator.ValidationError error =
+            CharacterCreationValidator.validateSection(activity, data, data.selectedSection);
+        if (error != null) {
+            if ("playerName".equals(error.field) && nameInput != null) {
+                nameInput.setError(error.message);
+                nameInput.requestFocus();
+            } else if ("playerAge".equals(error.field) && ageInput != null) {
+                ageInput.setError(error.message);
+                ageInput.requestFocus();
             }
-        }
-        if (data.selectedSection == 3) {
-            if (data.educationLevel.isEmpty()) {
-                Toast.makeText(activity, "آخرین مقطع تکمیل‌شده را انتخاب کنید.", Toast.LENGTH_SHORT).show();
-                return false;
-            }
-            if (data.educationStatus.isEmpty()) {
-                Toast.makeText(activity, "وضعیت تحصیل را مشخص کنید.", Toast.LENGTH_SHORT).show();
-                return false;
-            }
-            if (!"NOT_STUDYING".equals(data.educationStatus)) {
-                if (data.educationCurrentLevel.isEmpty()) {
-                    Toast.makeText(activity, "مقطع ناتمام فعلی را انتخاب کنید.", Toast.LENGTH_SHORT).show();
-                    return false;
-                }
-                if (educationLevelRank(data.educationCurrentLevel) < educationLevelRank(data.educationLevel)) {
-                    Toast.makeText(activity, "مقطع فعلی نمی‌تواند پایین‌تر از آخرین مقطع تکمیل‌شده باشد.", Toast.LENGTH_SHORT).show();
-                    return false;
-                }
-            }
-            String focusLevel = data.educationCurrentLevel.isEmpty() ? data.educationLevel : data.educationCurrentLevel;
-            if (!focusLevel.isEmpty() && !"NO_FORMAL_EDUCATION".equals(focusLevel)
-                    && (data.educationField.isEmpty() || data.educationPerformance.isEmpty())) {
-                Toast.makeText(activity, "رشته و عملکرد تحصیلی مقطع مربوط را مشخص کنید.", Toast.LENGTH_SHORT).show();
-                return false;
-            }
-        }
-        if (data.selectedSection == 4 && data.economicStatus.isEmpty()) {
-            Toast.makeText(activity, "وضعیت اقتصادی اولیه را انتخاب کنید.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, error.message, Toast.LENGTH_LONG).show();
             return false;
-        }
-        if (data.selectedSection == 6 && data.selectedGeneralSkillIds.isEmpty()) {
-            Toast.makeText(activity, "حداقل یک مهارت عمومی انتخاب کنید.", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        if (data.selectedSection == 5) {
-            if (data.familyStructure.isEmpty()) {
-                Toast.makeText(activity, "ساختار خانواده را انتخاب کنید.", Toast.LENGTH_SHORT).show();
-                return false;
-            }
-            if (data.familyParentStatus.isEmpty()) {
-                Toast.makeText(activity, "وضعیت والدین را مشخص کنید.", Toast.LENGTH_SHORT).show();
-                return false;
-            }
-            if (data.familySupport.isEmpty()) {
-                Toast.makeText(activity, "میزان حمایت خانوادگی را انتخاب کنید.", Toast.LENGTH_SHORT).show();
-                return false;
-            }
-            if (data.familyEconomicStatus.isEmpty()) {
-                Toast.makeText(activity, "وضعیت اقتصادی خانواده را انتخاب کنید.", Toast.LENGTH_SHORT).show();
-                return false;
-            }
         }
         return true;
     }
@@ -803,25 +763,10 @@ public class NewGameScreen {
     }
 
     private int firstInvalidSection() {
-        CharacterCreationValidator.ValidationError baseError =
-            CharacterCreationValidator.validateFirstThreeSections(activity, data);
-        if (baseError != null) return baseError.section;
-        if (data.educationLevel.isEmpty() || data.educationStatus.isEmpty()) return 3;
-        if (!"NOT_STUDYING".equals(data.educationStatus)) {
-            if (data.educationCurrentLevel.isEmpty()
-                    || educationLevelRank(data.educationCurrentLevel) < educationLevelRank(data.educationLevel)) return 3;
-        }
-        String focusLevel = data.educationCurrentLevel.isEmpty() ? data.educationLevel : data.educationCurrentLevel;
-        if (!"NO_FORMAL_EDUCATION".equals(focusLevel)
-                && (data.educationField.isEmpty() || data.educationPerformance.isEmpty())) return 3;
-        if (data.economicStatus.isEmpty()) return 4;
-        if (data.familyStructure.isEmpty() || data.familyParentStatus.isEmpty()
-                || data.familySupport.isEmpty() || data.familyEconomicStatus.isEmpty()) return 5;
-        if (data.selectedGeneralSkillIds.isEmpty()
-                || data.selectedGeneralSkillIds.size() > MAX_INITIAL_GENERAL_SKILLS) return 6;
-        return -1;
+        CharacterCreationValidator.ValidationError error =
+            CharacterCreationValidator.validateAllSections(activity, data);
+        return error == null ? -1 : error.section;
     }
-
 
     private interface OptionSelectionListener {
         void onSelected(String value);
