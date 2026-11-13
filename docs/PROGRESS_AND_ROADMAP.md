@@ -44,7 +44,7 @@ The new-game screen contains seven sections:
 6. Family
 7. Skills
 
-Character, nationality, and residence have initial inputs. Education (section 4) has initial selectable fields for highest completed level, current study status, study field/category, and academic performance. The user has confirmed that the latest education-related APK build succeeded; further on-device behavior testing and design refinement remain. Economic status (section 5) now has a required selection among five broad starting-condition levels, with short descriptions and no exact monetary amounts. This is an initial UI capture only; the selected level is not yet connected to an economic model or durable save. Family and skills (sections 6–7) remain placeholders.
+Character, nationality, and residence have initial inputs. Education (section 4) has initial selectable fields for highest completed level, current study status, study field/category, and academic performance. The user has confirmed that the latest education-related APK build succeeded; further on-device behavior testing and design refinement remain. Economic status (section 5) now has a required selection among five broad starting-condition levels, with short descriptions and no exact monetary amounts. This is an initial UI capture only; the selected level is not yet connected to an economic model or durable save. Family (section 6) now has initial selectable fields for household arrangement, parent life status, family support, and family economic circumstances. Skills (section 7) remains a placeholder.
 
 #### Character section
 
@@ -117,13 +117,28 @@ The initial economic-status UI offers five mutually exclusive starting-condition
 
 The player does not enter exact amounts or choose a job/income source during character creation. The selection is required before leaving section 5 and is currently held only in the `NewGameScreen` object. The actual starting cash, assets, liabilities, income, and economic consequences have not been defined or implemented. Family circumstances remain separate in section 6.
 
+### Family section
+
+The initial family UI captures four required dimensions:
+
+| Dimension | Options (display labels) | Internal storage |
+|---|---|---|
+| Household / living arrangement | Living with both parents; one parent; a guardian; relatives; independently / without a family guardian | Stable IDs |
+| Parent life status | Both alive; only father alive; only mother alive; neither alive; unknown | Stable IDs |
+| Family support | Strong; moderate; limited; conflictual; no effective support | Stable IDs |
+| Family economic circumstances | Very difficult; difficult; ordinary; suitable; favorable | Stable IDs |
+
+Household arrangement and parent life status are separate facts. A parent may be alive without living in the character's household, so these fields are not forced into a simplistic one-to-one mapping. Family economic circumstances are independent from the character's starting economic status in section 5.
+
+All four groups are required before leaving section 6. This is initial UI capture only: family relationships, obligations, support events, starting resources, gameplay consequences, and durable save integration remain unimplemented.
+
 ### Current limitations
 
 - Character, nationality, residence, education, and economic-status values are held in the screen object only; there is no durable save-game system yet.
 - There is no complete character data model shared across screens yet.
 - There is no playable world/gameplay screen after character creation.
 - No event-and-consequence gameplay loop exists yet.
-- Education captures initial form data but has no gameplay effects or durable save integration yet. Economic status captures one coarse starting category but is not connected to economic calculations or gameplay. Family and skills remain placeholders.
+- Education captures initial form data but has no gameplay effects or durable save integration yet. Economic status captures one coarse starting category but is not connected to economic calculations or gameplay. Family captures four initial categories but has no relationship simulation, gameplay effects, or durable save integration. Skills remains a placeholder.
 - The final action in character creation is still a placeholder.
 - No claim of successful build or device testing should be made solely from a successful GitHub commit.
 
@@ -293,3 +308,12 @@ This document is a living development record. Update the implementation status o
 - Kept job selection and income-source selection out of character creation; those are intended to emerge through gameplay.
 - Kept family economic circumstances separate in section 6.
 - This commit implements initial UI capture only. It does not establish starting cash/assets/debt, economic calculations, persistent storage, or on-device test results.
+
+
+### 2026-11-13 — Initial family section
+
+- Replaced the section 6 placeholder with four required choice groups: household arrangement, parent life status, family support, and family economic circumstances.
+- Stored choices using stable internal IDs rather than Persian display labels.
+- Kept household arrangement separate from whether parents are alive, and kept family economic circumstances separate from the player's own starting economic status.
+- Implemented required-field validation for all four groups.
+- This is initial UI capture only; family simulation, gameplay effects, durable save integration, and device-test confirmation remain future work.
