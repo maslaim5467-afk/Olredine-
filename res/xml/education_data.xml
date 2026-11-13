@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<educationData>
+    <levels>
+        <level id="NO_FORMAL_EDUCATION" label="بدون تحصیلات رسمی" />
+        <level id="PRIMARY" label="آموزش ابتدایی" />
+        <level id="LOWER_SECONDARY" label="آموزش متوسطه اول" />
+        <level id="SECONDARY" label="آموزش متوسطه" />
+        <level id="VOCATIONAL_DIPLOMA" label="دیپلم فنی‌وحرفه‌ای" />
+        <level id="SHORT_CYCLE_TERTIARY" label="آموزش عالی کوتاه‌مدت" />
+        <level id="BACHELOR" label="کارشناسی" />
+        <level id="MASTER" label="کارشناسی ارشد" />
+        <level id="DOCTORATE" label="دکتری" />
+    </levels>
+    <statuses>
+        <status id="CURRENTLY_STUDYING" label="در حال تحصیل" />
+        <status id="GRADUATED" label="فارغ‌التحصیل" />
+        <status id="DROPPED_OUT" label="ترک تحصیل" />
+        <status id="ON_BREAK" label="وقفه در تحصیل" />
+    </statuses>
+    <fields>
+        <field id="TECHNOLOGY_ENGINEERING" label="فناوری و مهندسی" />
+        <field id="ECONOMICS_MANAGEMENT" label="اقتصاد و مدیریت" />
+        <field id="MEDICAL_SCIENCES" label="علوم پزشکی" />
+        <field id="NATURAL_SCIENCES" label="علوم پایه" />
+        <field id="ARTS_DESIGN" label="هنر و طراحی" />
+        <field id="HUMANITIES_SOCIAL_SCIENCES" label="علوم انسانی و اجتماعی" />
+        <field id="VOCATIONAL" label="فنی‌وحرفه‌ای" />
+        <field id="OTHER" label="سایر رشته‌ها" />
+        <field id="UNDECLARED" label="بدون رشته مشخص" />
+    </fields>
+    <performances>
+        <performance id="POOR" label="ضعیف" />
+        <performance id="AVERAGE" label="متوسط" />
+        <performance id="GOOD" label="خوب" />
+        <performance id="EXCELLENT" label="عالی" />
+    </performances>
+</educationData>
