@@ -70,6 +70,10 @@ public class NewGameScreen {
     private String educationField = "";
     private String educationPerformance = "";
     private String economicStatus = "";
+    private String familyStructure = "";
+    private String familyParentStatus = "";
+    private String familySupport = "";
+    private String familyEconomicStatus = "";
 
     public NewGameScreen(Activity activity, Runnable onBack) {
         this.activity = activity;
@@ -433,6 +437,64 @@ public class NewGameScreen {
             economicHint.setTextSize(12);
             economicHint.setPadding(dp(4), dp(10), dp(4), dp(8));
             content.addView(economicHint, new LinearLayout.LayoutParams(-1, -2));
+        } else if (selectedSection == 5) {
+            TextView intro = new TextView(activity);
+            intro.setText("شرایط خانوادگی شخصیت را مشخص کنید. ساختار خانواده درباره محل و شیوه زندگی است؛ وضعیت والدین مستقل از این موضوع ثبت می‌شود.");
+            intro.setTextColor(Color.rgb(190, 202, 216));
+            intro.setTextSize(12);
+            intro.setPadding(dp(4), 0, dp(4), dp(10));
+            content.addView(intro, new LinearLayout.LayoutParams(-1, -2));
+
+            addFamilyOptionGroup("ساختار و محل زندگی خانوادگی", new String[][]{
+                {"TWO_PARENT_HOUSEHOLD", "زندگی با هر دو والد"},
+                {"SINGLE_PARENT_HOUSEHOLD", "زندگی با یکی از والدین"},
+                {"GUARDIAN_HOUSEHOLD", "زندگی با سرپرست یا قیم"},
+                {"RELATIVES_HOUSEHOLD", "زندگی با بستگان"},
+                {"INDEPENDENT_NO_GUARDIAN", "زندگی مستقل / بدون سرپرست"}
+            }, familyStructure, value -> {
+                familyStructure = value;
+                renderSection();
+            });
+
+            addFamilyOptionGroup("وضعیت والدین", new String[][]{
+                {"BOTH_ALIVE", "هر دو والد در قید حیات‌اند"},
+                {"FATHER_ONLY_ALIVE", "فقط پدر در قید حیات است"},
+                {"MOTHER_ONLY_ALIVE", "فقط مادر در قید حیات است"},
+                {"NEITHER_ALIVE", "هیچ‌کدام در قید حیات نیستند"},
+                {"PARENT_STATUS_UNKNOWN", "وضعیت نامشخص"}
+            }, familyParentStatus, value -> {
+                familyParentStatus = value;
+                renderSection();
+            });
+
+            addFamilyOptionGroup("میزان حمایت خانوادگی", new String[][]{
+                {"STRONG_SUPPORT", "حمایت قوی"},
+                {"MODERATE_SUPPORT", "حمایت معمولی"},
+                {"LIMITED_SUPPORT", "حمایت محدود"},
+                {"FAMILY_CONFLICT", "روابط پرتنش"},
+                {"NO_EFFECTIVE_SUPPORT", "بدون حمایت مؤثر"}
+            }, familySupport, value -> {
+                familySupport = value;
+                renderSection();
+            });
+
+            addFamilyOptionGroup("وضعیت اقتصادی خانواده", new String[][]{
+                {"FAMILY_VERY_DIFFICULT", "بسیار دشوار"},
+                {"FAMILY_DIFFICULT", "دشوار"},
+                {"FAMILY_ORDINARY", "معمولی"},
+                {"FAMILY_SUITABLE", "مناسب"},
+                {"FAMILY_FAVORABLE", "مطلوب"}
+            }, familyEconomicStatus, value -> {
+                familyEconomicStatus = value;
+                renderSection();
+            });
+
+            TextView familyHint = new TextView(activity);
+            familyHint.setText("وضعیت اقتصادی خانواده از شرایط اقتصادی شروع شخصیت در بخش قبل جداست. این انتخاب‌ها فعلاً فقط اطلاعات اولیه را ثبت می‌کنند و هنوز پیامدهای گیم‌پلی ندارند.");
+            familyHint.setTextColor(Color.rgb(190, 202, 216));
+            familyHint.setTextSize(12);
+            familyHint.setPadding(dp(4), dp(10), dp(4), dp(8));
+            content.addView(familyHint, new LinearLayout.LayoutParams(-1, -2));
         } else {
             TextView placeholder = new TextView(activity);
             placeholder.setText("ساختار این بخش آماده است؛ گزینه‌ها و اطلاعات آن در مراحل بعدی توسعه اضافه می‌شوند.");
@@ -506,6 +568,24 @@ public class NewGameScreen {
             Toast.makeText(activity, "وضعیت اقتصادی اولیه را انتخاب کنید.", Toast.LENGTH_SHORT).show();
             return false;
         }
+        if (selectedSection == 5) {
+            if (familyStructure.isEmpty()) {
+                Toast.makeText(activity, "ساختار خانواده را انتخاب کنید.", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+            if (familyParentStatus.isEmpty()) {
+                Toast.makeText(activity, "وضعیت والدین را مشخص کنید.", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+            if (familySupport.isEmpty()) {
+                Toast.makeText(activity, "میزان حمایت خانوادگی را انتخاب کنید.", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+            if (familyEconomicStatus.isEmpty()) {
+                Toast.makeText(activity, "وضعیت اقتصادی خانواده را انتخاب کنید.", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        }
         return true;
     }
 
@@ -545,6 +625,34 @@ public class NewGameScreen {
             if (options.length % 2 == 1 && i + 1 == options.length - 1) {
                 View spacer = new View(activity);
                 row.addView(spacer, new LinearLayout.LayoutParams(0, dp(48), 1f));
+            }
+        }
+    }
+
+    private void addFamilyOptionGroup(String label, String[][] options, String selected,
+                                      OptionSelectionListener listener) {
+        addLabel(label);
+        for (int i = 0; i < options.length; i += 2) {
+            LinearLayout row = new LinearLayout(activity);
+            row.setOrientation(LinearLayout.HORIZONTAL);
+            LinearLayout.LayoutParams rowParams = new LinearLayout.LayoutParams(-1, -2);
+            rowParams.bottomMargin = dp(7);
+            content.addView(row, rowParams);
+
+            for (int j = i; j < Math.min(i + 2, options.length); j++) {
+                final String optionId = options[j][0];
+                TextView button = choiceButton(options[j][1], optionId.equals(selected));
+                button.setTextSize(12);
+                button.setPadding(dp(5), dp(5), dp(5), dp(5));
+                LinearLayout.LayoutParams buttonParams =
+                    new LinearLayout.LayoutParams(0, dp(52), 1f);
+                if (j > i) buttonParams.setMargins(dp(7), 0, 0, 0);
+                row.addView(button, buttonParams);
+                button.setOnClickListener(v -> listener.onSelected(optionId));
+            }
+            if (options.length % 2 == 1 && i + 1 == options.length - 1) {
+                View spacer = new View(activity);
+                row.addView(spacer, new LinearLayout.LayoutParams(0, dp(52), 1f));
             }
         }
     }
