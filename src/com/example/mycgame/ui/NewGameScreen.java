@@ -69,6 +69,7 @@ public class NewGameScreen {
     private String educationStatus = "";
     private String educationField = "";
     private String educationPerformance = "";
+    private String economicStatus = "";
 
     public NewGameScreen(Activity activity, Runnable onBack) {
         this.activity = activity;
@@ -416,6 +417,22 @@ public class NewGameScreen {
                 noFormalEducation.setPadding(dp(4), dp(8), dp(4), dp(8));
                 content.addView(noFormalEducation);
             }
+        } else if (selectedSection == 4) {
+            TextView intro = new TextView(activity);
+            intro.setText("وضعیت اقتصادی فقط شرایط شروع شخصیت را مشخص می‌کند. مقدار دقیق پول یا ثروت در این مرحله نمایش داده نمی‌شود.");
+            intro.setTextColor(Color.rgb(190, 202, 216));
+            intro.setTextSize(12);
+            intro.setPadding(dp(4), 0, dp(4), dp(10));
+            content.addView(intro, new LinearLayout.LayoutParams(-1, -2));
+
+            addEconomicStatusOptions();
+
+            TextView economicHint = new TextView(activity);
+            economicHint.setText("درآمد و منابع مالی در جریان بازی و بر اساس فعالیت‌هایی مانند کار، کسب‌وکار یا سرمایه‌گذاری شکل می‌گیرند. وضعیت اقتصادی خانواده نیز در بخش خانواده جداگانه مشخص می‌شود.");
+            economicHint.setTextColor(Color.rgb(190, 202, 216));
+            economicHint.setTextSize(12);
+            economicHint.setPadding(dp(4), dp(10), dp(4), dp(8));
+            content.addView(economicHint, new LinearLayout.LayoutParams(-1, -2));
         } else {
             TextView placeholder = new TextView(activity);
             placeholder.setText("ساختار این بخش آماده است؛ گزینه‌ها و اطلاعات آن در مراحل بعدی توسعه اضافه می‌شوند.");
@@ -485,6 +502,10 @@ public class NewGameScreen {
                 return false;
             }
         }
+        if (selectedSection == 4 && economicStatus.isEmpty()) {
+            Toast.makeText(activity, "وضعیت اقتصادی اولیه را انتخاب کنید.", Toast.LENGTH_SHORT).show();
+            return false;
+        }
         return true;
     }
 
@@ -524,6 +545,68 @@ public class NewGameScreen {
             if (options.length % 2 == 1 && i + 1 == options.length - 1) {
                 View spacer = new View(activity);
                 row.addView(spacer, new LinearLayout.LayoutParams(0, dp(48), 1f));
+            }
+        }
+    }
+
+    private void addEconomicStatusOptions() {
+        String[][] options = {
+            {"VERY_DIFFICULT", "بسیار دشوار", "منابع اولیه بسیار محدود و فشار اقتصادی زیاد"},
+            {"DIFFICULT", "دشوار", "منابع محدود و شرایط مالی سخت"},
+            {"ORDINARY", "معمولی", "شرایط اقتصادی عادی"},
+            {"SUITABLE", "مناسب", "برخورداری از مقداری پشتوانه مالی"},
+            {"FAVORABLE", "مطلوب", "پشتوانه مالی نسبتاً خوب و شروع راحت‌تر"}
+        };
+
+        addLabel("شرایط اقتصادی شروع شخصیت");
+        for (int i = 0; i < options.length; i += 2) {
+            LinearLayout row = new LinearLayout(activity);
+            row.setOrientation(LinearLayout.HORIZONTAL);
+            LinearLayout.LayoutParams rowParams = new LinearLayout.LayoutParams(-1, -2);
+            rowParams.bottomMargin = dp(8);
+            content.addView(row, rowParams);
+
+            for (int j = i; j < Math.min(i + 2, options.length); j++) {
+                final String statusId = options[j][0];
+                boolean selected = statusId.equals(economicStatus);
+
+                LinearLayout card = new LinearLayout(activity);
+                card.setOrientation(LinearLayout.VERTICAL);
+                card.setGravity(Gravity.CENTER_VERTICAL);
+                card.setPadding(dp(10), dp(7), dp(10), dp(7));
+                card.setBackground(background(
+                    selected ? Color.rgb(91, 71, 39) : Color.rgb(34, 54, 77),
+                    10,
+                    selected ? gold : Color.rgb(86, 103, 121)
+                ));
+
+                TextView title = new TextView(activity);
+                title.setText(options[j][1]);
+                title.setTextColor(selected ? gold : text);
+                title.setTextSize(14);
+                title.setTypeface(Typeface.DEFAULT_BOLD);
+                card.addView(title);
+
+                TextView description = new TextView(activity);
+                description.setText(options[j][2]);
+                description.setTextColor(Color.rgb(190, 202, 216));
+                description.setTextSize(10);
+                card.addView(description);
+
+                LinearLayout.LayoutParams cardParams =
+                    new LinearLayout.LayoutParams(0, dp(82), 1f);
+                if (j > i) cardParams.setMargins(dp(7), 0, 0, 0);
+                row.addView(card, cardParams);
+
+                card.setOnClickListener(v -> {
+                    economicStatus = statusId;
+                    renderSection();
+                });
+            }
+
+            if (options.length % 2 == 1 && i + 1 == options.length - 1) {
+                View spacer = new View(activity);
+                row.addView(spacer, new LinearLayout.LayoutParams(0, dp(82), 1f));
             }
         }
     }
