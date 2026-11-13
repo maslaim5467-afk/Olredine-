@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.example.mycgame.data.CharacterCreationData;
 import com.example.mycgame.data.CharacterCreationRepository;
+import com.example.mycgame.data.CharacterCreationValidator;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -700,44 +701,19 @@ public class NewGameScreen {
     }
 
     private boolean validateCurrentFields() {
-        if (data.selectedSection == 0 && ageInput != null) {
-            String value = ageInput.getText().toString().trim();
-            if (value.isEmpty()) {
-                ageInput.setError("سن را وارد کنید");
-                ageInput.requestFocus();
-                return false;
-            }
-
-            try {
-                int age = Integer.parseInt(value);
-                if (age < 12 || age > 30) {
-                    ageInput.setError("سن باید بین ۱۲ تا ۳۰ سال باشد");
+        if (data.selectedSection >= 0 && data.selectedSection <= 2) {
+            captureVisibleFields();
+            CharacterCreationValidator.ValidationError error =
+                CharacterCreationValidator.validateSection(activity, data, data.selectedSection);
+            if (error != null) {
+                if ("playerName".equals(error.field) && nameInput != null) {
+                    nameInput.setError(error.message);
+                    nameInput.requestFocus();
+                } else if ("playerAge".equals(error.field) && ageInput != null) {
+                    ageInput.setError(error.message);
                     ageInput.requestFocus();
-                    return false;
                 }
-            } catch (NumberFormatException e) {
-                ageInput.setError("سن واردشده معتبر نیست");
-                ageInput.requestFocus();
-                return false;
-            }
-
-            if (data.innateTrait.isEmpty()) {
-                Toast.makeText(activity, "یک ویژگی ذاتی انتخاب کنید.", Toast.LENGTH_SHORT).show();
-                return false;
-            }
-        }
-
-        if (data.selectedSection == 1 && data.countryCode.isEmpty()) {
-            Toast.makeText(activity, "ملیت اصلی را انتخاب کنید.", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        if (data.selectedSection == 2) {
-            if (data.residenceCountryCode.isEmpty()) {
-                Toast.makeText(activity, "کشور محل زندگی را انتخاب کنید.", Toast.LENGTH_SHORT).show();
-                return false;
-            }
-            if (data.residenceLocationId.isEmpty()) {
-                Toast.makeText(activity, "شهر یا منطقه محل زندگی را انتخاب کنید.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, error.message, Toast.LENGTH_SHORT).show();
                 return false;
             }
         }
@@ -827,16 +803,9 @@ public class NewGameScreen {
     }
 
     private int firstInvalidSection() {
-        if (data.playerName == null || data.playerName.trim().isEmpty()) return 0;
-        try {
-            int age = Integer.parseInt(data.playerAge.trim());
-            if (age < 12 || age > 30) return 0;
-        } catch (Exception e) {
-            return 0;
-        }
-        if (data.innateTrait.isEmpty()) return 0;
-        if (data.countryCode.isEmpty()) return 1;
-        if (data.residenceCountryCode.isEmpty() || data.residenceLocationId.isEmpty()) return 2;
+        CharacterCreationValidator.ValidationError baseError =
+            CharacterCreationValidator.validateFirstThreeSections(activity, data);
+        if (baseError != null) return baseError.section;
         if (data.educationLevel.isEmpty() || data.educationStatus.isEmpty()) return 3;
         if (!"NOT_STUDYING".equals(data.educationStatus)) {
             if (data.educationCurrentLevel.isEmpty()
