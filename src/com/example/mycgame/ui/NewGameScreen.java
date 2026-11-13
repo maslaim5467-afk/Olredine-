@@ -56,7 +56,7 @@ public class NewGameScreen {
     private EditText ageInput;
     private String playerName = "";
     private String playerAge = "18";
-    private String gender = "مرد";
+    private String gender = "MALE";
     private String innateTrait = "";
     private String countryCode = "";
     private String countryName = "";
@@ -84,43 +84,8 @@ public class NewGameScreen {
     private static final int SKILL_ADVANCED = 4;
     private static final int SKILL_EXPERT = 5;
 
-    private static final String[][] GENERAL_SKILLS = {
-        {"PROBLEM_SOLVING", "حل مسئله", "بررسی مسئله و یافتن راه‌حل"},
-        {"COMMUNICATION", "ارتباطات", "انتقال روشن اطلاعات و تعامل با دیگران"},
-        {"NEGOTIATION", "مذاکره", "رسیدن به توافق و مدیریت اختلاف"},
-        {"TIME_MANAGEMENT", "مدیریت زمان", "برنامه‌ریزی و اولویت‌بندی فعالیت‌ها"},
-        {"DECISION_MAKING", "تصمیم‌گیری", "انتخاب میان گزینه‌ها و سنجش پیامدها"},
-        {"RESOURCE_MANAGEMENT", "مدیریت منابع", "استفاده مؤثر از منابع محدود"},
-        {"CREATIVITY", "خلاقیت", "ساخت ایده‌ها و راه‌حل‌های تازه"},
-        {"LEADERSHIP", "رهبری", "هدایت و هماهنگ‌کردن افراد"},
-        {"ADAPTABILITY", "سازگاری", "انطباق با شرایط و تغییرات"},
-        {"RISK_MANAGEMENT", "مدیریت ریسک", "شناخت و کنترل خطرها"}
-    };
-
-    // Education influences the initial estimate only; it never locks a specialist skill.
-    private static final String[][] SPECIALIZED_SKILLS = {
-        {"PROGRAMMING", "برنامه‌نویسی", "طراحی و نوشتن نرم‌افزار", "فناوری و مهندسی"},
-        {"SOFTWARE_ENGINEERING", "مهندسی نرم‌افزار", "طراحی و نگهداری سامانه‌های نرم‌افزاری", "فناوری و مهندسی"},
-        {"CYBERSECURITY", "امنیت سایبری", "شناخت و کاهش آسیب‌پذیری‌های دیجیتال", "فناوری و مهندسی"},
-        {"NETWORKING", "شبکه", "راه‌اندازی و مدیریت شبکه‌های رایانه‌ای", "فناوری و مهندسی"},
-        {"DATABASES", "پایگاه داده", "طراحی و کار با سامانه‌های داده", "فناوری و مهندسی"},
-        {"DATA_ANALYSIS", "تحلیل داده", "استخراج الگو و نتیجه از داده‌ها", "فناوری و مهندسی"},
-        {"INVESTING", "سرمایه‌گذاری", "ارزیابی فرصت‌ها و تخصیص سرمایه", "اقتصاد و مدیریت"},
-        {"ECONOMIC_ANALYSIS", "تحلیل اقتصادی", "تحلیل بازارها و پدیده‌های اقتصادی", "اقتصاد و مدیریت"},
-        {"ACCOUNTING", "حسابداری", "ثبت و تحلیل اطلاعات مالی", "اقتصاد و مدیریت"},
-        {"FINANCIAL_MANAGEMENT", "مدیریت مالی", "برنامه‌ریزی و کنترل منابع مالی", "اقتصاد و مدیریت"},
-        {"BUSINESS_MANAGEMENT", "مدیریت کسب‌وکار", "برنامه‌ریزی و اداره فعالیت تجاری", "اقتصاد و مدیریت"},
-        {"MARKETING", "بازاریابی", "شناخت بازار و توسعه تقاضا", "اقتصاد و مدیریت"},
-        {"SALES", "فروش", "معرفی و عرضه محصول یا خدمت", "اقتصاد و مدیریت"},
-        {"HUMAN_RESOURCES", "مدیریت منابع انسانی", "جذب و توسعه نیروی انسانی", "اقتصاد و مدیریت"},
-        {"MEDICINE", "علوم پزشکی", "دانش و مهارت‌های پایه حوزه پزشکی", "علوم پزشکی"},
-        {"SCIENTIFIC_RESEARCH", "پژوهش علمی", "روش تحقیق و بررسی نظام‌مند", "علوم پایه"},
-        {"GRAPHIC_DESIGN", "طراحی گرافیک", "ارتباط بصری و طراحی گرافیکی", "هنر و طراحی"},
-        {"PRODUCT_DESIGN", "طراحی محصول", "طراحی تجربه و ویژگی‌های محصول", "هنر و طراحی"},
-        {"CONTENT_CREATION", "تولید محتوا", "طراحی و تولید محتوای متنی یا چندرسانه‌ای", "هنر و طراحی"},
-        {"TEACHING", "آموزش", "انتقال دانش و طراحی فرایند یادگیری", "علوم انسانی و اجتماعی"},
-        {"TECHNICAL_TRADES", "مهارت‌های فنی و تعمیرات", "انجام کارهای فنی و تعمیراتی", "فنی‌وحرفه‌ای"}
-    };
+    // Static choice catalogs are loaded from XML resources.
+    private String[][] skillLevelOptions;
 
     private final HashSet<String> selectedGeneralSkillIds = new HashSet<>();
     private final HashSet<String> selectedSpecializedSkillIds = new HashSet<>();
@@ -296,15 +261,16 @@ public class NewGameScreen {
             addLabel("جنسیت");
             LinearLayout genders = new LinearLayout(activity);
             genders.setOrientation(LinearLayout.HORIZONTAL);
-            TextView male = choiceButton("مرد", gender.equals("مرد"));
-            TextView female = choiceButton("زن", gender.equals("زن"));
+            String[][] genders = loadOptions("character_data", "gender");
+            TextView male = choiceButton(optionLabel(genders, "MALE"), gender.equals("MALE"));
+            TextView female = choiceButton(optionLabel(genders, "FEMALE"), gender.equals("FEMALE"));
             genders.addView(male, new LinearLayout.LayoutParams(0, dp(48), 1f));
             LinearLayout.LayoutParams femaleParams = new LinearLayout.LayoutParams(0, dp(48), 1f);
             femaleParams.setMargins(dp(8), 0, 0, 0);
             genders.addView(female, femaleParams);
             content.addView(genders);
-            male.setOnClickListener(v -> { saveCurrentFields(); gender = "مرد"; renderSection(); });
-            female.setOnClickListener(v -> { saveCurrentFields(); gender = "زن"; renderSection(); });
+            male.setOnClickListener(v -> { saveCurrentFields(); gender = "MALE"; renderSection(); });
+            female.setOnClickListener(v -> { saveCurrentFields(); gender = "FEMALE"; renderSection(); });
 
             addLabel("سن");
             ageInput = addInput(playerAge, "18", true);
@@ -316,16 +282,7 @@ public class NewGameScreen {
             traitHint.setPadding(0, 0, 0, dp(8));
             content.addView(traitHint, new LinearLayout.LayoutParams(-1, -2));
 
-            String[][] traits = {
-                {"منضبط", "تمایل به نظم و برنامه‌ریزی"},
-                {"جاه‌طلب", "میل به پیشرفت و دستیابی به اهداف"},
-                {"تحلیل‌گر", "گرایش به بررسی و تحلیل مسائل"},
-                {"اجتماعی", "تمایل به ارتباط و تعامل"},
-                {"ریسک‌پذیر", "آمادگی برای پذیرش ریسک"},
-                {"صبور", "توانایی انتظار برای نتیجه بلندمدت"},
-                {"خلاق", "گرایش به ایده‌ها و راه‌حل‌های تازه"},
-                {"محتاط", "توجه به خطرات پیش از اقدام"}
-            };
+            String[][] traits = loadOptions("character_data", "trait");
 
             for (int i = 0; i < traits.length; i += 2) {
                 LinearLayout row = new LinearLayout(activity);
@@ -335,13 +292,14 @@ public class NewGameScreen {
                 content.addView(row, rowParams);
 
                 for (int j = i; j < i + 2; j++) {
-                    final String traitName = traits[j][0];
-                    LinearLayout trait = traitChoiceButton(traitName, traits[j][1], innateTrait.equals(traitName));
+                    final String traitId = traits[j][0];
+                    final String traitName = traits[j][1];
+                    LinearLayout trait = traitChoiceButton(traitName, traits[j][2], innateTrait.equals(traitId));
                     LinearLayout.LayoutParams traitParams = new LinearLayout.LayoutParams(0, dp(76), 1f);
                     if (j == i + 1) traitParams.setMargins(dp(8), 0, 0, 0);
                     row.addView(trait, traitParams);
                     trait.setOnClickListener(v -> {
-                        innateTrait = traitName;
+                        innateTrait = traitId;
                         renderSection();
                     });
                 }
@@ -350,7 +308,7 @@ public class NewGameScreen {
             TextView selectedTrait = new TextView(activity);
             selectedTrait.setText(innateTrait.isEmpty()
                 ? "هنوز ویژگی ذاتی انتخاب نشده است."
-                : "ویژگی ذاتی انتخاب‌شده: " + innateTrait);
+                : "ویژگی ذاتی انتخاب‌شده: " + optionLabel(traits, innateTrait));
             selectedTrait.setTextColor(gold);
             selectedTrait.setTextSize(13);
             selectedTrait.setPadding(dp(4), dp(8), dp(4), dp(8));
@@ -427,39 +385,31 @@ public class NewGameScreen {
             intro.setPadding(dp(4), 0, dp(4), dp(10));
             content.addView(intro, new LinearLayout.LayoutParams(-1, -2));
 
-            addOptionGroup("بالاترین سطح تحصیلات تکمیل‌شده", new String[]{
-                "بدون تحصیلات رسمی", "آموزش ابتدایی", "آموزش متوسطه اول",
-                "آموزش متوسطه", "دیپلم فنی‌وحرفه‌ای", "آموزش عالی کوتاه‌مدت",
-                "کارشناسی", "کارشناسی ارشد", "دکتری"
-            }, educationLevel, value -> {
-                educationLevel = value;
-                if ("بدون تحصیلات رسمی".equals(value)) {
-                    educationField = "بدون رشته مشخص";
-                    educationPerformance = "";
-                }
-                renderSection();
-            });
+            addOptionGroup("بالاترین سطح تحصیلات تکمیل‌شده",
+                loadOptions("education_data", "level"), educationLevel, value -> {
+                    educationLevel = value;
+                    if ("NO_FORMAL_EDUCATION".equals(value)) {
+                        educationField = "UNDECLARED";
+                        educationPerformance = "";
+                    }
+                    renderSection();
+                });
 
-            addOptionGroup("وضعیت تحصیلی فعلی", new String[]{
-                "در حال تحصیل", "فارغ‌التحصیل", "ترک تحصیل", "وقفه در تحصیل"
-            }, educationStatus, value -> {
+            addOptionGroup("وضعیت تحصیلی فعلی",
+                loadOptions("education_data", "status"), educationStatus, value -> {
                 educationStatus = value;
                 renderSection();
             });
 
-            if (!"بدون تحصیلات رسمی".equals(educationLevel)) {
-                addOptionGroup("رشته یا حوزه تحصیلی", new String[]{
-                    "فناوری و مهندسی", "اقتصاد و مدیریت", "علوم پزشکی",
-                    "علوم پایه", "هنر و طراحی", "علوم انسانی و اجتماعی",
-                    "فنی‌وحرفه‌ای", "سایر رشته‌ها", "بدون رشته مشخص"
-                }, educationField, value -> {
+            if (!"NO_FORMAL_EDUCATION".equals(educationLevel)) {
+                addOptionGroup("رشته یا حوزه تحصیلی",
+                    loadOptions("education_data", "field"), educationField, value -> {
                     educationField = value;
                     renderSection();
                 });
 
-                addOptionGroup("عملکرد تحصیلی", new String[]{
-                    "ضعیف", "متوسط", "خوب", "عالی"
-                }, educationPerformance, value -> {
+                addOptionGroup("عملکرد تحصیلی",
+                    loadOptions("education_data", "performance"), educationPerformance, value -> {
                     educationPerformance = value;
                     renderSection();
                 });
@@ -576,10 +526,10 @@ public class NewGameScreen {
         content.addView(generalCount);
 
         addSkillSelectionGrid("مهارت‌های عمومی — حداکثر سه انتخاب",
-            GENERAL_SKILLS, selectedGeneralSkillIds, true);
+            loadOptions("skills_data", "generalSkill"), selectedGeneralSkillIds, true);
 
         addSkillSelectionGrid("مهارت‌های تخصصی — انتخاب آزاد",
-            SPECIALIZED_SKILLS, selectedSpecializedSkillIds, false);
+            loadOptions("skills_data", "specializedSkill"), selectedSpecializedSkillIds, false);
 
         TextView levelHint = new TextView(activity);
         levelHint.setText("سطح تخصص‌ها به‌صورت اولیه از تطبیق رشته و سابقه تحصیلی محاسبه می‌شود. این برآورد هنوز تجربه کاری یا یادگیری مستقل را اندازه‌گیری نمی‌کند و هیچ مهارتی را قفل نمی‌کند.");
@@ -672,44 +622,47 @@ public class NewGameScreen {
 
     private int initialSpecializedSkillLevel(String relatedEducationField) {
         if (relatedEducationField == null || !relatedEducationField.equals(educationField)
-                || "بدون تحصیلات رسمی".equals(educationLevel)) {
+                || "NO_FORMAL_EDUCATION".equals(educationLevel)) {
             return SKILL_BEGINNER;
         }
 
-        boolean postSecondary = "آموزش عالی کوتاه‌مدت".equals(educationLevel)
-            || "کارشناسی".equals(educationLevel)
-            || "کارشناسی ارشد".equals(educationLevel)
-            || "دکتری".equals(educationLevel);
+        boolean postSecondary = "SHORT_CYCLE_TERTIARY".equals(educationLevel)
+            || "BACHELOR".equals(educationLevel)
+            || "MASTER".equals(educationLevel)
+            || "DOCTORATE".equals(educationLevel);
         boolean secondaryOrAbove = postSecondary
-            || "آموزش متوسطه".equals(educationLevel)
-            || "دیپلم فنی‌وحرفه‌ای".equals(educationLevel);
+            || "SECONDARY".equals(educationLevel)
+            || "VOCATIONAL_DIPLOMA".equals(educationLevel);
 
         int level = SKILL_BEGINNER;
-        if ("فارغ‌التحصیل".equals(educationStatus)) {
+        if ("GRADUATED".equals(educationStatus)) {
             level = postSecondary ? SKILL_INTERMEDIATE : SKILL_BASIC;
-        } else if ("در حال تحصیل".equals(educationStatus)
-                || "وقفه در تحصیل".equals(educationStatus)
-                || "ترک تحصیل".equals(educationStatus)) {
+        } else if ("CURRENTLY_STUDYING".equals(educationStatus)
+                || "ON_BREAK".equals(educationStatus)
+                || "DROPPED_OUT".equals(educationStatus)) {
             level = secondaryOrAbove ? SKILL_BASIC : SKILL_BEGINNER;
         }
 
         // Academic credentials alone never grant advanced or expert practical proficiency.
-        if ("ضعیف".equals(educationPerformance) && level > SKILL_BEGINNER) {
+        if ("POOR".equals(educationPerformance) && level > SKILL_BEGINNER) {
             level--;
         }
         return Math.min(level, SKILL_INTERMEDIATE);
     }
 
     private String skillLevelLabel(int level) {
+        if (skillLevelOptions == null) skillLevelOptions = loadOptions("skills_data", "level");
+        String id;
         switch (level) {
-            case SKILL_NONE: return "فاقد مهارت";
-            case SKILL_BASIC: return "مقدماتی";
-            case SKILL_INTERMEDIATE: return "متوسط";
-            case SKILL_ADVANCED: return "پیشرفته";
-            case SKILL_EXPERT: return "متخصص";
+            case SKILL_NONE: id = "NONE"; break;
+            case SKILL_BASIC: id = "BASIC"; break;
+            case SKILL_INTERMEDIATE: id = "INTERMEDIATE"; break;
+            case SKILL_ADVANCED: id = "ADVANCED"; break;
+            case SKILL_EXPERT: id = "EXPERT"; break;
             case SKILL_BEGINNER:
-            default: return "مبتدی";
+            default: id = "BEGINNER"; break;
         }
+        return optionLabel(skillLevelOptions, id);
     }
 
     private boolean validateCurrentFields() {
@@ -763,7 +716,7 @@ public class NewGameScreen {
                 Toast.makeText(activity, "وضعیت تحصیلی را انتخاب کنید.", Toast.LENGTH_SHORT).show();
                 return false;
             }
-            if (!"بدون تحصیلات رسمی".equals(educationLevel)
+            if (!"NO_FORMAL_EDUCATION".equals(educationLevel)
                     && (educationField.isEmpty() || educationPerformance.isEmpty())) {
                 Toast.makeText(activity, "رشته و عملکرد تحصیلی را مشخص کنید.", Toast.LENGTH_SHORT).show();
                 return false;
@@ -810,7 +763,7 @@ public class NewGameScreen {
         void onSelected(String value);
     }
 
-    private void addOptionGroup(String label, String[] options, String selected,
+    private void addOptionGroup(String label, String[][] options, String selected,
                                 OptionSelectionListener listener) {
         addLabel(label);
         for (int i = 0; i < options.length; i += 2) {
@@ -821,15 +774,16 @@ public class NewGameScreen {
             content.addView(row, rowParams);
 
             for (int j = i; j < Math.min(i + 2, options.length); j++) {
-                final String option = options[j];
-                TextView button = choiceButton(option, option.equals(selected));
+                final String optionId = options[j][0];
+                final String optionText = options[j][1];
+                TextView button = choiceButton(optionText, optionId.equals(selected));
                 button.setTextSize(12);
                 button.setPadding(dp(5), dp(5), dp(5), dp(5));
                 LinearLayout.LayoutParams buttonParams =
                     new LinearLayout.LayoutParams(0, dp(48), 1f);
                 if (j > i) buttonParams.setMargins(dp(7), 0, 0, 0);
                 row.addView(button, buttonParams);
-                button.setOnClickListener(v -> listener.onSelected(option));
+                button.setOnClickListener(v -> listener.onSelected(optionId));
             }
             if (options.length % 2 == 1 && i + 1 == options.length - 1) {
                 View spacer = new View(activity);
@@ -867,13 +821,7 @@ public class NewGameScreen {
     }
 
     private void addEconomicStatusOptions() {
-        String[][] options = {
-            {"VERY_DIFFICULT", "بسیار دشوار", "منابع اولیه بسیار محدود و فشار اقتصادی زیاد"},
-            {"DIFFICULT", "دشوار", "منابع محدود و شرایط مالی سخت"},
-            {"ORDINARY", "معمولی", "شرایط اقتصادی عادی"},
-            {"SUITABLE", "مناسب", "برخورداری از مقداری پشتوانه مالی"},
-            {"FAVORABLE", "مطلوب", "پشتوانه مالی نسبتاً خوب و شروع راحت‌تر"}
-        };
+        String[][] options = loadOptions("economy_data", "status");
 
         addLabel("شرایط اقتصادی شروع شخصیت");
         for (int i = 0; i < options.length; i += 2) {
@@ -998,6 +946,49 @@ public class NewGameScreen {
         option.setPadding(dp(12), dp(12), dp(12), dp(12));
         option.setBackground(background(Color.rgb(34, 54, 77), 10, Color.rgb(86, 103, 121)));
         content.addView(option, new LinearLayout.LayoutParams(-1, dp(44)));
+    }
+
+    private String[][] loadOptions(String resourceName, String elementName) {
+        ArrayList<String[]> result = new ArrayList<>();
+        int resourceId = activity.getResources().getIdentifier(
+            resourceName, "xml", activity.getPackageName());
+        if (resourceId == 0) {
+            Toast.makeText(activity, "فایل داده پیدا نشد: " + resourceName, Toast.LENGTH_SHORT).show();
+            return new String[0][];
+        }
+
+        XmlResourceParser parser = activity.getResources().getXml(resourceId);
+        try {
+            int event;
+            while ((event = parser.next()) != XmlResourceParser.END_DOCUMENT) {
+                if (event == XmlResourceParser.START_TAG && elementName.equals(parser.getName())) {
+                    String id = parser.getAttributeValue(null, "id");
+                    String label = parser.getAttributeValue(null, "label");
+                    String description = parser.getAttributeValue(null, "description");
+                    String field = parser.getAttributeValue(null, "field");
+                    if (id != null && label != null) {
+                        result.add(new String[]{
+                            id, label,
+                            description == null ? "" : description,
+                            field == null ? "" : field
+                        });
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Toast.makeText(activity, "خواندن داده ناموفق بود: " + resourceName, Toast.LENGTH_SHORT).show();
+        } finally {
+            parser.close();
+        }
+        return result.toArray(new String[result.size()][]);
+    }
+
+    private String optionLabel(String[][] options, String id) {
+        if (options == null || id == null) return "";
+        for (String[] option : options) {
+            if (option.length > 1 && id.equals(option[0])) return option[1];
+        }
+        return "";
     }
 
     private int worldDataResourceId() {
