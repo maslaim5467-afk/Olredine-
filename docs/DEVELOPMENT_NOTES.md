@@ -26,7 +26,8 @@ The design should be data-driven and extensible. Avoid hard-coding country facts
 - The residence section now has XML-backed country and location pickers. Its initial data covers 56 locations in 20 countries. The selected location supplies its settlement type (metropolis, medium city, or rural area).
 - Education now has initial selectable fields: highest completed education level, current study status, study field/category, and academic performance. The no-formal-education choice hides field/performance selection. This is initial form capture only; downstream gameplay effects and durable save integration are not implemented.
 - Economic status (section 5) now has a required initial selection with five broad levels: very difficult, difficult, ordinary, suitable, and favorable. The UI stores a stable internal ID for the chosen level; it does not ask for exact money, income, assets, or debt.
-- Family and skills remain structural placeholders.
+- Family (section 6) now has initial selectable fields for household/living arrangement, parent life status, family support, and family economic circumstances. Each choice stores a stable internal ID; all four groups are required before leaving the section. The family economic category is independent from the player's starting economic condition in section 5.
+- Skills (section 7) remains a structural placeholder.
 - The user confirmed that the residence APK test succeeded. The education UI change has now built successfully; further on-device behavior testing and design refinement remain.
 - The current screen state is held in the screen object only. It is not yet persisted to SQLite or another save system.
 - Main menu labels and new-game screen labels are Persian at present.
@@ -125,3 +126,17 @@ Work directly in the GitHub repository when the required tool access is availabl
 - Employment and income are not selected in character creation. Income is intended to emerge later from gameplay activities such as employment, business, or investment.
 - Family economic circumstances remain separate and belong to section 6.
 - This is an initial UI milestone only. The categories have not yet been translated into starting cash, assets, liabilities, costs, or simulation rules; there is no durable save integration.
+
+
+## Family section implementation notes (2026-11-13)
+
+- Section 6 now captures four independent dimensions:
+  - Household/living arrangement: living with both parents, one parent, a guardian, relatives, or independently/without a family guardian.
+  - Parent life status: both alive, only father alive, only mother alive, neither alive, or unknown.
+  - Family support: strong, moderate, limited, conflictual, or no effective support.
+  - Family economic circumstances: very difficult, difficult, ordinary, suitable, or favorable.
+- Every option is stored under a stable internal ID rather than its Persian display label.
+- All four groups require a selection before the player can leave section 6.
+- Household arrangement and parent life status are intentionally separate facts: for example, a parent may be alive without being part of the character's household. They are not forced into a simplistic one-to-one mapping.
+- Family economic circumstances remain independent from the character's own starting economic status in section 5.
+- This is initial UI data capture only. Family relationships, support events, obligations, starting resources, gameplay effects, and durable save integration are not implemented.
