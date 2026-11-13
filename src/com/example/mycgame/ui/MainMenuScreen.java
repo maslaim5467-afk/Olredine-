@@ -16,14 +16,17 @@ public class MainMenuScreen {
     private final Activity activity;
     private final Runnable onNewGame;
     private final Runnable onContinueDraft;
+    private final Runnable onLoadGame;
     private final int gold = Color.rgb(255, 194, 70);
     private final int cream = Color.rgb(255, 238, 190);
     private final int navy = Color.rgb(7, 20, 38);
 
-    public MainMenuScreen(Activity activity, Runnable onNewGame, Runnable onContinueDraft) {
+    public MainMenuScreen(Activity activity, Runnable onNewGame,
+                          Runnable onContinueDraft, Runnable onLoadGame) {
         this.activity = activity;
         this.onNewGame = onNewGame;
         this.onContinueDraft = onContinueDraft;
+        this.onLoadGame = onLoadGame;
     }
 
     public View create() {
@@ -87,8 +90,7 @@ public class MainMenuScreen {
 
         addButton(panel, "▶", "شروع بازی جدید", true, onNewGame);
         addButton(panel, "↻", "ادامه ساخت شخصیت", false, onContinueDraft);
-        addButton(panel, "▰", "بارگذاری بازی", false,
-            () -> toast("بارگذاری بازی‌های ذخیره‌شده بعداً اضافه می‌شود"));
+        addButton(panel, "▰", "بارگذاری بازی", false, onLoadGame);
         addButton(panel, "⚙", "تنظیمات", false,
             () -> toast("تنظیمات بعداً اضافه می‌شود"));
         addButton(panel, "ⓘ", "درباره بازی", false,
