@@ -67,6 +67,7 @@ public class NewGameScreen {
     private String residenceLocationName = "";
     private String residenceType = "";
     private String educationLevel = "";
+    private String educationCurrentLevel = "";
     private String educationStatus = "";
     private String educationField = "";
     private String educationPerformance = "";
@@ -387,37 +388,56 @@ public class NewGameScreen {
             intro.setPadding(dp(4), 0, dp(4), dp(10));
             content.addView(intro, new LinearLayout.LayoutParams(-1, -2));
 
-            addOptionGroup("بالاترین سطح تحصیلات تکمیل‌شده",
+            addOptionGroup("آخرین مقطع تکمیل‌شده",
                 loadOptions("education_data", "level"), educationLevel, value -> {
                     educationLevel = value;
                     if ("NO_FORMAL_EDUCATION".equals(value)) {
-                        educationField = "UNDECLARED";
+                        educationCurrentLevel = "";
+                        educationField = "";
                         educationPerformance = "";
+                    } else if (!educationCurrentLevel.isEmpty()
+                            && educationLevelRank(educationCurrentLevel) < educationLevelRank(value)) {
+                        educationCurrentLevel = "";
                     }
                     renderSection();
                 });
 
-            addOptionGroup("وضعیت تحصیلی فعلی",
+            addOptionGroup("وضعیت تحصیل",
                 loadOptions("education_data", "status"), educationStatus, value -> {
-                educationStatus = value;
-                renderSection();
-            });
+                    educationStatus = value;
+                    if ("NOT_STUDYING".equals(value)) educationCurrentLevel = "";
+                    renderSection();
+                });
 
-            if (!"NO_FORMAL_EDUCATION".equals(educationLevel)) {
-                addOptionGroup("رشته یا حوزه تحصیلی",
+            if (!educationStatus.isEmpty() && !"NOT_STUDYING".equals(educationStatus)) {
+                addOptionGroup("مقطع ناتمام فعلی",
+                    loadOptions("education_data", "level"), educationCurrentLevel, value -> {
+                        if (!"NO_FORMAL_EDUCATION".equals(value)
+                                && educationLevelRank(value) >= educationLevelRank(educationLevel)) {
+                            educationCurrentLevel = value;
+                        }
+                        renderSection();
+                    });
+            }
+
+            String focusLevel = educationCurrentLevel.isEmpty() ? educationLevel : educationCurrentLevel;
+            if (!focusLevel.isEmpty() && !"NO_FORMAL_EDUCATION".equals(focusLevel)) {
+                addOptionGroup(educationCurrentLevel.isEmpty()
+                        ? "رشته آخرین مقطع تکمیل‌شده" : "رشته مقطع ناتمام",
                     loadOptions("education_data", "field"), educationField, value -> {
-                    educationField = value;
-                    renderSection();
-                });
+                        educationField = value;
+                        renderSection();
+                    });
 
-                addOptionGroup("عملکرد تحصیلی",
+                addOptionGroup(educationCurrentLevel.isEmpty()
+                        ? "عملکرد در آخرین مقطع تکمیل‌شده" : "عملکرد در مقطع ناتمام",
                     loadOptions("education_data", "performance"), educationPerformance, value -> {
-                    educationPerformance = value;
-                    renderSection();
-                });
+                        educationPerformance = value;
+                        renderSection();
+                    });
             } else {
                 TextView noFormalEducation = new TextView(activity);
-                noFormalEducation.setText("برای این سابقه، رشته و عملکرد تحصیلی رسمی ثبت نمی‌شود.");
+                noFormalEducation.setText("برای این وضعیت، رشته و عملکرد تحصیلی رسمی ثبت نمی‌شود.");
                 noFormalEducation.setTextColor(gold);
                 noFormalEducation.setTextSize(12);
                 noFormalEducation.setPadding(dp(4), dp(8), dp(4), dp(8));
@@ -602,24 +622,37 @@ public class NewGameScreen {
         return card;
     }
 
+    private int educationLevelRank(String level) {
+        if ("PRIMARY".equals(level)) return 1;
+        if ("LOWER_SECONDARY".equals(level)) return 2;
+        if ("SECONDARY".equals(level)) return 3;
+        if ("VOCATIONAL_DIPLOMA".equals(level)) return 4;
+        if ("SHORT_CYCLE_TERTIARY".equals(level)) return 5;
+        if ("BACHELOR".equals(level)) return 6;
+        if ("MASTER".equals(level)) return 7;
+        if ("DOCTORATE".equals(level)) return 8;
+        return 0;
+    }
+
     private int initialSpecializedSkillLevel(String relatedEducationField) {
+        String focusLevel = educationCurrentLevel.isEmpty() ? educationLevel : educationCurrentLevel;
         if (relatedEducationField == null || !relatedEducationField.equals(educationField)
-                || "NO_FORMAL_EDUCATION".equals(educationLevel)) {
+                || focusLevel.isEmpty() || "NO_FORMAL_EDUCATION".equals(focusLevel)) {
             return SKILL_BEGINNER;
         }
 
-        boolean postSecondary = "SHORT_CYCLE_TERTIARY".equals(educationLevel)
-            || "BACHELOR".equals(educationLevel)
-            || "MASTER".equals(educationLevel)
-            || "DOCTORATE".equals(educationLevel);
+        boolean postSecondary = "SHORT_CYCLE_TERTIARY".equals(focusLevel)
+            || "BACHELOR".equals(focusLevel)
+            || "MASTER".equals(focusLevel)
+            || "DOCTORATE".equals(focusLevel);
         boolean secondaryOrAbove = postSecondary
-            || "SECONDARY".equals(educationLevel)
-            || "VOCATIONAL_DIPLOMA".equals(educationLevel);
+            || "SECONDARY".equals(focusLevel)
+            || "VOCATIONAL_DIPLOMA".equals(focusLevel);
 
         int level = SKILL_BEGINNER;
-        if ("GRADUATED".equals(educationStatus)) {
+        if (educationCurrentLevel.isEmpty()) {
             level = postSecondary ? SKILL_INTERMEDIATE : SKILL_BASIC;
-        } else if ("CURRENTLY_STUDYING".equals(educationStatus)
+        } else if ("STUDYING".equals(educationStatus)
                 || "ON_BREAK".equals(educationStatus)
                 || "DROPPED_OUT".equals(educationStatus)) {
             level = secondaryOrAbove ? SKILL_BASIC : SKILL_BEGINNER;
@@ -691,16 +724,27 @@ public class NewGameScreen {
         }
         if (selectedSection == 3) {
             if (educationLevel.isEmpty()) {
-                Toast.makeText(activity, "سطح تحصیلات را انتخاب کنید.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, "آخرین مقطع تکمیل‌شده را انتخاب کنید.", Toast.LENGTH_SHORT).show();
                 return false;
             }
             if (educationStatus.isEmpty()) {
-                Toast.makeText(activity, "وضعیت تحصیلی را انتخاب کنید.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, "وضعیت تحصیل را مشخص کنید.", Toast.LENGTH_SHORT).show();
                 return false;
             }
-            if (!"NO_FORMAL_EDUCATION".equals(educationLevel)
+            if (!"NOT_STUDYING".equals(educationStatus)) {
+                if (educationCurrentLevel.isEmpty()) {
+                    Toast.makeText(activity, "مقطع ناتمام فعلی را انتخاب کنید.", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+                if (educationLevelRank(educationCurrentLevel) < educationLevelRank(educationLevel)) {
+                    Toast.makeText(activity, "مقطع فعلی نمی‌تواند پایین‌تر از آخرین مقطع تکمیل‌شده باشد.", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            }
+            String focusLevel = educationCurrentLevel.isEmpty() ? educationLevel : educationCurrentLevel;
+            if (!focusLevel.isEmpty() && !"NO_FORMAL_EDUCATION".equals(focusLevel)
                     && (educationField.isEmpty() || educationPerformance.isEmpty())) {
-                Toast.makeText(activity, "رشته و عملکرد تحصیلی را مشخص کنید.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, "رشته و عملکرد تحصیلی مقطع مربوط را مشخص کنید.", Toast.LENGTH_SHORT).show();
                 return false;
             }
         }
