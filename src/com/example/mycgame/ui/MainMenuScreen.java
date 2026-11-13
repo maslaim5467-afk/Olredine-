@@ -15,13 +15,15 @@ import android.widget.Toast;
 public class MainMenuScreen {
     private final Activity activity;
     private final Runnable onNewGame;
+    private final Runnable onContinueDraft;
     private final int gold = Color.rgb(255, 194, 70);
     private final int cream = Color.rgb(255, 238, 190);
     private final int navy = Color.rgb(7, 20, 38);
 
-    public MainMenuScreen(Activity activity, Runnable onNewGame) {
+    public MainMenuScreen(Activity activity, Runnable onNewGame, Runnable onContinueDraft) {
         this.activity = activity;
         this.onNewGame = onNewGame;
+        this.onContinueDraft = onContinueDraft;
     }
 
     public View create() {
@@ -84,8 +86,7 @@ public class MainMenuScreen {
         panel.addView(line, lp);
 
         addButton(panel, "▶", "شروع بازی جدید", true, onNewGame);
-        addButton(panel, "↻", "ادامه بازی", false,
-            () -> toast("هنوز بازی ذخیره‌شده‌ای وجود ندارد"));
+        addButton(panel, "↻", "ادامه ساخت شخصیت", false, onContinueDraft);
         addButton(panel, "▰", "بارگذاری بازی", false,
             () -> toast("بارگذاری بازی‌های ذخیره‌شده بعداً اضافه می‌شود"));
         addButton(panel, "⚙", "تنظیمات", false,
