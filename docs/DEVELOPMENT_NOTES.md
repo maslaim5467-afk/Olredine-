@@ -76,22 +76,20 @@ The design should be data-driven and extensible. Avoid hard-coding country facts
 
 ## Immediate next steps
 
-1. Pull the latest `main` branch in Termux.
-2. Install and test the latest APK on the target phone.
-3. Verify:
-   - app opens to the main menu;
-   - tapping the new-game button opens the new screen;
-   - the left navigation changes the right panel;
-   - name, gender, and age survive section changes;
-   - the back control and Android back action return to the main menu;
-   - no clipping or unreadable text occurs in landscape orientation.
-4. Adjust the visual proportions only after reviewing a real device screenshot.
-5. Once navigation/layout is stable, extract reusable UI helpers if they reduce duplication; avoid premature framework-building.
-6. Build and device-test the XML-backed residence section; verify country filtering, city search, type display, and required-field navigation.
-7. Define a shared character data model and connect character, nationality, and residence values to it.
-8. Refine education rules and define the fields and validation rules for family and skills. Include the deferred age/education consistency issue above when designing shared character validation; revisit the economic-status categories when the shared character/economy model is designed.
-9. Design save-game schema and SQLite integration when the first complete character/world creation flow is understood.
-10. Add a localization manager before spreading more hard-coded user-facing strings across screens.
+1. Pull the latest `main` branch in Termux, build the APK, and test the XML-backed character-creation refactor on the target phone.
+2. Verify that all seven sections load their complete option catalogs and preserve the current choices while navigating:
+   - gender and all eight innate traits;
+   - 195 countries and the existing residence locations;
+   - all education levels, statuses, fields, and performance choices;
+   - all five personal economic starting conditions;
+   - all four family choice groups;
+   - ten general skills and 21 specialist skills, including education-based level labels.
+3. Confirm that changing education choices still updates the displayed initial estimates for specialist skills.
+4. Extract XML loading and character-creation rules/validation from `NewGameScreen` into a dedicated Java class. Keep the screen responsible for rendering and interaction; keep rule logic independent of UI. Do not move this layer to C/JNI without measured computational need.
+5. Design the cross-section compatibility matrix (age/education, household/parent status, and other genuine contradictions) in the shared rules layer, preserving valid unusual cases.
+6. Define a shared character data model and connect the seven sections to it.
+7. Design the SQLite save schema for mutable character/game state; XML remains read-only static catalog data.
+8. Add a localization manager when the data and UI boundaries are ready.
 
 ## Known caveats / things not to assume
 
