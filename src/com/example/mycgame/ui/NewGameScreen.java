@@ -261,9 +261,9 @@ public class NewGameScreen {
             addLabel("جنسیت");
             LinearLayout genders = new LinearLayout(activity);
             genders.setOrientation(LinearLayout.HORIZONTAL);
-            String[][] genders = loadOptions("character_data", "gender");
-            TextView male = choiceButton(optionLabel(genders, "MALE"), gender.equals("MALE"));
-            TextView female = choiceButton(optionLabel(genders, "FEMALE"), gender.equals("FEMALE"));
+            String[][] genderOptions = loadOptions("character_data", "gender");
+            TextView male = choiceButton(optionLabel(genderOptions, "MALE"), gender.equals("MALE"));
+            TextView female = choiceButton(optionLabel(genderOptions, "FEMALE"), gender.equals("FEMALE"));
             genders.addView(male, new LinearLayout.LayoutParams(0, dp(48), 1f));
             LinearLayout.LayoutParams femaleParams = new LinearLayout.LayoutParams(0, dp(48), 1f);
             femaleParams.setMargins(dp(8), 0, 0, 0);
