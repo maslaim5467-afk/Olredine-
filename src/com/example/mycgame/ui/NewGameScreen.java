@@ -841,7 +841,11 @@ public class NewGameScreen {
 
     private void persistDraft() {
         if (repository == null) return;
-        repository.saveDraft(toData());
+        try {
+            repository.saveDraft(toData());
+        } catch (Exception e) {
+            Toast.makeText(activity, "ذخیره موقت اطلاعات ناموفق بود.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private CharacterCreationData toData() {
