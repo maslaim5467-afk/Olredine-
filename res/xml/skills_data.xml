@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<skillsData>
+    <generalSkills>
+        <skill id="PROBLEM_SOLVING" label="حل مسئله" description="بررسی مسئله و یافتن راه‌حل" />
+        <skill id="COMMUNICATION" label="ارتباطات" description="انتقال روشن اطلاعات و تعامل با دیگران" />
+        <skill id="NEGOTIATION" label="مذاکره" description="رسیدن به توافق و مدیریت اختلاف" />
+        <skill id="TIME_MANAGEMENT" label="مدیریت زمان" description="برنامه‌ریزی و اولویت‌بندی فعالیت‌ها" />
+        <skill id="DECISION_MAKING" label="تصمیم‌گیری" description="انتخاب میان گزینه‌ها و سنجش پیامدها" />
+        <skill id="RESOURCE_MANAGEMENT" label="مدیریت منابع" description="استفاده مؤثر از منابع محدود" />
+        <skill id="CREATIVITY" label="خلاقیت" description="ساخت ایده‌ها و راه‌حل‌های تازه" />
+        <skill id="LEADERSHIP" label="رهبری" description="هدایت و هماهنگ‌کردن افراد" />
+        <skill id="ADAPTABILITY" label="سازگاری" description="انطباق با شرایط و تغییرات" />
+        <skill id="RISK_MANAGEMENT" label="مدیریت ریسک" description="شناخت و کنترل خطرها" />
+    </generalSkills>
+    <specializedSkills>
+        <skill id="PROGRAMMING" label="برنامه‌نویسی" description="طراحی و نوشتن نرم‌افزار" field="TECHNOLOGY_ENGINEERING" />
+        <skill id="SOFTWARE_ENGINEERING" label="مهندسی نرم‌افزار" description="طراحی و نگهداری سامانه‌های نرم‌افزاری" field="TECHNOLOGY_ENGINEERING" />
+        <skill id="CYBERSECURITY" label="امنیت سایبری" description="شناخت و کاهش آسیب‌پذیری‌های دیجیتال" field="TECHNOLOGY_ENGINEERING" />
+        <skill id="NETWORKING" label="شبکه" description="راه‌اندازی و مدیریت شبکه‌های رایانه‌ای" field="TECHNOLOGY_ENGINEERING" />
+        <skill id="DATABASES" label="پایگاه داده" description="طراحی و کار با سامانه‌های داده" field="TECHNOLOGY_ENGINEERING" />
+        <skill id="DATA_ANALYSIS" label="تحلیل داده" description="استخراج الگو و نتیجه از داده‌ها" field="TECHNOLOGY_ENGINEERING" />
+        <skill id="INVESTING" label="سرمایه‌گذاری" description="ارزیابی فرصت‌ها و تخصیص سرمایه" field="ECONOMICS_MANAGEMENT" />
+        <skill id="ECONOMIC_ANALYSIS" label="تحلیل اقتصادی" description="تحلیل بازارها و پدیده‌های اقتصادی" field="ECONOMICS_MANAGEMENT" />
+        <skill id="ACCOUNTING" label="حسابداری" description="ثبت و تحلیل اطلاعات مالی" field="ECONOMICS_MANAGEMENT" />
+        <skill id="FINANCIAL_MANAGEMENT" label="مدیریت مالی" description="برنامه‌ریزی و کنترل منابع مالی" field="ECONOMICS_MANAGEMENT" />
+        <skill id="BUSINESS_MANAGEMENT" label="مدیریت کسب‌وکار" description="برنامه‌ریزی و اداره فعالیت تجاری" field="ECONOMICS_MANAGEMENT" />
+        <skill id="MARKETING" label="بازاریابی" description="شناخت بازار و توسعه تقاضا" field="ECONOMICS_MANAGEMENT" />
+        <skill id="SALES" label="فروش" description="معرفی و عرضه محصول یا خدمت" field="ECONOMICS_MANAGEMENT" />
+        <skill id="HUMAN_RESOURCES" label="مدیریت منابع انسانی" description="جذب و توسعه نیروی انسانی" field="ECONOMICS_MANAGEMENT" />
+        <skill id="MEDICINE" label="علوم پزشکی" description="دانش و مهارت‌های پایه حوزه پزشکی" field="MEDICAL_SCIENCES" />
+        <skill id="SCIENTIFIC_RESEARCH" label="پژوهش علمی" description="روش تحقیق و بررسی نظام‌مند" field="NATURAL_SCIENCES" />
+        <skill id="GRAPHIC_DESIGN" label="طراحی گرافیک" description="ارتباط بصری و طراحی گرافیکی" field="ARTS_DESIGN" />
+        <skill id="PRODUCT_DESIGN" label="طراحی محصول" description="طراحی تجربه و ویژگی‌های محصول" field="ARTS_DESIGN" />
+        <skill id="CONTENT_CREATION" label="تولید محتوا" description="طراحی و تولید محتوای متنی یا چندرسانه‌ای" field="ARTS_DESIGN" />
+        <skill id="TEACHING" label="آموزش" description="انتقال دانش و طراحی فرایند یادگیری" field="HUMANITIES_SOCIAL_SCIENCES" />
+        <skill id="TECHNICAL_TRADES" label="مهارت‌های فنی و تعمیرات" description="انجام کارهای فنی و تعمیراتی" field="VOCATIONAL" />
+    </specializedSkills>
+    <skillLevels>
+        <level id="NONE" label="فاقد مهارت" />
+        <level id="BEGINNER" label="مبتدی" />
+        <level id="BASIC" label="مقدماتی" />
+        <level id="INTERMEDIATE" label="متوسط" />
+        <level id="ADVANCED" label="پیشرفته" />
+        <level id="EXPERT" label="متخصص" />
+    </skillLevels>
+</skillsData>
