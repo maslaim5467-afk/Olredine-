@@ -20,6 +20,8 @@ import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.example.mycgame.data.CharacterCreationData;
+import com.example.mycgame.data.CharacterCreationRepository;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,6 +47,7 @@ public class NewGameScreen {
 
     private final Activity activity;
     private final Runnable onBack;
+    private final CharacterCreationRepository repository;
     private final int gold = Color.rgb(225, 180, 91);
     private final int navy = Color.rgb(12, 27, 46);
     private final int text = Color.rgb(244, 239, 226);
@@ -93,9 +96,12 @@ public class NewGameScreen {
     private final HashSet<String> selectedGeneralSkillIds = new HashSet<>();
     private final HashSet<String> selectedSpecializedSkillIds = new HashSet<>();
 
-    public NewGameScreen(Activity activity, Runnable onBack) {
+    public NewGameScreen(Activity activity, Runnable onBack,
+                         CharacterCreationRepository repository, CharacterCreationData initialData) {
         this.activity = activity;
         this.onBack = onBack;
+        this.repository = repository;
+        if (initialData != null) applyData(initialData);
     }
 
     public View create() {
@@ -215,8 +221,23 @@ public class NewGameScreen {
             if (selectedSection < sections.length - 1) {
                 selectSection(selectedSection + 1, sidebar, next);
             } else {
-                next.setText("پایان");
-                Toast.makeText(activity, "ساخت ذخیره بازی پس از تکمیل اطلاعات جهان فعال می‌شود.", Toast.LENGTH_SHORT).show();
+                int invalidSection = firstInvalidSection();
+                if (invalidSection >= 0) {
+                    selectedSection = invalidSection;
+                    refreshSidebar(sidebar);
+                    next.setText(selectedSection == sections.length - 1 ? "پایان" : "بعدی");
+                    renderSection();
+                    Toast.makeText(activity, "ابتدا اطلاعات الزامی بخش «" + sections[invalidSection] + "» را کامل کنید.", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                try {
+                    repository.saveCharacter(toData());
+                    repository.deleteDraft();
+                    Toast.makeText(activity, "اطلاعات شخصیت در پایگاه داده ذخیره شد. ورود به جهان بازی در مرحله بعد فعال می‌شود.", Toast.LENGTH_LONG).show();
+                    onBack.run();
+                } catch (Exception e) {
+                    Toast.makeText(activity, "ذخیره شخصیت ناموفق بود: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -244,6 +265,8 @@ public class NewGameScreen {
     }
 
     private void renderSection() {
+        captureVisibleFields();
+        persistDraft();
         content.removeAllViews();
         TextView heading = new TextView(activity);
         heading.setText(sections[selectedSection]);
@@ -801,10 +824,110 @@ public class NewGameScreen {
     }
 
     private void saveCurrentFields() {
-        if (nameInput != null) playerName = nameInput.getText().toString();
-        if (ageInput != null) playerAge = ageInput.getText().toString();
+        captureVisibleFields();
         nameInput = null;
         ageInput = null;
+        persistDraft();
+    }
+
+    private void captureVisibleFields() {
+        if (nameInput != null) playerName = nameInput.getText().toString();
+        if (ageInput != null) playerAge = ageInput.getText().toString();
+    }
+
+    public void saveDraft() {
+        captureVisibleFields();
+        persistDraft();
+    }
+
+    private void persistDraft() {
+        if (repository == null) return;
+        repository.saveDraft(toData());
+    }
+
+    private CharacterCreationData toData() {
+        CharacterCreationData data = new CharacterCreationData();
+        data.selectedSection = selectedSection;
+        data.playerName = playerName;
+        data.playerAge = playerAge;
+        data.gender = gender;
+        data.innateTrait = innateTrait;
+        data.countryCode = countryCode;
+        data.countryName = countryName;
+        data.residenceCountryCode = residenceCountryCode;
+        data.residenceCountryName = residenceCountryName;
+        data.residenceLocationId = residenceLocationId;
+        data.residenceLocationName = residenceLocationName;
+        data.residenceType = residenceType;
+        data.educationLevel = educationLevel;
+        data.educationCurrentLevel = educationCurrentLevel;
+        data.educationStatus = educationStatus;
+        data.educationField = educationField;
+        data.educationPerformance = educationPerformance;
+        data.economicStatus = economicStatus;
+        data.familyStructure = familyStructure;
+        data.familyParentStatus = familyParentStatus;
+        data.familySupport = familySupport;
+        data.familyEconomicStatus = familyEconomicStatus;
+        data.selectedGeneralSkillIds.addAll(selectedGeneralSkillIds);
+        data.selectedSpecializedSkillIds.addAll(selectedSpecializedSkillIds);
+        return data;
+    }
+
+    private void applyData(CharacterCreationData data) {
+        selectedSection = Math.max(0, Math.min(sections.length - 1, data.selectedSection));
+        playerName = data.playerName;
+        playerAge = data.playerAge;
+        gender = data.gender;
+        innateTrait = data.innateTrait;
+        countryCode = data.countryCode;
+        countryName = data.countryName;
+        residenceCountryCode = data.residenceCountryCode;
+        residenceCountryName = data.residenceCountryName;
+        residenceLocationId = data.residenceLocationId;
+        residenceLocationName = data.residenceLocationName;
+        residenceType = data.residenceType;
+        educationLevel = data.educationLevel;
+        educationCurrentLevel = data.educationCurrentLevel;
+        educationStatus = data.educationStatus;
+        educationField = data.educationField;
+        educationPerformance = data.educationPerformance;
+        economicStatus = data.economicStatus;
+        familyStructure = data.familyStructure;
+        familyParentStatus = data.familyParentStatus;
+        familySupport = data.familySupport;
+        familyEconomicStatus = data.familyEconomicStatus;
+        selectedGeneralSkillIds.clear();
+        selectedGeneralSkillIds.addAll(data.selectedGeneralSkillIds);
+        selectedSpecializedSkillIds.clear();
+        selectedSpecializedSkillIds.addAll(data.selectedSpecializedSkillIds);
+    }
+
+    private int firstInvalidSection() {
+        if (playerName == null || playerName.trim().isEmpty()) return 0;
+        try {
+            int age = Integer.parseInt(playerAge.trim());
+            if (age < 12 || age > 30) return 0;
+        } catch (Exception e) {
+            return 0;
+        }
+        if (innateTrait.isEmpty()) return 0;
+        if (countryCode.isEmpty()) return 1;
+        if (residenceCountryCode.isEmpty() || residenceLocationId.isEmpty()) return 2;
+        if (educationLevel.isEmpty() || educationStatus.isEmpty()) return 3;
+        if (!"NOT_STUDYING".equals(educationStatus)) {
+            if (educationCurrentLevel.isEmpty()
+                    || educationLevelRank(educationCurrentLevel) < educationLevelRank(educationLevel)) return 3;
+        }
+        String focusLevel = educationCurrentLevel.isEmpty() ? educationLevel : educationCurrentLevel;
+        if (!"NO_FORMAL_EDUCATION".equals(focusLevel)
+                && (educationField.isEmpty() || educationPerformance.isEmpty())) return 3;
+        if (economicStatus.isEmpty()) return 4;
+        if (familyStructure.isEmpty() || familyParentStatus.isEmpty()
+                || familySupport.isEmpty() || familyEconomicStatus.isEmpty()) return 5;
+        if (selectedGeneralSkillIds.isEmpty()
+                || selectedGeneralSkillIds.size() > MAX_INITIAL_GENERAL_SKILLS) return 6;
+        return -1;
     }
 
 
