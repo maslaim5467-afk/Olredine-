@@ -44,7 +44,7 @@ The new-game screen contains seven sections:
 6. Family
 7. Skills
 
-The first three sections have initial inputs. Education (section 4) now has initial selectable fields for highest completed level, current study status, study field/category, and academic performance. Sections 5–7 remain placeholders. The education implementation is committed but still requires APK build and device testing.
+The first three sections have initial inputs. Education (section 4) now has initial selectable fields for highest completed level, current study status, study field/category, and academic performance. The user has confirmed that the latest education-related APK build succeeded; further on-device behavior testing and design refinement remain. Sections 5–7 remain placeholders.
 
 #### Character section
 
@@ -113,6 +113,18 @@ The initial location list is deliberately curated and limited. It is not a compl
 - Sections 5–7 do not yet collect real data. Education captures initial form data but has no gameplay effects or durable save integration yet.
 - The final action in character creation is still a placeholder.
 - No claim of successful build or device testing should be made solely from a successful GitHub commit.
+
+### Deferred design issue: age and education consistency
+
+The current character-creation form does not yet enforce logical compatibility between character age and education level/status. For example, a 15-year-old character can currently be assigned a doctorate. This is a known deferred issue, not a blocker for the current UI milestone.
+
+Revisit this when the shared character model and validation/game-rule layer are designed:
+- Define plausible education progression, study durations, and completion/status combinations in relation to age.
+- Account for differences between national education systems instead of applying an unqualified universal age table.
+- Decide whether and how exceptional accelerated-education paths are supported.
+- Centralize these rules so character creation and later in-game education progression use the same logic.
+
+Until then, education selections are preliminary form data; not every possible combination should be treated as logically valid.
 
 ## 3. Alpha 0.1 target
 
@@ -250,3 +262,11 @@ This document is a living development record. Update the implementation status o
 - Derived the settlement type (metropolis, medium city, or rural area) from the selected location's XML record.
 - Added forward-navigation validation for residence country and location.
 - This code has been committed, but the new residence flow has not yet been confirmed by a device test.
+
+
+### 2026-11-13 — Deferred age/education validation issue
+
+- Recorded that age and education level/status are not yet cross-validated (example: age 15 with a doctorate).
+- Deferred implementation until the character model and shared validation/game-rule logic are completed.
+- Future rules must consider progression and study duration, country-specific education systems, and any deliberately supported exceptional paths.
+- The current successful APK build confirms compilation only; it does not mean this logical validation has been implemented.
