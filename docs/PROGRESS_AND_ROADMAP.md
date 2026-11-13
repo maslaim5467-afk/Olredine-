@@ -44,7 +44,7 @@ The new-game screen contains seven sections:
 6. Family
 7. Skills
 
-Character, nationality, and residence have initial inputs. Education (section 4) has initial selectable fields for highest completed level, current study status, study field/category, and academic performance. The user has confirmed that the latest education-related APK build succeeded; further on-device behavior testing and design refinement remain. Economic status (section 5) now has a required selection among five broad starting-condition levels, with short descriptions and no exact monetary amounts. This is an initial UI capture only; the selected level is not yet connected to an economic model or durable save. Family (section 6) captures four required initial categories. Skills (section 7) now allows selection of general and specialist skills, with an education-based initial-level estimate for specialist choices. These are initial UI values only; character-model integration, durable save, skill progression, and gameplay effects remain future work.
+Character, nationality, and residence have initial inputs. The selectable catalogs for all seven sections are now stored in XML: `world_data.xml` contains countries and locations; `character_data.xml` contains gender and innate traits; `education_data.xml` contains education choices; `economy_data.xml` contains starting economic categories; `family_data.xml` contains the four family choice groups; and `skills_data.xml` contains general/specialist skills, education-field associations, and skill-level labels. The Java screen loads these catalogs and stores stable IDs for structured choices. Education, economic status, family, and skills remain initial UI capture only; character-model integration, durable save, validation-rule extraction, progression, and gameplay effects remain future work.
 
 #### Character section
 
@@ -103,6 +103,21 @@ Initial implementation added to the current UI:
 
 The initial location list is deliberately curated and limited. It is not a complete global city database. New countries and locations can be added to the XML without changing the screen's selection logic.
 
+### XML-backed character-creation catalogs
+
+Static option data has been separated from the programmatic UI:
+
+| Resource | Data |
+|---|---|
+| `world_data.xml` | Countries and starter residence locations |
+| `character_data.xml` | Gender and innate personality traits |
+| `education_data.xml` | Education levels, statuses, fields, and performance options |
+| `economy_data.xml` | Starting economic-condition options and descriptions |
+| `family_data.xml` | Household structure, parent status, family support, and family economy |
+| `skills_data.xml` | General/specialist skills, related education fields, and skill-level labels |
+
+Each structured choice uses a stable ID separate from its Persian display label. `NewGameScreen` currently contains a small XML option loader and still owns the existing screen behavior and preliminary skill estimator. A dedicated Java data/rules class is the next refactoring stage. This migration has been committed but has not yet been built or verified on a device.
+
 ### Economic status section
 
 The initial economic-status UI offers five mutually exclusive starting-condition choices:
@@ -134,13 +149,13 @@ All four groups are required before leaving section 6. This is initial UI captur
 
 ### Current limitations
 
-- Character, nationality, residence, education, economic-status, family, and skills values are held in the screen object only; there is no durable save-game system yet.
+- Character, nationality, residence, education, economic-status, family, and skills values are held in the screen object only; there is no durable save-game system yet. XML resources define available choices only and are not modified to store player selections.
 - There is no complete character data model shared across screens yet.
 - There is no playable world/gameplay screen after character creation.
 - No event-and-consequence gameplay loop exists yet.
 - Education captures initial form data but has no gameplay effects or durable save integration yet. Economic status captures one coarse starting category but is not connected to economic calculations or gameplay. Family captures four initial categories but has no relationship simulation, gameplay effects, or durable save integration. Skills captures initial selections and preliminary education-based levels only; skill growth/decay, experience-based calibration, gameplay effects, and durable save integration are not implemented.
 - The final action in character creation is still a placeholder.
-- No claim of successful build or device testing should be made solely from a successful GitHub commit.
+- No claim of successful build or device testing should be made solely from a successful GitHub commit. The XML catalog migration is committed but still requires a fresh APK build and on-device verification.
 
 ### Deferred design issue: age and education consistency
 
