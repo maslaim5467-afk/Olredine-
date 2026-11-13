@@ -360,6 +360,58 @@ public class NewGameScreen {
             residenceHint.setTextSize(12);
             residenceHint.setPadding(dp(4), dp(4), dp(4), dp(8));
             content.addView(residenceHint, new LinearLayout.LayoutParams(-1, -2));
+        } else if (selectedSection == 3) {
+            TextView intro = new TextView(activity);
+            intro.setText("سابقه آموزشی شخصیت را مشخص کنید. این اطلاعات در آینده بر فرصت‌های شغلی، مهارت‌ها و مسیر پیشرفت اثر خواهند گذاشت.");
+            intro.setTextColor(Color.rgb(190, 202, 216));
+            intro.setTextSize(12);
+            intro.setPadding(dp(4), 0, dp(4), dp(10));
+            content.addView(intro, new LinearLayout.LayoutParams(-1, -2));
+
+            addOptionGroup("بالاترین سطح تحصیلات تکمیل‌شده", new String[]{
+                "بدون تحصیلات رسمی", "آموزش ابتدایی", "آموزش متوسطه اول",
+                "آموزش متوسطه", "دیپلم فنی‌وحرفه‌ای", "آموزش عالی کوتاه‌مدت",
+                "کارشناسی", "کارشناسی ارشد", "دکتری"
+            }, educationLevel, value -> {
+                educationLevel = value;
+                if ("بدون تحصیلات رسمی".equals(value)) {
+                    educationField = "بدون رشته مشخص";
+                    educationPerformance = "";
+                }
+                renderSection();
+            });
+
+            addOptionGroup("وضعیت تحصیلی فعلی", new String[]{
+                "در حال تحصیل", "فارغ‌التحصیل", "ترک تحصیل", "وقفه در تحصیل"
+            }, educationStatus, value -> {
+                educationStatus = value;
+                renderSection();
+            });
+
+            if (!"بدون تحصیلات رسمی".equals(educationLevel)) {
+                addOptionGroup("رشته یا حوزه تحصیلی", new String[]{
+                    "فناوری و مهندسی", "اقتصاد و مدیریت", "علوم پزشکی",
+                    "علوم پایه", "هنر و طراحی", "علوم انسانی و اجتماعی",
+                    "فنی‌وحرفه‌ای", "سایر رشته‌ها", "بدون رشته مشخص"
+                }, educationField, value -> {
+                    educationField = value;
+                    renderSection();
+                });
+
+                addOptionGroup("عملکرد تحصیلی", new String[]{
+                    "ضعیف", "متوسط", "خوب", "عالی"
+                }, educationPerformance, value -> {
+                    educationPerformance = value;
+                    renderSection();
+                });
+            } else {
+                TextView noFormalEducation = new TextView(activity);
+                noFormalEducation.setText("برای این سابقه، رشته و عملکرد تحصیلی رسمی ثبت نمی‌شود.");
+                noFormalEducation.setTextColor(gold);
+                noFormalEducation.setTextSize(12);
+                noFormalEducation.setPadding(dp(4), dp(8), dp(4), dp(8));
+                content.addView(noFormalEducation);
+            }
         } else {
             TextView placeholder = new TextView(activity);
             placeholder.setText("ساختار این بخش آماده است؛ گزینه‌ها و اطلاعات آن در مراحل بعدی توسعه اضافه می‌شوند.");
@@ -414,6 +466,21 @@ public class NewGameScreen {
                 return false;
             }
         }
+        if (selectedSection == 3) {
+            if (educationLevel.isEmpty()) {
+                Toast.makeText(activity, "سطح تحصیلات را انتخاب کنید.", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+            if (educationStatus.isEmpty()) {
+                Toast.makeText(activity, "وضعیت تحصیلی را انتخاب کنید.", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+            if (!"بدون تحصیلات رسمی".equals(educationLevel)
+                    && (educationField.isEmpty() || educationPerformance.isEmpty())) {
+                Toast.makeText(activity, "رشته و عملکرد تحصیلی را مشخص کنید.", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        }
         return true;
     }
 
@@ -422,6 +489,39 @@ public class NewGameScreen {
         if (ageInput != null) playerAge = ageInput.getText().toString();
         nameInput = null;
         ageInput = null;
+    }
+
+
+    private interface OptionSelectionListener {
+        void onSelected(String value);
+    }
+
+    private void addOptionGroup(String label, String[] options, String selected,
+                                OptionSelectionListener listener) {
+        addLabel(label);
+        for (int i = 0; i < options.length; i += 2) {
+            LinearLayout row = new LinearLayout(activity);
+            row.setOrientation(LinearLayout.HORIZONTAL);
+            LinearLayout.LayoutParams rowParams = new LinearLayout.LayoutParams(-1, -2);
+            rowParams.bottomMargin = dp(7);
+            content.addView(row, rowParams);
+
+            for (int j = i; j < Math.min(i + 2, options.length); j++) {
+                final String option = options[j];
+                TextView button = choiceButton(option, option.equals(selected));
+                button.setTextSize(12);
+                button.setPadding(dp(5), dp(5), dp(5), dp(5));
+                LinearLayout.LayoutParams buttonParams =
+                    new LinearLayout.LayoutParams(0, dp(48), 1f);
+                if (j > i) buttonParams.setMargins(dp(7), 0, 0, 0);
+                row.addView(button, buttonParams);
+                button.setOnClickListener(v -> listener.onSelected(option));
+            }
+            if (options.length % 2 == 1 && i + 1 == options.length - 1) {
+                View spacer = new View(activity);
+                row.addView(spacer, new LinearLayout.LayoutParams(0, dp(48), 1f));
+            }
+        }
     }
 
     private void addLabel(String value) {
