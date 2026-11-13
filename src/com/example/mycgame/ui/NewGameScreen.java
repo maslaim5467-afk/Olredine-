@@ -65,6 +65,10 @@ public class NewGameScreen {
     private String residenceLocationId = "";
     private String residenceLocationName = "";
     private String residenceType = "";
+    private String educationLevel = "";
+    private String educationStatus = "";
+    private String educationField = "";
+    private String educationPerformance = "";
 
     public NewGameScreen(Activity activity, Runnable onBack) {
         this.activity = activity;
