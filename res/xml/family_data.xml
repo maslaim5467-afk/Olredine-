@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<familyData>
+    <structures>
+        <structure id="TWO_PARENT_HOUSEHOLD" label="زندگی با هر دو والد" />
+        <structure id="SINGLE_PARENT_HOUSEHOLD" label="زندگی با یکی از والدین" />
+        <structure id="GUARDIAN_HOUSEHOLD" label="زندگی با سرپرست یا قیم" />
+        <structure id="RELATIVES_HOUSEHOLD" label="زندگی با بستگان" />
+        <structure id="INDEPENDENT_NO_GUARDIAN" label="زندگی مستقل / بدون سرپرست" />
+    </structures>
+    <parentStatuses>
+        <parentStatus id="BOTH_ALIVE" label="هر دو والد در قید حیات‌اند" />
+        <parentStatus id="FATHER_ONLY_ALIVE" label="فقط پدر در قید حیات است" />
+        <parentStatus id="MOTHER_ONLY_ALIVE" label="فقط مادر در قید حیات است" />
+        <parentStatus id="NEITHER_ALIVE" label="هیچ‌کدام در قید حیات نیستند" />
+        <parentStatus id="PARENT_STATUS_UNKNOWN" label="وضعیت نامشخص" />
+    </parentStatuses>
+    <supportLevels>
+        <support id="STRONG_SUPPORT" label="حمایت قوی" />
+        <support id="MODERATE_SUPPORT" label="حمایت معمولی" />
+        <support id="LIMITED_SUPPORT" label="حمایت محدود" />
+        <support id="FAMILY_CONFLICT" label="روابط پرتنش" />
+        <support id="NO_EFFECTIVE_SUPPORT" label="بدون حمایت مؤثر" />
+    </supportLevels>
+    <economicStatuses>
+        <economicStatus id="FAMILY_VERY_DIFFICULT" label="بسیار دشوار" />
+        <economicStatus id="FAMILY_DIFFICULT" label="دشوار" />
+        <economicStatus id="FAMILY_ORDINARY" label="معمولی" />
+        <economicStatus id="FAMILY_SUITABLE" label="مناسب" />
+        <economicStatus id="FAMILY_FAVORABLE" label="مطلوب" />
+    </economicStatuses>
+</familyData>
