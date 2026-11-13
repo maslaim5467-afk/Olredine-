@@ -10,10 +10,12 @@ import android.view.View;
 
 import com.example.mycgame.ui.MainMenuScreen;
 import com.example.mycgame.ui.NewGameScreen;
+import com.example.mycgame.ui.SaveLoadScreen;
 
 public class MainActivity extends Activity {
     private static final int SCREEN_MAIN_MENU = 0;
     private static final int SCREEN_NEW_GAME = 1;
+    private static final int SCREEN_SAVE_LOAD = 2;
     private int currentScreen = SCREEN_MAIN_MENU;
     private CharacterCreationRepository repository;
     private NewGameScreen newGameScreen;
@@ -36,7 +38,17 @@ public class MainActivity extends Activity {
     private void showMainMenu() {
         currentScreen = SCREEN_MAIN_MENU;
         newGameScreen = null;
-        setContentView(new MainMenuScreen(this, this::startNewGame, this::continueDraft).create());
+        setContentView(new MainMenuScreen(
+            this, this::startNewGame, this::continueDraft, this::showSaveLoad
+        ).create());
+    }
+
+    private void showSaveLoad() {
+        currentScreen = SCREEN_SAVE_LOAD;
+        newGameScreen = null;
+        setContentView(new SaveLoadScreen(
+            this, repository, this::showMainMenu
+        ).create());
     }
 
     private void startNewGame() {
@@ -86,6 +98,8 @@ public class MainActivity extends Activity {
     public void onBackPressed() {
         if (currentScreen == SCREEN_NEW_GAME) {
             if (newGameScreen != null) newGameScreen.saveDraft();
+            showMainMenu();
+        } else if (currentScreen == SCREEN_SAVE_LOAD) {
             showMainMenu();
         } else {
             super.onBackPressed();
