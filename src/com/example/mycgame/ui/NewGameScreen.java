@@ -73,7 +73,57 @@ public class NewGameScreen {
     private String familyStructure = "";
     private String familyParentStatus = "";
     private String familySupport = "";
+
     private String familyEconomicStatus = "";
+
+    private static final int MAX_INITIAL_GENERAL_SKILLS = 3;
+    private static final int SKILL_NONE = 0;
+    private static final int SKILL_BEGINNER = 1;
+    private static final int SKILL_BASIC = 2;
+    private static final int SKILL_INTERMEDIATE = 3;
+    private static final int SKILL_ADVANCED = 4;
+    private static final int SKILL_EXPERT = 5;
+
+    private static final String[][] GENERAL_SKILLS = {
+        {"PROBLEM_SOLVING", "حل مسئله", "بررسی مسئله و یافتن راه‌حل"},
+        {"COMMUNICATION", "ارتباطات", "انتقال روشن اطلاعات و تعامل با دیگران"},
+        {"NEGOTIATION", "مذاکره", "رسیدن به توافق و مدیریت اختلاف"},
+        {"TIME_MANAGEMENT", "مدیریت زمان", "برنامه‌ریزی و اولویت‌بندی فعالیت‌ها"},
+        {"DECISION_MAKING", "تصمیم‌گیری", "انتخاب میان گزینه‌ها و سنجش پیامدها"},
+        {"RESOURCE_MANAGEMENT", "مدیریت منابع", "استفاده مؤثر از منابع محدود"},
+        {"CREATIVITY", "خلاقیت", "ساخت ایده‌ها و راه‌حل‌های تازه"},
+        {"LEADERSHIP", "رهبری", "هدایت و هماهنگ‌کردن افراد"},
+        {"ADAPTABILITY", "سازگاری", "انطباق با شرایط و تغییرات"},
+        {"RISK_MANAGEMENT", "مدیریت ریسک", "شناخت و کنترل خطرها"}
+    };
+
+    // Education influences the initial estimate only; it never locks a specialist skill.
+    private static final String[][] SPECIALIZED_SKILLS = {
+        {"PROGRAMMING", "برنامه‌نویسی", "طراحی و نوشتن نرم‌افزار", "فناوری و مهندسی"},
+        {"SOFTWARE_ENGINEERING", "مهندسی نرم‌افزار", "طراحی و نگهداری سامانه‌های نرم‌افزاری", "فناوری و مهندسی"},
+        {"CYBERSECURITY", "امنیت سایبری", "شناخت و کاهش آسیب‌پذیری‌های دیجیتال", "فناوری و مهندسی"},
+        {"NETWORKING", "شبکه", "راه‌اندازی و مدیریت شبکه‌های رایانه‌ای", "فناوری و مهندسی"},
+        {"DATABASES", "پایگاه داده", "طراحی و کار با سامانه‌های داده", "فناوری و مهندسی"},
+        {"DATA_ANALYSIS", "تحلیل داده", "استخراج الگو و نتیجه از داده‌ها", "فناوری و مهندسی"},
+        {"INVESTING", "سرمایه‌گذاری", "ارزیابی فرصت‌ها و تخصیص سرمایه", "اقتصاد و مدیریت"},
+        {"ECONOMIC_ANALYSIS", "تحلیل اقتصادی", "تحلیل بازارها و پدیده‌های اقتصادی", "اقتصاد و مدیریت"},
+        {"ACCOUNTING", "حسابداری", "ثبت و تحلیل اطلاعات مالی", "اقتصاد و مدیریت"},
+        {"FINANCIAL_MANAGEMENT", "مدیریت مالی", "برنامه‌ریزی و کنترل منابع مالی", "اقتصاد و مدیریت"},
+        {"BUSINESS_MANAGEMENT", "مدیریت کسب‌وکار", "برنامه‌ریزی و اداره فعالیت تجاری", "اقتصاد و مدیریت"},
+        {"MARKETING", "بازاریابی", "شناخت بازار و توسعه تقاضا", "اقتصاد و مدیریت"},
+        {"SALES", "فروش", "معرفی و عرضه محصول یا خدمت", "اقتصاد و مدیریت"},
+        {"HUMAN_RESOURCES", "مدیریت منابع انسانی", "جذب و توسعه نیروی انسانی", "اقتصاد و مدیریت"},
+        {"MEDICINE", "علوم پزشکی", "دانش و مهارت‌های پایه حوزه پزشکی", "علوم پزشکی"},
+        {"SCIENTIFIC_RESEARCH", "پژوهش علمی", "روش تحقیق و بررسی نظام‌مند", "علوم پایه"},
+        {"GRAPHIC_DESIGN", "طراحی گرافیک", "ارتباط بصری و طراحی گرافیکی", "هنر و طراحی"},
+        {"PRODUCT_DESIGN", "طراحی محصول", "طراحی تجربه و ویژگی‌های محصول", "هنر و طراحی"},
+        {"CONTENT_CREATION", "تولید محتوا", "طراحی و تولید محتوای متنی یا چندرسانه‌ای", "هنر و طراحی"},
+        {"TEACHING", "آموزش", "انتقال دانش و طراحی فرایند یادگیری", "علوم انسانی و اجتماعی"},
+        {"TECHNICAL_TRADES", "مهارت‌های فنی و تعمیرات", "انجام کارهای فنی و تعمیراتی", "فنی‌وحرفه‌ای"}
+    };
+
+    private final HashSet<String> selectedGeneralSkillIds = new HashSet<>();
+    private final HashSet<String> selectedSpecializedSkillIds = new HashSet<>();
 
     public NewGameScreen(Activity activity, Runnable onBack) {
         this.activity = activity;
@@ -495,15 +545,170 @@ public class NewGameScreen {
             familyHint.setTextSize(12);
             familyHint.setPadding(dp(4), dp(10), dp(4), dp(8));
             content.addView(familyHint, new LinearLayout.LayoutParams(-1, -2));
+        } else if (selectedSection == 6) {
+            renderSkillsSection();
         } else {
             TextView placeholder = new TextView(activity);
-            placeholder.setText("ساختار این بخش آماده است؛ گزینه‌ها و اطلاعات آن در مراحل بعدی توسعه اضافه می‌شوند.");
+            placeholder.setText("این بخش هنوز طراحی نشده است.");
             placeholder.setTextColor(text);
             placeholder.setTextSize(16);
             placeholder.setGravity(Gravity.CENTER);
             placeholder.setPadding(dp(18), dp(20), dp(18), dp(20));
             placeholder.setBackground(background(Color.rgb(28, 48, 70), 14, Color.rgb(110, 91, 61)));
             content.addView(placeholder, new LinearLayout.LayoutParams(-1, dp(150)));
+        }
+    }
+
+    private void renderSkillsSection() {
+        TextView intro = new TextView(activity);
+        intro.setText("مهارت‌های اولیه شخصیت را انتخاب کنید. تحصیلات می‌تواند سطح آغازین یک مهارت مرتبط را افزایش دهد، اما هیچ مهارتی به دلیل نداشتن مدرک قفل نیست.");
+        intro.setTextColor(Color.rgb(190, 202, 216));
+        intro.setTextSize(12);
+        intro.setPadding(dp(4), 0, dp(4), dp(8));
+        content.addView(intro, new LinearLayout.LayoutParams(-1, -2));
+
+        TextView generalCount = new TextView(activity);
+        generalCount.setText("انتخاب مهارت‌های عمومی: " + selectedGeneralSkillIds.size()
+            + " از " + MAX_INITIAL_GENERAL_SKILLS);
+        generalCount.setTextColor(gold);
+        generalCount.setTextSize(12);
+        generalCount.setPadding(dp(4), dp(4), dp(4), 0);
+        content.addView(generalCount);
+
+        addSkillSelectionGrid("مهارت‌های عمومی — حداکثر سه انتخاب",
+            GENERAL_SKILLS, selectedGeneralSkillIds, true);
+
+        addSkillSelectionGrid("مهارت‌های تخصصی — انتخاب آزاد",
+            SPECIALIZED_SKILLS, selectedSpecializedSkillIds, false);
+
+        TextView levelHint = new TextView(activity);
+        levelHint.setText("سطح تخصص‌ها به‌صورت اولیه از تطبیق رشته و سابقه تحصیلی محاسبه می‌شود. این برآورد هنوز تجربه کاری یا یادگیری مستقل را اندازه‌گیری نمی‌کند و هیچ مهارتی را قفل نمی‌کند.");
+        levelHint.setTextColor(Color.rgb(190, 202, 216));
+        levelHint.setTextSize(11);
+        levelHint.setPadding(dp(4), dp(12), dp(4), dp(12));
+        content.addView(levelHint, new LinearLayout.LayoutParams(-1, -2));
+    }
+
+    private void addSkillSelectionGrid(String label, String[][] skills,
+                                       HashSet<String> selectedSkills, boolean general) {
+        addLabel(label);
+        for (int i = 0; i < skills.length; i += 2) {
+            LinearLayout row = new LinearLayout(activity);
+            row.setOrientation(LinearLayout.HORIZONTAL);
+            LinearLayout.LayoutParams rowParams = new LinearLayout.LayoutParams(-1, -2);
+            rowParams.bottomMargin = dp(8);
+            content.addView(row, rowParams);
+
+            for (int j = i; j < Math.min(i + 2, skills.length); j++) {
+                final String skillId = skills[j][0];
+                final String skillName = skills[j][1];
+                final String skillDescription = skills[j][2];
+                boolean selected = selectedSkills.contains(skillId);
+                int level = general ? SKILL_BEGINNER : initialSpecializedSkillLevel(skills[j][3]);
+                String levelText = "سطح آغازین: " + skillLevelLabel(level);
+                LinearLayout card = skillChoiceCard(skillName, skillDescription, levelText, selected);
+                boolean limitReached = general && !selected
+                    && selectedGeneralSkillIds.size() >= MAX_INITIAL_GENERAL_SKILLS;
+                if (limitReached) card.setAlpha(0.48f);
+
+                LinearLayout.LayoutParams cardParams =
+                    new LinearLayout.LayoutParams(0, dp(94), 1f);
+                if (j > i) cardParams.setMargins(dp(7), 0, 0, 0);
+                row.addView(card, cardParams);
+
+                card.setOnClickListener(v -> {
+                    if (selectedSkills.contains(skillId)) {
+                        selectedSkills.remove(skillId);
+                    } else if (general && selectedGeneralSkillIds.size() >= MAX_INITIAL_GENERAL_SKILLS) {
+                        Toast.makeText(activity, "حداکثر سه مهارت عمومی می‌توانید انتخاب کنید.", Toast.LENGTH_SHORT).show();
+                        return;
+                    } else {
+                        selectedSkills.add(skillId);
+                    }
+                    renderSection();
+                });
+            }
+
+            if (skills.length % 2 == 1 && i + 1 == skills.length - 1) {
+                View spacer = new View(activity);
+                row.addView(spacer, new LinearLayout.LayoutParams(0, dp(94), 1f));
+            }
+        }
+    }
+
+    private LinearLayout skillChoiceCard(String name, String description,
+                                         String level, boolean selected) {
+        LinearLayout card = new LinearLayout(activity);
+        card.setOrientation(LinearLayout.VERTICAL);
+        card.setGravity(Gravity.CENTER_VERTICAL);
+        card.setPadding(dp(9), dp(6), dp(9), dp(6));
+        card.setBackground(background(
+            selected ? Color.rgb(91, 71, 39) : Color.rgb(34, 54, 77),
+            10,
+            selected ? gold : Color.rgb(86, 103, 121)
+        ));
+
+        TextView title = new TextView(activity);
+        title.setText(name);
+        title.setTextColor(selected ? gold : text);
+        title.setTextSize(12);
+        title.setTypeface(Typeface.DEFAULT_BOLD);
+        card.addView(title);
+
+        TextView detail = new TextView(activity);
+        detail.setText(description);
+        detail.setTextColor(Color.rgb(190, 202, 216));
+        detail.setTextSize(9);
+        card.addView(detail);
+
+        TextView levelView = new TextView(activity);
+        levelView.setText(level);
+        levelView.setTextColor(selected ? gold : Color.rgb(190, 202, 216));
+        levelView.setTextSize(9);
+        levelView.setPadding(0, dp(3), 0, 0);
+        card.addView(levelView);
+        return card;
+    }
+
+    private int initialSpecializedSkillLevel(String relatedEducationField) {
+        if (relatedEducationField == null || !relatedEducationField.equals(educationField)
+                || "بدون تحصیلات رسمی".equals(educationLevel)) {
+            return SKILL_BEGINNER;
+        }
+
+        boolean postSecondary = "آموزش عالی کوتاه‌مدت".equals(educationLevel)
+            || "کارشناسی".equals(educationLevel)
+            || "کارشناسی ارشد".equals(educationLevel)
+            || "دکتری".equals(educationLevel);
+        boolean secondaryOrAbove = postSecondary
+            || "آموزش متوسطه".equals(educationLevel)
+            || "دیپلم فنی‌وحرفه‌ای".equals(educationLevel);
+
+        int level = SKILL_BEGINNER;
+        if ("فارغ‌التحصیل".equals(educationStatus)) {
+            level = postSecondary ? SKILL_INTERMEDIATE : SKILL_BASIC;
+        } else if ("در حال تحصیل".equals(educationStatus)
+                || "وقفه در تحصیل".equals(educationStatus)
+                || "ترک تحصیل".equals(educationStatus)) {
+            level = secondaryOrAbove ? SKILL_BASIC : SKILL_BEGINNER;
+        }
+
+        // Academic credentials alone never grant advanced or expert practical proficiency.
+        if ("ضعیف".equals(educationPerformance) && level > SKILL_BEGINNER) {
+            level--;
+        }
+        return Math.min(level, SKILL_INTERMEDIATE);
+    }
+
+    private String skillLevelLabel(int level) {
+        switch (level) {
+            case SKILL_NONE: return "فاقد مهارت";
+            case SKILL_BASIC: return "مقدماتی";
+            case SKILL_INTERMEDIATE: return "متوسط";
+            case SKILL_ADVANCED: return "پیشرفته";
+            case SKILL_EXPERT: return "متخصص";
+            case SKILL_BEGINNER:
+            default: return "مبتدی";
         }
     }
 
@@ -566,6 +771,10 @@ public class NewGameScreen {
         }
         if (selectedSection == 4 && economicStatus.isEmpty()) {
             Toast.makeText(activity, "وضعیت اقتصادی اولیه را انتخاب کنید.", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (selectedSection == 6 && selectedGeneralSkillIds.isEmpty()) {
+            Toast.makeText(activity, "حداقل یک مهارت عمومی انتخاب کنید.", Toast.LENGTH_SHORT).show();
             return false;
         }
         if (selectedSection == 5) {
