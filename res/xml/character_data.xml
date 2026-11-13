@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<characterData>
+    <genders>
+        <gender id="MALE" label="مرد" />
+        <gender id="FEMALE" label="زن" />
+    </genders>
+    <traits>
+        <trait id="DISCIPLINED" label="منضبط" description="تمایل به نظم و برنامه‌ریزی" />
+        <trait id="AMBITIOUS" label="جاه‌طلب" description="میل به پیشرفت و دستیابی به اهداف" />
+        <trait id="ANALYTICAL" label="تحلیل‌گر" description="گرایش به بررسی و تحلیل مسائل" />
+        <trait id="SOCIABLE" label="اجتماعی" description="تمایل به ارتباط و تعامل" />
+        <trait id="RISK_TAKING" label="ریسک‌پذیر" description="آمادگی برای پذیرش ریسک" />
+        <trait id="PATIENT" label="صبور" description="توانایی انتظار برای نتیجه بلندمدت" />
+        <trait id="CREATIVE" label="خلاق" description="گرایش به ایده‌ها و راه‌حل‌های تازه" />
+        <trait id="CAUTIOUS" label="محتاط" description="توجه به خطرات پیش از اقدام" />
+    </traits>
+</characterData>
