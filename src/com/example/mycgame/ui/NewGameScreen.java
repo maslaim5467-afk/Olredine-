@@ -445,46 +445,26 @@ public class NewGameScreen {
             intro.setPadding(dp(4), 0, dp(4), dp(10));
             content.addView(intro, new LinearLayout.LayoutParams(-1, -2));
 
-            addFamilyOptionGroup("ساختار و محل زندگی خانوادگی", new String[][]{
-                {"TWO_PARENT_HOUSEHOLD", "زندگی با هر دو والد"},
-                {"SINGLE_PARENT_HOUSEHOLD", "زندگی با یکی از والدین"},
-                {"GUARDIAN_HOUSEHOLD", "زندگی با سرپرست یا قیم"},
-                {"RELATIVES_HOUSEHOLD", "زندگی با بستگان"},
-                {"INDEPENDENT_NO_GUARDIAN", "زندگی مستقل / بدون سرپرست"}
-            }, familyStructure, value -> {
+            addFamilyOptionGroup("ساختار و محل زندگی خانوادگی",
+                loadOptions("family_data", "structure"), familyStructure, value -> {
                 familyStructure = value;
                 renderSection();
             });
 
-            addFamilyOptionGroup("وضعیت والدین", new String[][]{
-                {"BOTH_ALIVE", "هر دو والد در قید حیات‌اند"},
-                {"FATHER_ONLY_ALIVE", "فقط پدر در قید حیات است"},
-                {"MOTHER_ONLY_ALIVE", "فقط مادر در قید حیات است"},
-                {"NEITHER_ALIVE", "هیچ‌کدام در قید حیات نیستند"},
-                {"PARENT_STATUS_UNKNOWN", "وضعیت نامشخص"}
-            }, familyParentStatus, value -> {
+            addFamilyOptionGroup("وضعیت والدین",
+                loadOptions("family_data", "parentStatus"), familyParentStatus, value -> {
                 familyParentStatus = value;
                 renderSection();
             });
 
-            addFamilyOptionGroup("میزان حمایت خانوادگی", new String[][]{
-                {"STRONG_SUPPORT", "حمایت قوی"},
-                {"MODERATE_SUPPORT", "حمایت معمولی"},
-                {"LIMITED_SUPPORT", "حمایت محدود"},
-                {"FAMILY_CONFLICT", "روابط پرتنش"},
-                {"NO_EFFECTIVE_SUPPORT", "بدون حمایت مؤثر"}
-            }, familySupport, value -> {
+            addFamilyOptionGroup("میزان حمایت خانوادگی",
+                loadOptions("family_data", "support"), familySupport, value -> {
                 familySupport = value;
                 renderSection();
             });
 
-            addFamilyOptionGroup("وضعیت اقتصادی خانواده", new String[][]{
-                {"FAMILY_VERY_DIFFICULT", "بسیار دشوار"},
-                {"FAMILY_DIFFICULT", "دشوار"},
-                {"FAMILY_ORDINARY", "معمولی"},
-                {"FAMILY_SUITABLE", "مناسب"},
-                {"FAMILY_FAVORABLE", "مطلوب"}
-            }, familyEconomicStatus, value -> {
+            addFamilyOptionGroup("وضعیت اقتصادی خانواده",
+                loadOptions("family_data", "economicStatus"), familyEconomicStatus, value -> {
                 familyEconomicStatus = value;
                 renderSection();
             });
