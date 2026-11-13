@@ -291,7 +291,7 @@ public class NewGameScreen {
                 rowParams.bottomMargin = dp(8);
                 content.addView(row, rowParams);
 
-                for (int j = i; j < i + 2; j++) {
+                for (int j = i; j < Math.min(i + 2, traits.length); j++) {
                     final String traitId = traits[j][0];
                     final String traitName = traits[j][1];
                     LinearLayout trait = traitChoiceButton(traitName, traits[j][2], innateTrait.equals(traitId));
