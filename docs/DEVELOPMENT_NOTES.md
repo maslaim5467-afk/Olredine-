@@ -21,13 +21,14 @@ The design should be data-driven and extensible. Avoid hard-coding country facts
   - Android back action from new-game screen -> main menu
 - The new-game screen uses a left navigation rail and a right content panel.
 - Current sections: character, nationality, place of residence, education, economic status, family, and skills.
-- The character section has name, gender, age, and one innate-trait selection.
+- The character section has name, gender, age, and one innate-trait selection. Gender and innate-trait catalogs are loaded from `res/xml/character_data.xml`.
 - The nationality section is backed by the searchable 195-country XML list and was confirmed working by the user on-device.
-- The residence section now has XML-backed country and location pickers. Its initial data covers 56 locations in 20 countries. The selected location supplies its settlement type (metropolis, medium city, or rural area).
-- Education now has initial selectable fields: highest completed education level, current study status, study field/category, and academic performance. The no-formal-education choice hides field/performance selection. This is initial form capture only; downstream gameplay effects and durable save integration are not implemented.
-- Economic status (section 5) now has a required initial selection with five broad levels: very difficult, difficult, ordinary, suitable, and favorable. The UI stores a stable internal ID for the chosen level; it does not ask for exact money, income, assets, or debt.
-- Family (section 6) now has initial selectable fields for household/living arrangement, parent life status, family support, and family economic circumstances. Each choice stores a stable internal ID; all four groups are required before leaving the section. The family economic category is independent from the player's starting economic condition in section 5.
-- Skills (section 7) remains a structural placeholder.
+- The residence section has XML-backed country and location pickers in `res/xml/world_data.xml`. Its initial data covers 56 locations in 20 countries. The selected location supplies its settlement type (metropolis, medium city, or rural area).
+- Education choices (levels, statuses, fields, and performance labels) are loaded from `res/xml/education_data.xml`.
+- Economic starting-condition choices and descriptions are loaded from `res/xml/economy_data.xml`.
+- Family choice groups are loaded from `res/xml/family_data.xml`.
+- General skills, specialist skills, education-field associations, and skill-level labels are loaded from `res/xml/skills_data.xml`.
+- All seven character-creation sections now use XML-backed option catalogs. Structured choices use stable IDs in screen state; Persian labels are display data. The current XML reader is a temporary loader inside `NewGameScreen`; extracting a dedicated data/rules class is the next planned step.
 - The user confirmed that the residence APK test succeeded. The education UI change has now built successfully; further on-device behavior testing and design refinement remain.
 - The current screen state is held in the screen object only. It is not yet persisted to SQLite or another save system.
 - Main menu labels and new-game screen labels are Persian at present.
@@ -96,11 +97,26 @@ The design should be data-driven and extensible. Avoid hard-coding country facts
 
 - Do not tell the user that a feature works on-device until the build and device test succeed.
 - SVG files under `assets/ui/svg/` are design assets only; the current Android screens do not load them.
-- Education has initial UI fields but its full logic, gameplay effects, and durable save integration are not implemented. Economic status captures one broad starting-condition category but has no economic calculations, character-model integration, gameplay effects, or durable save integration. Family and skills remain placeholders. Nationality and residence have initial data-backed implementations.
+- Education, economic status, family, and skills have XML-backed initial option catalogs, but their complete validation/gameplay logic and durable save integration are not implemented. Character-creation option loading currently lives in `NewGameScreen` and is intentionally awaiting extraction into a dedicated rules/data layer. Nationality and residence continue to use `world_data.xml`.
 - The final "finish" action does not create a save yet.
 - Character, nationality, and residence values are currently held in the screen object and are not durable across Activity/process recreation.
 - The background image's fit and the panel proportions need validation on the actual landscape device.
 - Do not expose or copy any sensitive MARG YOORNA code or credentials into project notes, examples, or public assets.
+
+
+## Character-creation XML data migration (2026-11-13)
+
+- Moved selectable character-creation catalogs out of `NewGameScreen.java` into five XML resources:
+  - `character_data.xml`: gender and innate traits.
+  - `education_data.xml`: education levels, current study statuses, study fields, and academic-performance choices.
+  - `economy_data.xml`: starting economic-condition choices and descriptions.
+  - `family_data.xml`: household arrangement, parent life status, support, and family economic categories.
+  - `skills_data.xml`: general/specialist skills, specialist-to-education-field associations, and skill-level labels.
+- `world_data.xml` remains the source for countries and starter locations.
+- The screen now loads option records by XML element name. Each option has a stable internal ID and a Persian display label; descriptions and specialist education-field associations are optional attributes.
+- Existing choice meanings and visible labels were retained. Education state now stores stable IDs rather than Persian labels; the existing preliminary skill estimator was updated to compare those IDs without changing its intended rules.
+- The XML resources and Java wiring have been committed, but this migration has not yet been built or tested on-device. Do not treat the current commit as verified until the user builds and tests it.
+- Next: extract XML loading and panel validation/rules from `NewGameScreen` into a dedicated Java class. Keep C/JNI out of this layer unless profiling later demonstrates a real need.
 
 ## Collaboration style
 
