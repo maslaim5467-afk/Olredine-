@@ -25,7 +25,8 @@ The design should be data-driven and extensible. Avoid hard-coding country facts
 - The nationality section is backed by the searchable 195-country XML list and was confirmed working by the user on-device.
 - The residence section now has XML-backed country and location pickers. Its initial data covers 56 locations in 20 countries. The selected location supplies its settlement type (metropolis, medium city, or rural area).
 - Education now has initial selectable fields: highest completed education level, current study status, study field/category, and academic performance. The no-formal-education choice hides field/performance selection. This is initial form capture only; downstream gameplay effects and durable save integration are not implemented.
-- Economic status, family, and skills remain structural placeholders.
+- Economic status (section 5) now has a required initial selection with five broad levels: very difficult, difficult, ordinary, suitable, and favorable. The UI stores a stable internal ID for the chosen level; it does not ask for exact money, income, assets, or debt.
+- Family and skills remain structural placeholders.
 - The user confirmed that the residence APK test succeeded. The education UI change has now built successfully; further on-device behavior testing and design refinement remain.
 - The current screen state is held in the screen object only. It is not yet persisted to SQLite or another save system.
 - Main menu labels and new-game screen labels are Persian at present.
@@ -86,7 +87,7 @@ The design should be data-driven and extensible. Avoid hard-coding country facts
 5. Once navigation/layout is stable, extract reusable UI helpers if they reduce duplication; avoid premature framework-building.
 6. Build and device-test the XML-backed residence section; verify country filtering, city search, type display, and required-field navigation.
 7. Define a shared character data model and connect character, nationality, and residence values to it.
-8. Decide the fields and validation rules for education, economic status, family, and skills. Include the deferred age/education consistency issue above when designing shared character validation.
+8. Refine education rules and define the fields and validation rules for family and skills. Include the deferred age/education consistency issue above when designing shared character validation; revisit the economic-status categories when the shared character/economy model is designed.
 9. Design save-game schema and SQLite integration when the first complete character/world creation flow is understood.
 10. Add a localization manager before spreading more hard-coded user-facing strings across screens.
 
@@ -94,7 +95,7 @@ The design should be data-driven and extensible. Avoid hard-coding country facts
 
 - Do not tell the user that a feature works on-device until the build and device test succeed.
 - SVG files under `assets/ui/svg/` are design assets only; the current Android screens do not load them.
-- Education has initial UI fields but its full logic, gameplay effects, and durable save integration are not implemented; economic status, family, and skills remain placeholders. Nationality and residence have initial data-backed implementations.
+- Education has initial UI fields but its full logic, gameplay effects, and durable save integration are not implemented. Economic status captures one broad starting-condition category but has no economic calculations, character-model integration, gameplay effects, or durable save integration. Family and skills remain placeholders. Nationality and residence have initial data-backed implementations.
 - The final "finish" action does not create a save yet.
 - Character, nationality, and residence values are currently held in the screen object and are not durable across Activity/process recreation.
 - The background image's fit and the panel proportions need validation on the actual landscape device.
@@ -114,3 +115,13 @@ Work directly in the GitHub repository when the required tool access is availabl
 - The settlement category is derived from the selected location. It is not an independent user choice.
 - The residence UI validates that both a country and a location are selected before moving forward.
 - This implementation has been built and confirmed working by the user on-device.
+
+
+## Economic status section implementation notes (2026-11-13)
+
+- Section 5 now presents five mutually exclusive starting-condition choices: `VERY_DIFFICULT`, `DIFFICULT`, `ORDINARY`, `SUITABLE`, and `FAVORABLE`.
+- Each choice has a short Persian explanation; the player is not shown exact currency or wealth amounts.
+- The selected level is required before leaving section 5 and is held in the `NewGameScreen` object only.
+- Employment and income are not selected in character creation. Income is intended to emerge later from gameplay activities such as employment, business, or investment.
+- Family economic circumstances remain separate and belong to section 6.
+- This is an initial UI milestone only. The categories have not yet been translated into starting cash, assets, liabilities, costs, or simulation rules; there is no durable save integration.
