@@ -231,8 +231,7 @@ public class NewGameScreen {
                     return;
                 }
                 try {
-                    repository.saveCharacter(toData());
-                    repository.deleteDraft();
+                    repository.completeDraft(toData());
                     Toast.makeText(activity, "اطلاعات شخصیت در پایگاه داده ذخیره شد. ورود به جهان بازی در مرحله بعد فعال می‌شود.", Toast.LENGTH_LONG).show();
                     onBack.run();
                 } catch (Exception e) {
