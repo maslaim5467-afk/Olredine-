@@ -218,9 +218,9 @@ public final class CharacterCreationValidator {
 
             int completedRank = educationLevelRank(completedLevel);
             int currentRank = educationLevelRank(currentLevel);
-            if (currentRank <= completedRank) {
+            if (currentRank < completedRank) {
                 return error(3, "educationCurrentLevel",
-                    "مقطع ناتمام باید از آخرین مقطع تکمیل‌شده بالاتر باشد؛ تکرار یا تحصیل مجدد در همان مقطع در این مدل ثبت نمی‌شود.");
+                    "مقطع ناتمام نمی‌تواند پایین‌تر از آخرین مقطع تکمیل‌شده باشد.");
             }
 
             int minimumCurrentAge = minimumAgeToStudy(currentLevel);
@@ -293,11 +293,9 @@ public final class CharacterCreationValidator {
         }
 
         if ("TWO_PARENT_HOUSEHOLD".equals(structure)
-                && ("FATHER_ONLY_ALIVE".equals(parentStatus)
-                    || "MOTHER_ONLY_ALIVE".equals(parentStatus)
-                    || "NEITHER_ALIVE".equals(parentStatus))) {
+                && !"BOTH_ALIVE".equals(parentStatus)) {
             return error(5, "familyParentStatus",
-                "زندگی با هر دو والد با وضعیت فوت یکی یا هر دو والد سازگار نیست.");
+                "زندگی با هر دو والد مستلزم زنده بودن هر دو والد است؛ وضعیت والدین را اصلاح کنید.");
         }
         if ("SINGLE_PARENT_HOUSEHOLD".equals(structure)
                 && "NEITHER_ALIVE".equals(parentStatus)) {
