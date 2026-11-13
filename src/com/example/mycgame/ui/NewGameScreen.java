@@ -420,7 +420,7 @@ public class NewGameScreen {
                 addOptionGroup("مقطع ناتمام فعلی",
                     educationCurrentLevelOptions(), data.educationCurrentLevel, value -> {
                         if (!"NO_FORMAL_EDUCATION".equals(value)
-                                && educationLevelRank(value) > educationLevelRank(data.educationLevel)) {
+                                && educationLevelRank(value) >= educationLevelRank(data.educationLevel)) {
                             if (!data.educationCurrentLevel.equals(value)) {
                                 data.educationField = "";
                                 data.educationPerformance = "";
@@ -639,7 +639,7 @@ public class NewGameScreen {
         int completedRank = educationLevelRank(data.educationLevel);
         for (String[] level : allLevels) {
             if (!"NO_FORMAL_EDUCATION".equals(level[0])
-                    && educationLevelRank(level[0]) > completedRank) {
+                    && educationLevelRank(level[0]) >= completedRank) {
                 available.add(level);
             }
         }
