@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<economyData>
+    <statuses>
+        <status id="VERY_DIFFICULT" label="بسیار دشوار" description="منابع اولیه بسیار محدود و فشار اقتصادی زیاد" />
+        <status id="DIFFICULT" label="دشوار" description="منابع محدود و شرایط مالی سخت" />
+        <status id="ORDINARY" label="معمولی" description="شرایط اقتصادی عادی" />
+        <status id="SUITABLE" label="مناسب" description="برخورداری از مقداری پشتوانه مالی" />
+        <status id="FAVORABLE" label="مطلوب" description="پشتوانه مالی نسبتاً خوب و شروع راحت‌تر" />
+    </statuses>
+</economyData>
