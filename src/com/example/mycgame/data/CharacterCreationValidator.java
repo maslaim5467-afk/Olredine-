@@ -128,6 +128,25 @@ public final class CharacterCreationValidator {
                 }
                 return null;
 
+            case 3:
+                return validateEducation(context, data);
+
+            case 4:
+                Map<String, String> economicStatuses = readOptions(context, "economy_data", "status");
+                if (economicStatuses == null) {
+                    return error(4, "economicStatus", "فهرست وضعیت‌های اقتصادی قابل خواندن نیست.");
+                }
+                if (!economicStatuses.containsKey(clean(data.economicStatus))) {
+                    return error(4, "economicStatus", "وضعیت اقتصادی اولیه را انتخاب کنید.");
+                }
+                return null;
+
+            case 5:
+                return validateFamily(context, data);
+
+            case 6:
+                return validateSkills(context, data);
+
             default:
                 return null;
         }
@@ -140,6 +159,214 @@ public final class CharacterCreationValidator {
             if (result != null) return result;
         }
         return null;
+    }
+
+    public static ValidationError validateAllSections(Context context,
+                                                       CharacterCreationData data) {
+        for (int section = 0; section <= 6; section++) {
+            ValidationError result = validateSection(context, data, section);
+            if (result != null) return result;
+        }
+        return null;
+    }
+
+    private static ValidationError validateEducation(Context context, CharacterCreationData data) {
+        Map<String, String> levels = readOptions(context, "education_data", "level");
+        if (levels == null) {
+            return error(3, "educationLevel", "فهرست مقاطع تحصیلی قابل خواندن نیست.");
+        }
+
+        String completedLevel = clean(data.educationLevel);
+        if (!levels.containsKey(completedLevel)) {
+            return error(3, "educationLevel", "آخرین مقطع تکمیل‌شده را به‌درستی انتخاب کنید.");
+        }
+
+        int age;
+        try {
+            age = Integer.parseInt(clean(data.playerAge));
+        } catch (NumberFormatException e) {
+            return error(3, "playerAge", "سن برای بررسی سازگاری تحصیلات معتبر نیست.");
+        }
+
+        int minimumCompletedAge = minimumAgeToComplete(completedLevel);
+        if (minimumCompletedAge > 0 && age < minimumCompletedAge) {
+            return error(3, "educationLevel",
+                "سن شخصیت برای آخرین مقطع تکمیل‌شده کمتر از حداقل سن منطقی آن مقطع است.");
+        }
+
+        Map<String, String> statuses = readOptions(context, "education_data", "status");
+        if (statuses == null) {
+            return error(3, "educationStatus", "فهرست وضعیت‌های تحصیلی قابل خواندن نیست.");
+        }
+        String status = clean(data.educationStatus);
+        if (!statuses.containsKey(status)) {
+            return error(3, "educationStatus", "وضعیت تحصیل را به‌درستی انتخاب کنید.");
+        }
+
+        String currentLevel = clean(data.educationCurrentLevel);
+        if ("NOT_STUDYING".equals(status)) {
+            if (!currentLevel.isEmpty()) {
+                return error(3, "educationCurrentLevel",
+                    "وقتی شخصیت در حال تحصیل نیست، نباید مقطع ناتمام فعلی ثبت شود.");
+            }
+        } else {
+            if (currentLevel.isEmpty() || !levels.containsKey(currentLevel)
+                    || "NO_FORMAL_EDUCATION".equals(currentLevel)) {
+                return error(3, "educationCurrentLevel",
+                    "برای وضعیت انتخاب‌شده باید یک مقطع ناتمام معتبر مشخص شود.");
+            }
+
+            int completedRank = educationLevelRank(completedLevel);
+            int currentRank = educationLevelRank(currentLevel);
+            if (currentRank <= completedRank) {
+                return error(3, "educationCurrentLevel",
+                    "مقطع ناتمام باید از آخرین مقطع تکمیل‌شده بالاتر باشد؛ تکرار یا تحصیل مجدد در همان مقطع در این مدل ثبت نمی‌شود.");
+            }
+
+            int minimumCurrentAge = minimumAgeToStudy(currentLevel);
+            if (minimumCurrentAge > 0 && age < minimumCurrentAge) {
+                return error(3, "educationCurrentLevel",
+                    "سن شخصیت برای تحصیل در مقطع انتخاب‌شده کمتر از حداقل سن منطقی آن مقطع است.");
+            }
+        }
+
+        String focusLevel = currentLevel.isEmpty() ? completedLevel : currentLevel;
+        String field = clean(data.educationField);
+        String performance = clean(data.educationPerformance);
+
+        if ("NO_FORMAL_EDUCATION".equals(focusLevel)) {
+            if (!field.isEmpty() || !performance.isEmpty()) {
+                return error(3, "educationField",
+                    "برای شخصی که هنوز هیچ مقطع رسمی را نگذرانده، رشته و عملکرد تحصیلی ثبت نمی‌شود.");
+            }
+            return null;
+        }
+
+        Map<String, String> fields = readOptions(context, "education_data", "field");
+        if (fields == null) {
+            return error(3, "educationField", "فهرست رشته‌های تحصیلی قابل خواندن نیست.");
+        }
+        if (!fields.containsKey(field)) {
+            return error(3, "educationField", "رشتهٔ تحصیلی معتبر انتخاب کنید.");
+        }
+
+        if (("PRIMARY".equals(focusLevel) || "LOWER_SECONDARY".equals(focusLevel))
+                && !"UNDECLARED".equals(field)) {
+            return error(3, "educationField",
+                "در مقاطع ابتدایی و متوسطه اول رشتهٔ تخصصی ثبت نمی‌شود؛ گزینهٔ «بدون رشته مشخص» را انتخاب کنید.");
+        }
+
+        Map<String, String> performances = readOptions(context, "education_data", "performance");
+        if (performances == null) {
+            return error(3, "educationPerformance", "فهرست عملکردهای تحصیلی قابل خواندن نیست.");
+        }
+        if (!performances.containsKey(performance)) {
+            return error(3, "educationPerformance", "عملکرد تحصیلی مقطع مربوط را مشخص کنید.");
+        }
+        return null;
+    }
+
+    private static ValidationError validateFamily(Context context, CharacterCreationData data) {
+        Map<String, String> structures = readOptions(context, "family_data", "structure");
+        Map<String, String> parentStatuses = readOptions(context, "family_data", "parentStatus");
+        Map<String, String> supportLevels = readOptions(context, "family_data", "support");
+        Map<String, String> economicStatuses = readOptions(context, "family_data", "economicStatus");
+
+        if (structures == null || parentStatuses == null
+                || supportLevels == null || economicStatuses == null) {
+            return error(5, "familyStructure", "فهرست اطلاعات خانواده قابل خواندن نیست.");
+        }
+
+        String structure = clean(data.familyStructure);
+        String parentStatus = clean(data.familyParentStatus);
+        if (!structures.containsKey(structure)) {
+            return error(5, "familyStructure", "ساختار خانواده را به‌درستی انتخاب کنید.");
+        }
+        if (!parentStatuses.containsKey(parentStatus)) {
+            return error(5, "familyParentStatus", "وضعیت والدین را به‌درستی مشخص کنید.");
+        }
+        if (!supportLevels.containsKey(clean(data.familySupport))) {
+            return error(5, "familySupport", "میزان حمایت خانوادگی را به‌درستی انتخاب کنید.");
+        }
+        if (!economicStatuses.containsKey(clean(data.familyEconomicStatus))) {
+            return error(5, "familyEconomicStatus", "وضعیت اقتصادی خانواده را به‌درستی انتخاب کنید.");
+        }
+
+        if ("TWO_PARENT_HOUSEHOLD".equals(structure)
+                && ("FATHER_ONLY_ALIVE".equals(parentStatus)
+                    || "MOTHER_ONLY_ALIVE".equals(parentStatus)
+                    || "NEITHER_ALIVE".equals(parentStatus))) {
+            return error(5, "familyParentStatus",
+                "زندگی با هر دو والد با وضعیت فوت یکی یا هر دو والد سازگار نیست.");
+        }
+        if ("SINGLE_PARENT_HOUSEHOLD".equals(structure)
+                && "NEITHER_ALIVE".equals(parentStatus)) {
+            return error(5, "familyParentStatus",
+                "زندگی با یکی از والدین با فوت هر دو والد سازگار نیست.");
+        }
+        return null;
+    }
+
+    private static ValidationError validateSkills(Context context, CharacterCreationData data) {
+        Map<String, String> generalSkills = readOptions(context, "skills_data", "generalSkill");
+        Map<String, String> specializedSkills = readOptions(context, "skills_data", "specializedSkill");
+        if (generalSkills == null || specializedSkills == null) {
+            return error(6, "skills", "فهرست مهارت‌ها قابل خواندن نیست.");
+        }
+        if (data.selectedGeneralSkillIds.isEmpty() || data.selectedGeneralSkillIds.size() > 3) {
+            return error(6, "selectedGeneralSkillIds", "باید بین یک تا سه مهارت عمومی انتخاب کنید.");
+        }
+        for (String id : data.selectedGeneralSkillIds) {
+            if (!generalSkills.containsKey(clean(id))) {
+                return error(6, "selectedGeneralSkillIds", "یکی از مهارت‌های عمومی انتخاب‌شده معتبر نیست.");
+            }
+        }
+        for (String id : data.selectedSpecializedSkillIds) {
+            if (!specializedSkills.containsKey(clean(id))) {
+                return error(6, "selectedSpecializedSkillIds", "یکی از مهارت‌های تخصصی انتخاب‌شده معتبر نیست.");
+            }
+        }
+        return null;
+    }
+
+    private static int educationLevelRank(String level) {
+        if ("PRIMARY".equals(level)) return 1;
+        if ("LOWER_SECONDARY".equals(level)) return 2;
+        if ("SECONDARY".equals(level)) return 3;
+        if ("VOCATIONAL_DIPLOMA".equals(level)) return 4;
+        if ("SHORT_CYCLE_TERTIARY".equals(level)) return 5;
+        if ("BACHELOR".equals(level)) return 6;
+        if ("MASTER".equals(level)) return 7;
+        if ("DOCTORATE".equals(level)) return 8;
+        return 0;
+    }
+
+    private static int minimumAgeToComplete(String level) {
+        switch (level) {
+            case "PRIMARY": return 10;
+            case "LOWER_SECONDARY": return 12;
+            case "SECONDARY": return 15;
+            case "VOCATIONAL_DIPLOMA": return 16;
+            case "SHORT_CYCLE_TERTIARY": return 17;
+            case "BACHELOR": return 18;
+            case "MASTER": return 20;
+            case "DOCTORATE": return 23;
+            default: return 0;
+        }
+    }
+
+    private static int minimumAgeToStudy(String level) {
+        switch (level) {
+            case "PRIMARY": return 6;
+            case "LOWER_SECONDARY": return 10;
+            case "SECONDARY": return 13;
+            case "VOCATIONAL_DIPLOMA": return 14;
+            case "SHORT_CYCLE_TERTIARY": return 16;
+            case "BACHELOR": return 17;
+            case "MASTER": return 19;
+            case "DOCTORATE": return 21;
+            default: return 0;
+        }
     }
 
     private static ValidationError error(int section, String field, String message) {
