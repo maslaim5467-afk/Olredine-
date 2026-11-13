@@ -2,7 +2,7 @@
 
 > Working notes for continuity across development sessions. This file records implementation state, design decisions, assumptions, and unresolved questions. It is not player-facing documentation.
 
-Last updated: 2026-11-12
+Last updated: 2026-11-13
 
 ## Project direction
 
@@ -24,8 +24,9 @@ The design should be data-driven and extensible. Avoid hard-coding country facts
 - The character section has name, gender, age, and one innate-trait selection.
 - The nationality section is backed by the searchable 195-country XML list and was confirmed working by the user on-device.
 - The residence section now has XML-backed country and location pickers. Its initial data covers 56 locations in 20 countries. The selected location supplies its settlement type (metropolis, medium city, or rural area).
-- Education, economic status, family, and skills remain structural placeholders.
-- Residence implementation is committed but has not yet been confirmed by a device test.
+- Education now has initial selectable fields: highest completed education level, current study status, study field/category, and academic performance. The no-formal-education choice hides field/performance selection. This is initial form capture only; downstream gameplay effects and durable save integration are not implemented.
+- Economic status, family, and skills remain structural placeholders.
+- The user confirmed that the residence APK test succeeded. The education UI change has been committed but has not yet been built or device-tested.
 - The current screen state is held in the screen object only. It is not yet persisted to SQLite or another save system.
 - Main menu labels and new-game screen labels are Persian at present.
 
@@ -83,7 +84,7 @@ The design should be data-driven and extensible. Avoid hard-coding country facts
 
 - Do not tell the user that the latest APK works until the new build and device test succeed.
 - SVG files under `assets/ui/svg/` are design assets only; the current Android screens do not load them.
-- Education, economic status, family, and skills are placeholders. Nationality and residence have initial data-backed implementations.
+- Education has initial UI fields but has not yet been device-tested; economic status, family, and skills remain placeholders. Nationality and residence have initial data-backed implementations.
 - The final "finish" action does not create a save yet.
 - Character, nationality, and residence values are currently held in the screen object and are not durable across Activity/process recreation.
 - The background image's fit and the panel proportions need validation on the actual landscape device.
