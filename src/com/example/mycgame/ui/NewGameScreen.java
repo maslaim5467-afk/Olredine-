@@ -23,6 +23,7 @@ import android.widget.Toast;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 
@@ -86,6 +87,7 @@ public class NewGameScreen {
 
     // Static choice catalogs are loaded from XML resources.
     private String[][] skillLevelOptions;
+    private final HashMap<String, String[][]> optionCache = new HashMap<>();
 
     private final HashSet<String> selectedGeneralSkillIds = new HashSet<>();
     private final HashSet<String> selectedSpecializedSkillIds = new HashSet<>();
@@ -929,6 +931,10 @@ public class NewGameScreen {
     }
 
     private String[][] loadOptions(String resourceName, String elementName) {
+        String cacheKey = resourceName + ":" + elementName;
+        String[][] cached = optionCache.get(cacheKey);
+        if (cached != null) return cached;
+
         ArrayList<String[]> result = new ArrayList<>();
         int resourceId = activity.getResources().getIdentifier(
             resourceName, "xml", activity.getPackageName());
@@ -960,7 +966,9 @@ public class NewGameScreen {
         } finally {
             parser.close();
         }
-        return result.toArray(new String[result.size()][]);
+        String[][] loaded = result.toArray(new String[result.size()][]);
+        optionCache.put(cacheKey, loaded);
+        return loaded;
     }
 
     private String optionLabel(String[][] options, String id) {
