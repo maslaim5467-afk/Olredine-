@@ -411,7 +411,7 @@ public class NewGameScreen {
 
             if (!educationStatus.isEmpty() && !"NOT_STUDYING".equals(educationStatus)) {
                 addOptionGroup("مقطع ناتمام فعلی",
-                    loadOptions("education_data", "level"), educationCurrentLevel, value -> {
+                    educationCurrentLevelOptions(), educationCurrentLevel, value -> {
                         if (!"NO_FORMAL_EDUCATION".equals(value)
                                 && educationLevelRank(value) >= educationLevelRank(educationLevel)) {
                             educationCurrentLevel = value;
@@ -620,6 +620,15 @@ public class NewGameScreen {
         levelView.setPadding(0, dp(3), 0, 0);
         card.addView(levelView);
         return card;
+    }
+
+    private String[][] educationCurrentLevelOptions() {
+        String[][] allLevels = loadOptions("education_data", "level");
+        ArrayList<String[]> available = new ArrayList<>();
+        for (String[] level : allLevels) {
+            if (!"NO_FORMAL_EDUCATION".equals(level[0])) available.add(level);
+        }
+        return available.toArray(new String[available.size()][]);
     }
 
     private int educationLevelRank(String level) {
