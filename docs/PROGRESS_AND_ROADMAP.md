@@ -44,7 +44,7 @@ The new-game screen contains seven sections:
 6. Family
 7. Skills
 
-Character, nationality, and residence have initial inputs. Education (section 4) has initial selectable fields for highest completed level, current study status, study field/category, and academic performance. The user has confirmed that the latest education-related APK build succeeded; further on-device behavior testing and design refinement remain. Economic status (section 5) now has a required selection among five broad starting-condition levels, with short descriptions and no exact monetary amounts. This is an initial UI capture only; the selected level is not yet connected to an economic model or durable save. Family (section 6) now has initial selectable fields for household arrangement, parent life status, family support, and family economic circumstances. Skills (section 7) remains a placeholder.
+Character, nationality, and residence have initial inputs. Education (section 4) has initial selectable fields for highest completed level, current study status, study field/category, and academic performance. The user has confirmed that the latest education-related APK build succeeded; further on-device behavior testing and design refinement remain. Economic status (section 5) now has a required selection among five broad starting-condition levels, with short descriptions and no exact monetary amounts. This is an initial UI capture only; the selected level is not yet connected to an economic model or durable save. Family (section 6) captures four required initial categories. Skills (section 7) now allows selection of general and specialist skills, with an education-based initial-level estimate for specialist choices. These are initial UI values only; character-model integration, durable save, skill progression, and gameplay effects remain future work.
 
 #### Character section
 
@@ -134,11 +134,11 @@ All four groups are required before leaving section 6. This is initial UI captur
 
 ### Current limitations
 
-- Character, nationality, residence, education, and economic-status values are held in the screen object only; there is no durable save-game system yet.
+- Character, nationality, residence, education, economic-status, family, and skills values are held in the screen object only; there is no durable save-game system yet.
 - There is no complete character data model shared across screens yet.
 - There is no playable world/gameplay screen after character creation.
 - No event-and-consequence gameplay loop exists yet.
-- Education captures initial form data but has no gameplay effects or durable save integration yet. Economic status captures one coarse starting category but is not connected to economic calculations or gameplay. Family captures four initial categories but has no relationship simulation, gameplay effects, or durable save integration. Skills remains a placeholder.
+- Education captures initial form data but has no gameplay effects or durable save integration yet. Economic status captures one coarse starting category but is not connected to economic calculations or gameplay. Family captures four initial categories but has no relationship simulation, gameplay effects, or durable save integration. Skills captures initial selections and preliminary education-based levels only; skill growth/decay, experience-based calibration, gameplay effects, and durable save integration are not implemented.
 - The final action in character creation is still a placeholder.
 - No claim of successful build or device testing should be made solely from a successful GitHub commit.
 
@@ -166,7 +166,7 @@ Alpha 0.1 should prioritize one complete, understandable loop over broad but sha
 
 #### A. Complete character creation
 
-- Complete and validate all seven character-creation sections; refine education and economic-status rules, and design the family and skills sections.
+- Complete and validate all seven character-creation sections; refine education and economic-status rules and review the initial family and skills rules.
 - Finalize the fields and rules for each section without collecting data that has no planned gameplay use.
 - Keep nationality separate from residence.
 - Validate required fields and avoid collecting information that has no planned use.
@@ -317,3 +317,25 @@ This document is a living development record. Update the implementation status o
 - Kept household arrangement separate from whether parents are alive, and kept family economic circumstances separate from the player's own starting economic status.
 - Implemented required-field validation for all four groups.
 - This is initial UI capture only; family simulation, gameplay effects, durable save integration, and device-test confirmation remain future work.
+
+
+### Skills section
+
+The initial skills UI has two groups:
+
+- **General skills:** ten options. The player must select at least one and may select up to three. Each selected general skill starts at beginner level.
+- **Specialist skills:** an open catalog of selectable skills. Education does not lock any choice and there is no selection cap in this initial form.
+
+Specialist skill level is a preliminary estimate, not a claim of professional competence. A selected skill starts at beginner level by default. A matching broad education field can raise the estimate to basic or intermediate depending on education status and level; weak academic performance lowers it by one level. Formal education alone does not grant advanced or expert practical proficiency. The current form does not capture work experience or independent learning, and age does not prevent the player from selecting a skill.
+
+Selections and estimates currently remain in the NewGameScreen instance. They are not yet connected to a shared character model, durable save data, skill progression/decay, or gameplay outcomes.
+
+
+### 2026-11-13 — Initial skills section
+
+- Replaced the section 7 placeholder with general and specialist skill selection.
+- Added ten general skills with a required minimum of one and a maximum of three selections.
+- Added an open specialist catalog; education affects estimated initial level but never locks a specialist choice.
+- Added a preliminary education-based level estimator using the matching broad field, education status, education level, and academic performance.
+- Kept advanced/expert proficiency unavailable from academic credentials alone; experience and independent learning are not yet captured.
+- This is initial UI capture only. Durable save, character-model integration, skill progression/decay, gameplay effects, build verification, and device testing remain outstanding.
