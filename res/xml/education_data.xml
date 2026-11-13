@@ -12,10 +12,10 @@
         <level id="DOCTORATE" label="دکتری" />
     </levels>
     <statuses>
-        <status id="CURRENTLY_STUDYING" label="در حال تحصیل" />
-        <status id="GRADUATED" label="فارغ‌التحصیل" />
+        <status id="NOT_STUDYING" label="در حال حاضر تحصیل نمی‌کند" />
+        <status id="STUDYING" label="در حال تحصیل" />
+        <status id="ON_BREAK" label="وقفه موقت در تحصیل" />
         <status id="DROPPED_OUT" label="ترک تحصیل" />
-        <status id="ON_BREAK" label="وقفه در تحصیل" />
     </statuses>
     <fields>
         <field id="TECHNOLOGY_ENGINEERING" label="فناوری و مهندسی" />
